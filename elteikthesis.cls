@@ -21,6 +21,8 @@
 %% OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 %% SOFTWARE.
 
+\usepackage[utf8]{inputenc}
+
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{elteikthesis}[2020/02/26 ELTE FI bachelor and master thesis template]
 
