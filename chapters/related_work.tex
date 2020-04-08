@@ -1,0 +1,82 @@
+\chapter{Előzmények}
+\label{ch:related_work}
+
+Ahogyan a nyelvet is szétválaszthatjuk elemeire – például lexéma (szó) , szintagma (szószerkezet) , mondat – , úgy a nyelvi elemeket reprezentáló módszereket is csoportosíthatjuk. 
+
+
+\section{Reprezentáció a szavak szintjén}
+
+A szó szintű reprezentációs módszerek azt a célt szolgálják, hogy a természetes nyelven írott szöveg szavait numerikusan feldolgozhatóvá tegyék.
+
+Bár a gondolat, hogy szavakat matematikailag ábrázoljunk már a '80-as években megjelent, ezek a módszerek többnyire ritka reprezentációkat eredményeztek. A ritka reprezentációk csak kevés esetben hoznak hatékony megoldást.
+
+\subsection{Szótár keresés}
+
+A legegyszerűbb technika, V nyelvtan minden eleméhez injektív módon egy pozitív természetes számot rendelünk.
+
+\subsection{Valószínűség Alapú ábrázolás}
+
+Valószínűség alapú ábrázolásnak nevezünk minden olyan módszert, amely a matematikai valószínűségszámítás eszközét használja. Ezen reprezentációkat gyenge szemantikai erejük ellenére a mai napig alkalmazzák.
+
+\subsubsection{Gyakoriság}
+
+Egy ilyen módszer például a gyakoriság alapú leképezés, amely azt veszi figyelembe, hogy a dokumentumok halmazában hányszor szerepel egy adott szó. Használhatunk relatív gyakoriságot is, ha a gyakoriságot elosztjuk a dokumentumok összes szavának számával. Az így kinyert adat akár egyszerűbb szociális média analízisre is használható.
+
+
+\subsubsection{Tf-Idf}
+
+A tf-idf egy statisztikai módszer, amely arra hivatott, hogy egy szó előfordulásának fontosságát ragadja meg egy dokumentumban, a dokumentumhalmazban. Két részből áll: term frequency és inverse document frequency. A végeredmény a két metrika szorzata. Mindkét metrikára több variáció is van, a legnépszerűbb a következő:
+
+\begin{definition}
+$$tf\left(t,d\right) = \log \left( 1 + freq\left(t,d\right)\right) \text{, ahol freq(t,d) t szó gyakorisága d dokumentumban.}$$
+$$idf\left(t,D\right) = \log \left( \frac{N}{count \left( d \in D:t \in d \right) } \right) \text{, ahol D dokumentumhalmaz elemszáma N.}$$
+
+$$tfidf(t,d,D) = tf(t,d) \cdot idf(t,D)$$
+
+\end{definition}
+
+\begin{note}
+	Természetesen a később bemutatott módszerekben is fellelhetők matematikai valószínűségszámítási eszközök.
+\end{note}
+
+\subsection{Szóvektorok}
+
+Azon feladatok esetén, amikor a szemantikának nagyobb szerepe van – ilyen lehet az írott szöveg érzelmi tartalmának vizsgálata – , nem használhatjuk a fenti technikákat. Olyan reprezentációs módszert kell találnunk, amely képes komplexebb problémákat is megoldani. Ilyen probléma például ha egy szó több jelentéssel is bír (pl.: mész), a szinonímák és a kontextusfüggő szóhasználat (pl.: víz - $H_2O$).
+
+A szóvektorok ezen problémákra részben megoldást nyújthatnak. Szóvektorokat úgy kapunk, ha a szavakat leképezzük valamely vektortérbe. Ha két szó szemantikai tartalma hasonló, koszinusz távolságuk kicsi.
+
+\subsubsection{One-hot kódolás}
+
+\begin{definition}
+Legyen L egy n elemű nyelv. Ekkor $w \in L$ szó one-hot kódolásán $v \in \{0,1\}^n$ vektort értjük, ahol 
+\[
+v_i= 
+\begin{cases}
+1,				& \text{ha } L_i = w\\
+0,              & \text{egyébként.}
+\end{cases}
+\]
+\end{definition}
+
+A one-hot kódolás egy egyszerű és nem hatékony reprezentációs módszer, azonban mégis a szóvektorokhoz sorolhatjuk. Legfőbb gyengesége, hogy képtelen kezelni a szinonímákat, teljesen különböző szavaknak tekinti őket.
+
+\begin{note}
+	A one-hot kódolás ritka reprezentációt eredményez.
+\end{note}
+
+\subsection{Szó beágyazás (embedding)}
+
+A szó beágyazás azon a feltevésen alapszik, hogy a hasonló kontextusban előforduló szavak hasonló jelentéstartalommal bírnak.
+
+\subsubsection{Word2vec}
+A Word2Vec egy olyan reprezentációs algoritmus, amely képes megoldani a szinonímák problémáját. Megfelelő fix méretű vektorok között nem-lineáris függőséget alakít ki, így elosztott reprezentációt létrehozva egy vektortérben.
+
+A Word2Vec módszer egy sekély neurális hálón alapszik. A háló tanítását a szerzők alapvetően két feladattal végezték: Common Bag of Words (CBOW) és Skip-Gram.
+
+A tanítás során a mondatokat token-ekre bontották és one-hot kódolták, amelyek hossza a teljes nyelv hosszával egyezett meg.
+
+%algoritmus
+
+
+
+\subsubsection{GloVe}
