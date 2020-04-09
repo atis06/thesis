@@ -43,12 +43,12 @@ $$tfidf(t,d,D) = tf(t,d) \cdot idf(t,D)$$
 
 Azon feladatok esetén, amikor a szemantikának nagyobb szerepe van – ilyen lehet az írott szöveg érzelmi tartalmának vizsgálata – , nem használhatjuk a fenti technikákat. Olyan reprezentációs módszert kell találnunk, amely képes komplexebb problémákat is megoldani. Ilyen probléma például ha egy szó több jelentéssel is bír (pl.: mész), a szinonímák és a kontextusfüggő szóhasználat (pl.: víz - $H_2O$).
 
-A szóvektorok ezen problémákra részben megoldást nyújthatnak. Szóvektorokat úgy kapunk, ha a szavakat leképezzük valamely vektortérbe. Ha két szó szemantikai tartalma hasonló, koszinusz távolságuk kicsi.
+A szóvektorok ezen problémákra részben megoldást nyújthatnak. Szóvektorokat úgy kapunk, ha a szavakat leképezzük valamely vektortérbe. Ha két szó szemantikai tartalma hasonló, szóvektoruk koszinusz távolsága kicsi.
 
 \subsubsection{One-hot kódolás}
 
 \begin{definition}
-Legyen L egy n elemű nyelv. Ekkor $w \in L$ szó one-hot kódolásán $v \in \{0,1\}^n$ vektort értjük, ahol 
+Legyen L egy $n \in \mathbb{N}$ elemű nyelv. Ekkor $w \in L$ szó one-hot kódolásán $v \in \{0,1\}^n$ vektort értjük, ahol 
 \[
 v_i= 
 \begin{cases}
@@ -69,14 +69,23 @@ A one-hot kódolás egy egyszerű és nem hatékony reprezentációs módszer, a
 A szó beágyazás azon a feltevésen alapszik, hogy a hasonló kontextusban előforduló szavak hasonló jelentéstartalommal bírnak.
 
 \subsubsection{Word2vec}
-A Word2Vec egy olyan reprezentációs algoritmus, amely képes megoldani a szinonímák problémáját. Megfelelő fix méretű vektorok között nem-lineáris függőséget alakít ki, így elosztott reprezentációt létrehozva egy vektortérben.
+A Word2Vec módszer sekély neurális hálót használ. A háló tanítását a szerzők alapvetően két feladattal végezték: Continuous Bag of Words (CBOW) vagy Skip-Gram.
 
-A Word2Vec módszer egy sekély neurális hálón alapszik. A háló tanítását a szerzők alapvetően két feladattal végezték: Common Bag of Words (CBOW) és Skip-Gram.
+A tanítás során a mondatokat token-ekre bontották és one-hot kódolták. Az így keletkező vektorok mérete a teljes nyelv hosszával egyezett meg. Ezek után a szöveg minden egyes token-jén végigiterálva a következőket hajtották végre:
 
-A tanítás során a mondatokat token-ekre bontották és one-hot kódolták, amelyek hossza a teljes nyelv hosszával egyezett meg.
+A CBOW modell szerint a háló bemenete $v_i$
+$\left( i \in \left|D\right| \right)$ vektorra a $v_i$ vektor k méretű kontextusa ($v_{i-k},...,v_{i-1}, v_{i+1},..., v_{i+k} : k \in \mathbb{N}$), azaz a könyezetében lévő vektorok. A háló feladata prediktálni $v_i$ vektort a kontextus függvényében. A folyamat közben a háló rejtett rétegében létrejön a Word2Vec reprezentáció.
 
-%algoritmus
+KÉP
 
+Skip-Gram modell esetén pont az ellenkezője történik. A háló bemenete $v_i$
+$\left( i \in \left|D\right| \right)$ vektor lesz. A tanítás célja, hogy a háló prediktálja az i. szó k méretű kontextusának one-hot kódolt vektorait ($v_{i-k},...,v_{i-1}, v_{i+1},..., v_{i+k} : k \in \mathbb{N}$), közben a háló a rejtett rétegében megtanulja a Word2Vec reprezentációt.
+
+KÉP
+
+\begin{note}
+	A Skip-Gram modell a ritka szavak, míg a CBOW modell a gyakori szavak esetén készít pontosabb reprezentációt.
+\end{note}
 
 
 \subsubsection{GloVe}
