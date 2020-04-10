@@ -41,9 +41,9 @@ $$tfidf(t,d,D) = tf(t,d) \cdot idf(t,D)$$
 
 \subsection{Szóvektorok}
 
-Azon feladatok esetén, amikor a szemantikának nagyobb szerepe van – ilyen lehet az írott szöveg érzelmi tartalmának vizsgálata – , nem használhatjuk a fenti technikákat. Olyan reprezentációs módszert kell találnunk, amely képes komplexebb problémákat is megoldani. Ilyen probléma például ha egy szó több jelentéssel is bír (pl.: mész), a szinonímák és a kontextusfüggő szóhasználat (pl.: víz - $H_2O$).
+Azon feladatok esetén, amikor a szemantikának nagyobb szerepe van – ilyen lehet az írott szöveg érzelmi tartalmának vizsgálata – , nem használhatjuk a fenti technikákat. Olyan reprezentációs módszert kell találnunk, amely képes komplexebb problémákat is megoldani. Ilyen probléma például, ha egy szó több jelentéssel is bír (pl.: mész), a szinonímák és a kontextusfüggő szóhasználat (pl.: víz - $H_2O$).
 
-A szóvektorok ezen problémákra részben megoldást nyújthatnak. Szóvektorokat úgy kapunk, ha a szavakat leképezzük valamely vektortérbe. Ha két szó szemantikai tartalma hasonló, szóvektoruk koszinusz távolsága kicsi.
+A szóvektorok ezen problémákra részben megoldást nyújthatnak. Szóvektorokat úgy kapunk, ha a szavakat leképezzük valamely vektortérbe. Ha két szó szemantikai tartalma hasonló, szóvektoruk Euklideszi távolsága kicsi.
 
 \subsubsection{One-hot kódolás}
 
@@ -69,7 +69,7 @@ A one-hot kódolás egy egyszerű és nem hatékony reprezentációs módszer, a
 A szó beágyazás azon a feltevésen alapszik, hogy a hasonló kontextusban előforduló szavak hasonló jelentéstartalommal bírnak.
 
 \subsubsection{Word2vec}
-A Word2Vec módszer sekély neurális hálót használ. A háló tanítását a szerzők alapvetően két feladattal végezték: Continuous Bag of Words (CBOW) vagy Skip-Gram.
+A Word2Vec módszer sekély neurális hálót használ. A háló tanítását a szerzők alapvetően két felügyelet nélküli feladattal végezték: Continuous Bag of Words (CBOW) vagy Skip-Gram.
 
 A tanítás során a mondatokat token-ekre bontották és one-hot kódolták. Az így keletkező vektorok mérete a teljes nyelv hosszával egyezett meg. Ezek után a szöveg minden egyes token-jén végigiterálva a következőket hajtották végre:
 
@@ -89,3 +89,16 @@ KÉP
 
 
 \subsubsection{GloVe}
+A GloVe (Global Vectors) reprezentációs módszer egy korpusz lokális statisztkáján kívül a globális statisztikáit is figyelembe veszi. 
+
+\begin{definition}
+	Adott egy korpusz, melynek elemszáma V. Az $X \in \mathbb{N}^{V \times V}$ mátrixot közös előfordulási mátrixnak nevezzük, ahol $X_{ij}$ az a  szám, ahányszor i szó kontextusában j szó megjelenik.  
+\end{definition}
+
+A GloVe modell tanítása egy korpusz közös előfordulási mátrixának nem nulla elemein történik. A GloVe modell egy log-bilineáris modell, amely feladata, hogy kiszámítsa a következő szó valószínűségét azon kontextusa alapján.
+
+A módszer mögötti intuíció az, hogy a közös előfordulási valószínűségek hányadosa értékes információval szolgálhat a leképezés során. Így a feladat célja, hogy a tanult szóvektorok skaláris szorzata megegyezzen a szavak közös előfordulási valószínűségének logaritmusával. Mivel $\log \left( \frac{A}{B} \right) = \log \left( A \right) - \log \left( B \right)$, így ez a cél összekapcsolja az előfordulási valószínűségek arányszámát a vektorok távolságával.
+
+\begin{note}
+	A GloVe módszer néhány esetben túlteljesíti a Word2Vec-et.
+\end{note}
