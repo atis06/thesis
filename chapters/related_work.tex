@@ -102,3 +102,61 @@ A módszer mögötti intuíció az, hogy a közös előfordulási valószínűs�
 \begin{note}
 	A GloVe módszer néhány esetben túlteljesíti a Word2Vec-et.
 \end{note}
+
+\subsubsection{ELMo}
+A Word2Vec és a GloVe csak szavankénti kontextusfüggetlen reprezentáció tanulására képes. Az Embeddings from Language Models (ELMo) módszer figyelembe veszi azon szó kontextusát is, amelyre éppen alkalmazzák a reprezentációt az NLP feladat megoldása során, alkalmazás közben állítja elő a vektorokat.
+
+A modell tanításához használt neurális háló több réteg kétirányú LSTM (biLSTM) konkatenációja. A különböző rétegek más és más típusú információt képesek eltárolni.
+
+KÉP
+
+Az ELMo a különböző rétegek kimenetének feladatspecifikus kombinációján alapszik. Egy adott NLP feladatra minden biLSTM réteg egyedi súlyt kap. A végső háló 2 darab biLSTM rétegből áll, minden LSTM réteg 4096 széles.
+
+KÉP
+
+Az így kapott sekély kétirányú módszer jelentősen javított a szóvektorok pontosságán.
+
+\begin{note}
+	Az ELMo egy karakter alapú reprezentációs módszer, így képes kezelni az addig nem látott szavak problémáját is.
+\end{note}
+
+\subsubsection{BERT}
+A Bidirectional Encoder Representations from Transformers (BERT) egy a Google által kifejlesztett transformer architektúrájú nyelvi modell. Az ELMo-hoz hasonlóan ez is kétirányú, azaz egy szó mindkét oldali kontextusát figyelembe veszi a tanulás alatt. 
+
+A tanítást két fázisra bontották: előtanítás és finomhangolás.
+
+Az előtanítás két feladatból állt: \textit{következő mondat} és \textit{maszkolás}. A \textit{következő mondat} esetében a mélyháló feladata kitalálni, hogy A\#B input mondatokra B rákövetkezője-e A-nak. A \textit{maszkolás} során véletlenszerűen letakarták a szavakat a mondatokban és a mélyháló megpróbálta kitalálni, hogy eredetileg melyik szó volt a [MASK] token helyén.
+
+A bemenetben megadták a token-eket, a token-ekhez tartozó mondaton belüli helyadatokat és azt, hogy az adott token A vagy B mondathoz tartozik.
+
+KÉP
+
+A finomhangolás az adott NLP feladat szerint történik.
+
+\begin{note}
+	Míg az ELMo különböző balról-jobbra és jobbról-balra olvasó rétegek konkatenációjaként állítja elő a reprezentációkat, addig a BERT a valódi mély architektúrájával csak egyszer dolgozza fel a token-eket. Több feladat megoldásában is jelenleg a BERT a State-of-the-art.
+\end{note}
+
+
+
+\section{Reprezentáció a mondatok és magasabb nyelvi elemek szintjén}
+Néhány NLP feladatnál, mint például a dokumentumok szemantikus keresésénél, vagy szöveg összegzésnél szükség lehet magasabb szintű reprezentációkra. Ezek a módszerek szavak helyett mondatokat, bekezdéseket, vagy akár egész dokumentumokat tesznek numerikusan értelmezhetővé. 
+
+\subsection{Mondatvektorok}
+A szóvektorokhoz hasonlóan mondatvektorokat úgy kapunk, ha mondatokat helyezünk el egy vektortérbe. A módszerünk akkor hatékony, ha az azonos jelentéstartalmú mondatok reprezentációi klaszterekbe tömörülnek a vektortérben.
+
+
+\subsubsection{Skip-thought vektorok}
+A Skip-though módszer a Skip-Gram algoritmus mondatokra történő kiterjesztése. A szerzők rekurrens enkóder-dekóder hálót használtak a tanításhoz, melynek bemenete mondathármasok Word2Vec vektoraiból állt. A háló célja $s_i$ mondat esetén $s_{i-1}$ és $s_{i+1}$ mondatok generálása volt.
+
+KÉP
+
+A rekurrens modell GRU aktivációkkal bírt.
+Olyan szavak esetén, melyeket a háló még nem ismert, tanítottak egy $f:V_{w2v} \rightarrow V_{rnn}$ lineáris leképezést, ahol $V_{w2v}$ és $V_{rnn}$ rendre a Word2Vec és a rekurrens GRU modell szótára. A reprezentáció vektora a rejtett, úgy nevezett \textit{thought} vektor.
+
+\subsubsection{USE}
+
+\subsubsection{InferSent}
+
+
+
