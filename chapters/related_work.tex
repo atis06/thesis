@@ -64,7 +64,7 @@ A one-hot kódolás egy egyszerű és nem hatékony reprezentációs módszer, a
 	A one-hot kódolás ritka reprezentációt eredményez.
 \end{note}
 
-\subsection{Szó beágyazás (embedding)}
+\subsection{Szóbeágyazás (embedding)}
 
 A szó beágyazás azon a feltevésen alapszik, hogy a hasonló kontextusban előforduló szavak hasonló jelentéstartalommal bírnak.
 
@@ -76,7 +76,11 @@ A tanítás során a mondatokat token-ekre bontották és one-hot kódolták. Az
 A CBOW modell szerint a háló bemenete $v_i$
 $\left( i \in \left|D\right| \right)$ vektorra a $v_i$ vektor k méretű kontextusa ($v_{i-k},...,v_{i-1}, v_{i+1},..., v_{i+k} : k \in \mathbb{N}$), azaz a könyezetében lévő vektorok. A háló feladata prediktálni $v_i$ vektort a kontextus függvényében. A folyamat közben a háló rejtett rétegében létrejön a Word2Vec reprezentáció.
 
-KÉP
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.6\textwidth,height=400px]{cbow-skipg}
+	\caption{CBOW modell}
+\end{figure}
 
 Skip-Gram modell esetén pont az ellenkezője történik. A háló bemenete $v_i$
 $\left( i \in \left|D\right| \right)$ vektor lesz. A tanítás célja, hogy a háló prediktálja az i. szó k méretű kontextusának one-hot kódolt vektorait ($v_{i-k},...,v_{i-1}, v_{i+1},..., v_{i+k} : k \in \mathbb{N}$), közben a háló a rejtett rétegében megtanulja a Word2Vec reprezentációt.
@@ -155,8 +159,49 @@ A rekurrens modell GRU aktivációkkal bírt.
 Olyan szavak esetén, melyeket a háló még nem ismert, tanítottak egy $f:V_{w2v} \rightarrow V_{rnn}$ lineáris leképezést, ahol $V_{w2v}$ és $V_{rnn}$ rendre a Word2Vec és a rekurrens GRU modell szótára. A reprezentáció vektora a rejtett, úgy nevezett \textit{thought} vektor.
 
 \subsubsection{USE}
+A Universal Sentence Encoder (USE) egy Google által fejlesztett mondatszintű szemantikus reprezentációs algoritmus. A szerzők két architektúrát használtak: a BERT-ben említett transformer és DAN (Deep Averaging Network). 
+
+KÉP(DAN)
+
+A hálókat (az ELMo-ban és a BERT-ben is bemutatott) transfer learning módszerrel tanították. A tanulás a Skip-thought-hoz hasonló módon és társalgásból vett mondat-válasz párokkal, illetve felügyelt módon a Stanford Natural Language Inference (SNLI) korpuszon történt.
+
+A USE szavakból, mondatokból, vagy akár rövidebb bekezdésekből is képes 512 méretű vektorokat generálni.
+
+A transformer modell pontosabb eredményt hozott, mint a DAN alapú modell, de a transformer modell $\mathcal{O}(n^2)$, míg a DAN modell $\mathcal{O}(n)$ időkomplexitású a bemeneti hossz függvényében. Továbbá memóriahasználatban is kedvezőbb választás a DAN háló.
 
 \subsubsection{InferSent}
+Az InferSent egy mondatszintű szemantikus reprezentációs technika, melyet a Facebook prezentált. Hasonló algoritmusokkal ellentétben a szerzők felügyelt tanítást végeztek, melyhez az SNLI adathalmazt vették igénybe.
+
+Az SNLI adathalmaz 570 ezer darab – ember által írt és címkézett – mondatpárból áll. A címkék a következők: következmény, ellentmondás és semleges.
+
+Négy háló architektúrát összemérve a legpontosabb eredményt a biLSTM + max pooling mutatta. 
+
+KÉP
+
+Az NLI feladat speciális szerkezetet igényel. Mivel kontextus független reprezentációt akartak előállítani, a mondatpárok GloVe vektorait szeparáltan enkódolták.
+
+KÉP
+
+Az így készült u és v vektorokból egy speciális reprezentáció készült: u, v, $\left| u - v \right|$ és $u \ast v$ konkatenációjával, melyet végül egy 3 osztályú klasszifikáló hálóba vezettek.
+
+\begin{note}
+	A szerzők a vektorméret növelésével pontosabb eredményt kaptak.
+\end{note}
+
+\subsection{Doc2Vec}
+A Doc2Vec módszer a Word2Vec modell kiterjesztése a dokumentumok szintjére. Mivel a dokumentumokat nem lehet a szavakhoz hasonló logikai struktúrába rendezni, ezért a megszokott CBOW modell bemeneti vektorai mellé egy speciális, a dokumentum azonosítóját jelölő vektort konkatenáltak. A tanítás végén a speciális vektor reprezentációja képviseli az egész dokumentumot.
+
+KÉP
+
+Az így kapott modell képes dokumentumokat leképezni egy n dimenziós vektortérbe.
+
+\section{Transfer learning}
+
+A \textit{transfer learning} napjainkban közkedvelt tanítási módszer, melynek az ötletét az NLP ágazata a számítógépes látás eszközkészletéből merítette. A folyamatot két fázisra lehet bontani: előtanítás és a finomhangolás. Az előtanítás általában nagy mennyiségű, címkézetlen adaton történik. A finomhangolás az adott NLP feladathoz szükséges speciális feladatokon való tanítást jelenti, ez szignifikánsan kevesebb adatot igényel.
+
+A \textit{transfer learning} során az előtanítási szakasz után kapott modell súlyait használjuk a finomhangoláshoz alkalmazott mélyháló inicializálására.
+
+
 
 
 
