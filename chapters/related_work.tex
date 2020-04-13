@@ -6,21 +6,21 @@ Ahogyan a nyelvet is szétválaszthatjuk elemeire – például lexéma (szó) ,
 
 \section{Reprezentáció a szavak szintjén}
 
-A szó szintű reprezentációs módszerek azt a célt szolgálják, hogy a természetes nyelven írott szöveg szavait numerikusan feldolgozhatóvá tegyék.
+A szószintű reprezentációs módszerek azt a célt szolgálják, hogy a természetes nyelven írott szöveg szavait numerikusan feldolgozhatóvá tegyék.
 
 Bár a gondolat, hogy szavakat matematikailag ábrázoljunk már a '80-as években megjelent, ezek a módszerek többnyire ritka reprezentációkat eredményeztek. A ritka reprezentációk csak kevés esetben hoznak hatékony megoldást.
 
 \subsection{Szótár keresés}
 
-A legegyszerűbb technika, V nyelvtan minden eleméhez injektív módon egy pozitív természetes számot rendelünk.
+A legegyszerűbb technika, V nyelvtan minden eleméhez injektív módon egy természetes számot rendelünk.
 
-\subsection{Valószínűség Alapú ábrázolás}
+\subsection{Valószínűség alapú ábrázolás}
 
-Valószínűség alapú ábrázolásnak nevezünk minden olyan módszert, amely a matematikai valószínűségszámítás eszközét használja. Ezen reprezentációkat gyenge szemantikai erejük ellenére a mai napig alkalmazzák.
+Valószínűség alapú ábrázolásnak nevezünk minden olyan módszert, amely a matematikai valószínűségszámítás eszközeit használja. Ezen reprezentációkat gyenge szemantikai erejük ellenére a mai napig alkalmazzák.
 
 \subsubsection{Gyakoriság}
 
-Egy ilyen módszer például a gyakoriság alapú leképezés, amely azt veszi figyelembe, hogy a dokumentumok halmazában hányszor szerepel egy adott szó. Használhatunk relatív gyakoriságot is, ha a gyakoriságot elosztjuk a dokumentumok összes szavának számával. Az így kinyert adat akár egyszerűbb szociális média analízisre is használható.
+Egy ilyen módszer a gyakoriság alapú leképezés, amely azt az információt veszi figyelembe, hogy a dokumentumok halmazában hányszor szerepel egy adott szó. Használhatunk relatív gyakoriságot is, ha a gyakoriságot elosztjuk a dokumentumok összes szavának számával. Az így kinyert adat akár egyszerűbb szociális média analízisre is használható.
 
 
 \subsubsection{Tf-Idf}
@@ -43,7 +43,7 @@ $$tfidf(t,d,D) = tf(t,d) \cdot idf(t,D)$$
 
 Azon feladatok esetén, amikor a szemantikának nagyobb szerepe van – ilyen lehet az írott szöveg érzelmi tartalmának vizsgálata – , nem használhatjuk a fenti technikákat. Olyan reprezentációs módszert kell találnunk, amely képes komplexebb problémákat is megoldani. Ilyen probléma például, ha egy szó több jelentéssel is bír (pl.: mész), a szinonímák és a kontextusfüggő szóhasználat (pl.: víz - $H_2O$).
 
-A szóvektorok ezen problémákra részben megoldást nyújthatnak. Szóvektorokat úgy kapunk, ha a szavakat leképezzük valamely vektortérbe. Ha két szó szemantikai tartalma hasonló, szóvektoruk Euklideszi távolsága kicsi.
+A szóvektorok részben megoldást nyújthatnak ezen komplikációkra. Szóvektorokat úgy kapunk, ha a szavakat leképezzük valamely vektortérbe. Ha két szó szemantikai tartalma hasonló, szóvektoruk Euklideszi távolsága kicsi.
 
 \subsubsection{One-hot kódolás}
 
@@ -70,7 +70,7 @@ A szóbeágyazás azon a feltevésen alapszik, hogy a hasonló kontextusban elő
 \subsubsection{Word2vec}
 A Word2Vec módszer sekély neurális hálót használ. A háló tanítását a szerzők alapvetően két felügyelet nélküli feladattal végezték: Continuous Bag of Words (CBOW) vagy Skip-Gram.
 
-A tanítás során a mondatokat token-ekre bontották és one-hot kódolták. Az így keletkező vektorok mérete a teljes nyelv hosszával egyezett meg. Ezek után a szöveg minden egyes token-jén végigiterálva a következőket hajtották végre:
+A tanítás során a mondatokat token-ekre bontották és one-hot kódolták. Majd a szöveg minden egyes token-jén végigiterálva a következőket hajtották végre:
 
 A CBOW modell szerint a háló bemenete $v_i$
 $\left( i \in \left|D\right| \right)$ vektorra a $v_i$ vektor k méretű kontextusa ($v_{i-k},...,v_{i-1}, v_{i+1},..., v_{i+k} : k \in \mathbb{N}$), azaz a könyezetében lévő vektorok. A háló feladata prediktálni $v_i$ vektort a kontextus függvényében. A folyamat közben a háló rejtett rétegében létrejön a Word2Vec reprezentáció.
@@ -99,7 +99,7 @@ $\left( i \in \left|D\right| \right)$ vektor lesz. A tanítás célja, hogy a h�
 A GloVe (Global Vectors) reprezentációs módszer egy korpusz lokális statisztkáján kívül a globális statisztikáit is figyelembe veszi. 
 
 \begin{definition}
-	Adott egy korpusz, melynek elemszáma V. Az $X \in \mathbb{N}^{V \times V}$ mátrixot közös előfordulási mátrixnak nevezzük, ahol $X_{ij}$ az a  szám, ahányszor i szó kontextusában j szó megjelenik.  
+	Adott egy korpusz, melynek elemszáma V. Az $X \in \mathbb{N}^{V \times V}$ mátrixot közös előfordulási mátrixnak nevezzük, ahol $X_{ij}$ az a szám, ahányszor i. szó kontextusában j. szó megjelenik.  
 \end{definition}
 
 A GloVe modell tanítása egy korpusz közös előfordulási mátrixának nem nulla elemein történik. A GloVe modell egy log-bilineáris modell, amely feladata, hogy kiszámítsa a következő szó valószínűségét azon kontextusa alapján.
@@ -134,11 +134,11 @@ A Bidirectional Encoder Representations from Transformers (BERT) egy a Google á
 
 A tanítást két fázisra bontották: előtanítás és finomhangolás.
 
-Az előtanítás két feladatból állt: \textit{következő mondat} és \textit{maszkolás}. A \textit{következő mondat} esetében a mélyháló feladata kitalálni, hogy A\#B input mondatokra B rákövetkezője-e A-nak. A \textit{maszkolás} során véletlenszerűen letakarták a szavakat a mondatokban és a mélyháló megpróbálta kitalálni, hogy eredetileg melyik szó volt a [MASK] token helyén.
+Az előtanítás két feladatból állt: \textit{következő mondat} és \textit{maszkolás}. A \textit{következő mondat} esetében a mélyháló feladata kitalálni, hogy A[SEP]B input mondatokra B rákövetkezője-e A-nak. A \textit{maszkolás} során véletlenszerűen letakarták a szavakat a mondatokban és a mélyháló megpróbálta kitalálni, hogy eredetileg melyik szó volt a [MASK] token helyén.
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.9\textwidth,height=150px]{BERT}
+	\includegraphics[width=1\textwidth,height=160px]{BERT}
 	\caption{A BERT bemenete}
 \end{figure}
 
@@ -161,7 +161,7 @@ A szóvektorokhoz hasonlóan mondatvektorokat úgy kapunk, ha mondatokat helyez�
 
 
 \subsubsection{Skip-thought vektorok}
-A Skip-though módszer a Skip-Gram algoritmus mondatokra történő kiterjesztése. A szerzők rekurrens enkóder-dekóder hálót használtak a tanításhoz, melynek bemenete mondathármasok Word2Vec vektoraiból állt. A háló célja $s_i$ mondat esetén $s_{i-1}$ és $s_{i+1}$ mondatok generálása volt.
+A Skip-though módszer a Skip-Gram algoritmus mondatokra történő kiterjesztése. A szerzők rekurrens enkóder-dekóder hálót használtak a tanításhoz, melynek bemenete mondathármasok Word2Vec vektoraiból állt. A háló feladata $s_i$ mondat esetén $s_{i-1}$ és $s_{i+1}$ mondatok generálása volt.
 
 \begin{figure}[H]
 	\centering
@@ -173,7 +173,7 @@ A rekurrens modell GRU aktivációkkal bírt.
 Olyan szavak esetén, melyeket a háló még nem ismert, tanítottak egy $f:V_{w2v} \rightarrow V_{rnn}$ lineáris leképezést, ahol $V_{w2v}$ és $V_{rnn}$ rendre a Word2Vec és a rekurrens GRU modell szótára. A reprezentáció vektora a rejtett, úgy nevezett \textit{thought} vektor (T).
 
 \subsubsection{USE}
-A Universal Sentence Encoder (USE) egy Google által fejlesztett mondatszintű szemantikus reprezentációs algoritmus. A szerzők két architektúrát használtak: a BERT-ben említett transformer és DAN (Deep Averaging Network). 
+A Universal Sentence Encoder (USE) egy Google által fejlesztett mondatszintű szemantikus reprezentációs algoritmus. A szerzők két architektúrát használtak: a BERT-ben említett transformer-t és a DAN-t (Deep Averaging Network). 
 
 \begin{figure}[H]
 	\centering
@@ -208,10 +208,10 @@ Az NLI feladat speciális szerkezetet igényel. Mivel kontextus független repre
 	\caption{Az NLI feladat}
 \end{figure}
 
-Az így készült u és v vektorokból egy speciális reprezentáció készült: u, v, $\left| u - v \right|$ és $u \ast v$ konkatenációjával, melyet végül egy 3 osztályú klasszifikáló hálóba vezettek.
+Az így készült u és v vektorokból egy speciális reprezentáció készült: u, v, $\left| u - v \right|$ és $u \ast v$ (vektoriális szorzat) konkatenációjával, melyet végül egy 3 osztályú klasszifikáló hálóba vezettek.
 
 \begin{note}
-	A szerzők a vektorméret növelésével pontosabb eredményt kaptak.
+	A szerzők a reprezentációs vektorméret növelésével pontosabb eredményt kaptak.
 \end{note}
 
 \subsection{Doc2Vec}
@@ -235,7 +235,7 @@ A \textit{transfer learning} napjainkban közkedvelt tanítási módszer, melyne
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.5\textwidth,height=150px]{transfer}
+	\includegraphics[width=0.6\textwidth,height=170px]{transfer}
 	\caption{Transfel learning}
 \end{figure}
 
