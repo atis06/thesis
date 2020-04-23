@@ -145,44 +145,82 @@ Bár az ELMo egy karakter (konkatenáció) alapú reprezentációs algoritmus, s
 
 
 \subsubsection{BERT}
-Egy 2018-ban publikált cikk rámutatott arra, hogy a karakteralapú algoritmusok nem teljesítenek olyan jól, mint a szóalapú társaik. A Bidirectional Encoder Representations from Transformers (BERT) egy a Google által kifejlesztett transformer architektúrájú nyelvi modell. Az ELMo-hoz hasonlóan ez is kétirányú, azaz egy szó mindkét oldali kontextusát figyelembe veszi a tanulás alatt, azonban bemenetként nem szavakat és nem is karaktereket kap, hanem szótöredékeket.
+Egy 2018-ban publikált cikk rámutatott arra, hogy a karakteralapú algoritmusok nem teljesítenek olyan jól, mint a szóalapú társaik. A Bidirectional Encoder Representations from Transformers (BERT) egy a Google által kifejlesztett transformer architektúrájú nyelvi modell. Az ELMo-hoz hasonlóan ez is kétirányú, azaz egy szó mindkét oldali kontextusát figyelembe veszi a tanulás alatt. A BERT azonban bemenetként nem szavakat és nem is karaktereket kap, hanem szótöredékeket.
 
-A tanítást két fázisra bontották a \textit{transfer learning} szerint: előtanítás és finomhangolás. 
+A tanítást a \textit{transfer learning} szerint két fázisra bontották: előtanítás és finomhangolás. 
 
-Az előtanítás két feladatból állt: \textit{következő mondat} és \textit{maszkolás}. A \textit{következő mondat} esetében a mélyháló feladata kitalálni, hogy A[SEP]B input mondatokra B rákövetkezője-e A-nak. A \textit{maszkolás} során véletlenszerűen letakarták a szavakat a mondatokban és a mélyháló megpróbálta kitalálni, hogy eredetileg melyik szó volt a [MASK] token helyén.
+Az előtanítás két feladatból állt: \textit{következő mondat} és \textit{maszkolás}.
+A bemenetben megadták a szótöredék token-eket, a token-ekhez tartozó mondaton belüli helyadatokat és azt, hogy az adott token A vagy B mondat közül melyikhez tartozik.
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=1\textwidth,height=160px]{BERT}
+	\includegraphics[width=1\textwidth,height=180px]{BERT}
 	\caption{A BERT bemenete}
 \end{figure}
 
-A bemenetben megadták a szótöredék token-eket, a token-ekhez tartozó mondaton belüli helyadatokat és azt, hogy az adott token A vagy B mondathoz tartozik.
+ A \textit{következő mondat} esetében a mélyháló feladata kitalálni, hogy A[SEP]B input mondatokra B rákövetkezője-e A-nak. A \textit{maszkolás} során véletlenszerűen letakarták a token-eket a mondatokban és a mélyháló megpróbálta kitalálni, hogy eredetileg melyik szó volt a [MASK] token helyén.  A [CLS] token a klasszifikációs feladat alatt a mondatot ábrázolja, a [SEP] a mondatok közötti szeparátor és a [MASK] a letakart szótöredékeket helyettesíti.
 
-A modell finomhangolása az adott NLP feladat szerint történik.
+A továbbiakban a modell finomhangolása az adott NLP feladat szerint történik.
 
-Míg az ELMo különböző balról-jobbra és jobbról-balra olvasó rétegek konkatenációjaként állítja elő a reprezentációkat, addig a BERT a valódi mély architektúrájával csak egyszer dolgozza fel a token-eket. 
+Míg az ELMo különböző balról-jobbra és jobbról-balra olvasó rétegek konkatenációjaként állítja elő a reprezentációkat, addig a BERT a valódi mély architektúrájával csak egyszer dolgozza fel a token-eket.
 
-A BERT szótöredék alapú megoldása egyesíti a karakteralapú modellek előnyét a szóalapú modellek előnyével. Képes kezelni az ismeretlen szavakat és performanciája mégis magas, mint a szóalapú modelleknek. Több feladat megoldásában is jelenleg a BERT a \textit{State-of-the-art}.
+A BERT szótöredék alapú megoldása egyesíti a karakteralapú modellek előnyét a szóalapú modellek előnyével. Képes kezelni az ismeretlen szavakat és performanciája mégis magas marad. A \textit{következő mondat} feladat a szövegben található mondatok közötti relációk, a \textit{maszkolás} pedig a mondatokon belüli szemantikai és szintaktikai információ ábrázolását segíti. Több NLP feladat megoldásában is jelenleg a BERT a \textit{State-of-the-art}.
 
 \section{Reprezentáció a mondatok és magasabb nyelvi elemek szintjén}
-Néhány NLP feladatnál, mint például a dokumentumok szemantikus keresésénél, vagy szöveg összegzésnél szükség lehet magasabb szintű reprezentációkra. Ezek a módszerek szavak helyett mondatokat, bekezdéseket, vagy akár egész dokumentumokat tesznek numerikusan értelmezhetővé. 
+
+Ahogy a lexémák szemantikai tartalmát sem határozza meg az őket alkotó karakterek lánca, úgy a mondatok sem értelmezhetőek pusztán a magukban foglalt szavak halmaza alapján. A mondatok és magasabb nyelvi elemek interpretálása során fontos tényezők lehetnek a bennük lévő szintaktikai viszonyok és a kontextus is.
+
+Néhány NLP feladatnál, mint például a dokumentumok szemantikus keresésénél, vagy szöveg összegzésnél szükség lehet magasabb szintű reprezentációkra.  Ezek a módszerek szavak helyett mondatokat, bekezdéseket, vagy akár egész dokumentumokat tesznek numerikusan értelmezhetővé. 
 
 \subsection{Mondatvektorok}
-A szóvektorokhoz hasonlóan mondatvektorokat úgy kapunk, ha mondatokat helyezünk el egy vektortérbe. A módszerünk akkor hatékony, ha az azonos jelentéstartalmú mondatok reprezentációi klaszterekbe tömörülnek a vektortérben.
-
+A szóvektorokhoz hasonlóan úgy kaphatunk mondatvektorokat, ha mondatokat helyezünk el egy vektortérbe. A tanítás során azonban a sorrendiség, az egyes lexémák változó súlya és a szintaktikai viszonyok megnehezíthetik dolgunkat. Szükség van egy technikára, mely segítségével leképezhetjük és szemantikai tartalmuknál fogva összegezhetjük a megfelelő rendezett szóvektorok sorozatát, így hozzájutva az adott mondat reprezentációjához. A módszerünk akkor hatékony, ha az azonos jelentéstartalmú mondatvektorok klaszterekbe tömörülnek a vektortérben.
 
 \subsubsection{Skip-thought vektorok}
-A Skip-though módszer a Skip-Gram algoritmus mondatokra történő kiterjesztése. A szerzők rekurrens enkóder-dekóder hálót használtak a tanításhoz, melynek bemenete mondathármasok Word2Vec vektoraiból állt. A háló feladata $s_i$ mondat esetén $s_{i-1}$ és $s_{i+1}$ mondatok generálása volt.
+A Skip-though egy 2015-ben bemutatott mondatreprezentációs módszer – a Skip-Gram algoritmus kiterjesztése – , amely a környező mondatokat is figyelembe veszi a tanulás során. 
+
+A szerzők rekurrens enkóder-dekóder architektúrát használtak a tanításhoz. A neurális háló bemenete mondathármasok szavainak Word2Vec vektoraiból állt. A háló feladata $s_i$ mondat esetén $s_{i-1}$ és $s_{i+1}$ mondatok generálása volt.
 
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.6\textwidth,height=130px]{Skip-thought}
-	\caption{A Skip-thought enkóder-dekóder arcitektúrája}
+	\caption{A Skip-thought enkóder-dekóder architektúrája}
 \end{figure}
 
-A rekurrens modell GRU aktivációkkal bírt.
-Olyan szavak esetén, melyeket a háló még nem ismert, tanítottak egy $f:V_{w2v} \rightarrow V_{rnn}$ lineáris leképezést, ahol $V_{w2v}$ és $V_{rnn}$ rendre a Word2Vec és a rekurrens GRU modell szótára. A reprezentáció vektora a rejtett, úgy nevezett \textit{thought} vektor (T).
+Az enkóder és dekóder blokkokhoz rekurrens hálót használtak, melyek lehetnek LSTM és GRU rétegek is. Az enkóder célja a legjobb teljesítményével segíteni a dekóder blokkokat, míg a dekóder blokkok célja minimalizálni az előző és a következő mondat rekonstrukciós hibáját.
+
+
+Olyan szavak esetén, melyeket a háló még nem ismert, tanítottak egy $f:V_{w2v} \rightarrow V_{rnn}$ lineáris leképezést, ahol $V_{w2v}$ és $V_{rnn}$ rendre a Word2Vec és a rekurrens modell szótára. A reprezentáció vektora a rejtett, úgy nevezett \textit{thought} vektor (T).
+
+Bár a \textit{Skip-thought} módszer képes a mondaton belüli és kívüli sorrendiségi információ leképezésére is, csak olyan esetben teljesít megfelelően, ahol az egyes mondatok – melyekre alkalmazzák – megfelelő kontextusban szerepelnek, nem izoláltak.
+
+\subsubsection{InferSent}
+2017-ben a Facebook kutatói jelentős áttörést értek el a mondatszintű reprezentációs módszerek terén, a technika neve InferSent. Hasonló algoritmusokkal ellentétben a szerzők felügyelt tanítást végeztek, melyhez az SNLI adathalmazt vették igénybe. A cikk megmutatta, hogy egy kisebb adathalmazon történő felügyelt tanítás felülmúlhatja a nagyobb adathalmazon nem felügyelt módon tanított modellek teljesítményét.
+
+Az SNLI adathalmaz 570 ezer darab – ember által írt és címkézett – mondatpárból áll. A címkék a következők: következmény, ellentmondás és semleges.
+
+Négyféle neurális architektúrát összemérve a legpontosabb eredményt a biLSTM + max pooling mutatta. 
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.5\textwidth,height=200px]{biLSTM-max-pooling}
+	\caption{A biLSTM + max pooling architektúra}
+\end{figure}
+
+Az SNLI feldolgozásához szükséges NLI feladat speciális szerkezetet igényel. Mivel kontextusfüggetlen reprezentációt akartak előállítani, amely izolált formában is működik, a mondatpárok GloVe vektorait szeparáltan enkódolták.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.5\textwidth,height=150px]{NLI}
+	\caption{Az NLI feladat}
+\end{figure}
+
+Az így készült u és v vektorokból egy speciális reprezentáció készült: u, v, $\left| u - v \right|$ és $u \ast v$ (vektoriális szorzat) konkatenációjával, melyet végül egy 3 osztályú klasszifikáló hálóba vezettek.
+
+A szerzők a reprezentációs vektorméret növelésével pontosabb eredményt kaptak, de a vektorok memóriaigénye emelkedett. Az InferSent megoldja a kontextusfüggőség problémáját, így a módszer már szövegrészletekre is alkalmazható.
+
+\begin{note}
+	Az InferSent napjaink egyik legjobb teljesítményű szemantikus reprezentációs algoritmusa.
+\end{note}
 
 \subsubsection{USE}
 A Universal Sentence Encoder (USE) egy Google által fejlesztett mondatszintű szemantikus reprezentációs algoritmus. A szerzők két architektúrát használtak: a BERT-ben említett transformer-t és a DAN-t (Deep Averaging Network). 
@@ -199,32 +237,7 @@ A USE szavakból, mondatokból, vagy akár rövidebb bekezdésekből is képes 5
 
 A transformer modell pontosabb eredményt hozott, mint a DAN alapú modell, de a transformer modell $\mathcal{O}(n^2)$, míg a DAN modell $\mathcal{O}(n)$ időkomplexitású a bemeneti hossz függvényében. Továbbá memóriahasználatban is kedvezőbb választás a DAN háló.
 
-\subsubsection{InferSent}
-Az InferSent egy mondatszintű szemantikus reprezentációs technika, melyet a Facebook prezentált. Hasonló algoritmusokkal ellentétben a szerzők felügyelt tanítást végeztek, melyhez az SNLI adathalmazt vették igénybe.
 
-Az SNLI adathalmaz 570 ezer darab – ember által írt és címkézett – mondatpárból áll. A címkék a következők: következmény, ellentmondás és semleges.
-
-Négy háló architektúrát összemérve a legpontosabb eredményt a biLSTM + max pooling mutatta. 
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.5\textwidth,height=200px]{biLSTM-max-pooling}
-	\caption{A biLSTM + max pooling architektúra}
-\end{figure}
-
-Az NLI feladat speciális szerkezetet igényel. Mivel kontextus független reprezentációt akartak előállítani, a mondatpárok GloVe vektorait szeparáltan enkódolták.
-
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.5\textwidth,height=150px]{NLI}
-	\caption{Az NLI feladat}
-\end{figure}
-
-Az így készült u és v vektorokból egy speciális reprezentáció készült: u, v, $\left| u - v \right|$ és $u \ast v$ (vektoriális szorzat) konkatenációjával, melyet végül egy 3 osztályú klasszifikáló hálóba vezettek.
-
-\begin{note}
-	A szerzők a reprezentációs vektorméret növelésével pontosabb eredményt kaptak.
-\end{note}
 
 \subsection{Doc2Vec}
 A Doc2Vec módszer a Word2Vec modell kiterjesztése a dokumentumok szintjére. Mivel a dokumentumokat nem lehet a szavakhoz hasonló logikai struktúrába rendezni, ezért a megszokott CBOW modell bemeneti vektorai mellé egy speciális, a dokumentum azonosítóját jelölő vektort konkatenáltak. A tanítás végén a speciális vektor reprezentációja képviseli az egész dokumentumot.
