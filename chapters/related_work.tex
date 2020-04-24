@@ -162,7 +162,7 @@ A bemenetben megadták a szótöredék token-eket, a token-ekhez tartozó mondat
 
 A továbbiakban a modell finomhangolása az adott NLP feladat szerint történik.
 
-Míg az ELMo különböző balról-jobbra és jobbról-balra olvasó rétegek konkatenációjaként állítja elő a reprezentációkat, addig a BERT a valódi mély architektúrájával csak egyszer dolgozza fel a token-eket.
+Míg az ELMo különböző balról-jobbra és jobbról-balra olvasó rétegek konkatenációjaként állítja elő a vektorokat, addig a BERT a valódi mély architektúrájával csak egyszer dolgozza fel a token-eket. A \textit{transformer} architektúra nem igényel vektoriális bemenetet, saját reprezentációt épít a token-ek számára is.
 
 A BERT szótöredék alapú megoldása egyesíti a karakteralapú modellek előnyét a szóalapú modellek előnyével. Képes kezelni az ismeretlen szavakat és performanciája mégis magas marad. A \textit{következő mondat} feladat a szövegben található mondatok közötti relációk, a \textit{maszkolás} pedig a mondatokon belüli szemantikai és szintaktikai információ ábrázolását segíti. Több NLP feladat megoldásában is jelenleg a BERT a \textit{State-of-the-art}.
 
@@ -223,7 +223,7 @@ A szerzők a reprezentációs vektorméret növelésével pontosabb eredményt k
 \end{note}
 
 \subsubsection{USE}
-A Universal Sentence Encoder (USE) egy Google által fejlesztett mondatszintű szemantikus reprezentációs algoritmus. A szerzők két architektúrát használtak: a BERT-ben említett transformer-t és a DAN-t (Deep Averaging Network). 
+Az InferSent bemutatását követő évben a Google Research csapata a modern reprezentációs módszereket vizsgálta a \textit{transfer learning} aspektusából. A Universal Sentence Encoder (USE) egy mondatszintű  algoritmus, mely célja, hogy a használója könnyedén igényeire tudja formálni, annak érdekében, hogy pontosabb leképezést kapjon. A szerzők két architektúrát használtak: a BERT-ben említett \textit{transformer}-t és a DAN-t (\textit{Deep Averaging Network}). 
 
 \begin{figure}[H]
 	\centering
@@ -231,16 +231,29 @@ A Universal Sentence Encoder (USE) egy Google által fejlesztett mondatszintű s
 	\caption{DAN architektúra}
 \end{figure}
 
-A hálókat (az ELMo-ban és a BERT-ben is bemutatott) transfer learning módszerrel tanították. A tanulás a Skip-thought-hoz hasonló módon és társalgásból vett mondat-válasz párokkal, illetve felügyelt módon a Stanford Natural Language Inference (SNLI) korpuszon történt.
+A \textit{transformer} modell egyik algráfja a mondatokban lévő szavak kontextusfüggő reprezentációját állítja elő. A folyamat során figyelembe veszi az egyes lexémák sorrendi és egyéni információit is, majd összegzi őket, így megkapja a végső mondatszintű reprezentációt.
+A \textit{DAN} modell az input tokenek vektorait először átlagolja, majd \textit{feed forward} rétegek segítségével előállítja a mondatvektorokat. A USE szavakból, mondatokból, vagy akár rövidebb bekezdésekből is képes 512 méretű vektorokat generálni.
 
-A USE szavakból, mondatokból, vagy akár rövidebb bekezdésekből is képes 512 méretű vektorokat generálni.
+A neurális hálók tanítását két részre bontották, bemenetként angol nyelvű karakterláncokat kaptak. Az első rész a \textit{Skip-thought}-hoz hasonló módon, dialógusokból vett mondat-válasz párokkal, illetve felügyelt módon a \textit{Stanford Natural Language Inference} (SNLI) korpuszon történt.
 
-A transformer modell pontosabb eredményt hozott, mint a DAN alapú modell, de a transformer modell $\mathcal{O}(n^2)$, míg a DAN modell $\mathcal{O}(n)$ időkomplexitású a bemeneti hossz függvényében. Továbbá memóriahasználatban is kedvezőbb választás a DAN háló.
+A cikk során kiemelt szerepet kapott a tanítás második fázisa. Számos módon finomhangolták a modelleket és mérték a teljesítményüket. A feladatok közé tartozott, hogy filmes értékelések szövege alapján ki kellett találnia a neurális hálóknak az értékelések pontszámát 1 és 5 között. Továbbá vásárlói értékelések hangulati töltetét kellett prediktálniuk.
 
+ Az algoritmusokat kipróbálták a szavak szintjén, a mondatok szintjén és a kettő módszer konkatenációjaként is. A legjobb teljesítményt a mondatszintű reprezentációk mutatták. A transformer architektúra pontosabb eredményt hozott, mint a DAN alapú modell, de a transformer modell $\mathcal{O}(n^2)$, míg a DAN modell $\mathcal{O}(n)$ időkomplexitású a bemeneti hossz függvényében. Továbbá memóriahasználatban is kedvezőbb választás a DAN.
 
+A \textit{GloVe}-hoz hasonlóan a USE is képes asszociációkra, de jóval gyengébb ezen képessége az olyan kényes témák esetében, mint a szexizmus és a rasszizmus. Ez a tény alkalmassá teheti a USE-t az ipari használatra is.
 
-\subsection{Doc2Vec}
+A szerzők rávilágítottak arra, hogy kevés adat esetén jó választás lehet a \textit{transfer learning} módszere, és a magasabb szintű reprezentációk pontosabb eredményt érhetnek el a legtöbb feladat esetében.
+
+\subsection{Dokumentumszintű reprezentáció}
+Ahogy a technológia fejlődik, úgy növekszik a világon az egységnyi idő alatt előállított információ mennyisége. Gyakori eset, hogy ez írott formában, dokumentumokban jelenik meg. Dokumentumnak tekinthetünk minden, a mondatnál hosszabb emberi nyelven írott szöveget.
+
+A dokumentumok értelmezése és feldolgozása nem triviális feladat, mégis sok helyen megjelenik. Nagy kihívást jelent a szemantikai szimilaritás feladata, az olyan gyakorlati problémákat nem is említve, mint a duplikációk kiszűrése a fórumokról, vagy a szociális média analízis.
+
 A Doc2Vec módszer a Word2Vec modell kiterjesztése a dokumentumok szintjére. Mivel a dokumentumokat nem lehet a szavakhoz hasonló logikai struktúrába rendezni, ezért a megszokott CBOW modell bemeneti vektorai mellé egy speciális, a dokumentum azonosítóját jelölő vektort konkatenáltak. A tanítás végén a speciális vektor reprezentációja képviseli az egész dokumentumot.
+
+
+context of document similarity tasks 
+forum question duplication task
 
 \begin{figure}[H]
 	\centering
