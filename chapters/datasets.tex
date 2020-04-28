@@ -1,0 +1,40 @@
+\chapter{Az adathamazok és az előkészítés}
+\label{ch:datasets}
+
+Ahogy az előzmények fejezetben is láthattuk, a mai modern szemantikus reprezentációs modellek neurális hálók segítségével képezik le a nyelvi elemeket valamely vektortérbe. A neurális modellek a feladatok során felfedezik az adathalmaz rejtett mintáit és megtanulják az halmaz elemeinek eloszlását. Kevés adat esetén nem várhatjuk el a hálónktól a megfelelő pontosságot, mivel az adathalmazunk nem reprezentatív az adott problémára, továbbá a kis tanítóminta a túltanulás miatt is erősen eltérítheti a tanulási folyamatot.
+
+Bár az olyan nyelveken, amelyeken a kutatásokat folytatják és amelyeket széles körben beszélnek előfordulhat ember által annotált adat is – ilyen például az SNLI – , a reprezentációs módszerek tanítását jellemzően auto-annotált adatokon végzik. Auto-annotált adatnak tekintünk minden olyan adatot, amelyek címkézését nem ember hajtotta végre. Az auto-annotált tanítóhalmazok hátulütője, hogy pontosságuk sokszor nem éri el az emberi szintet és jelentős zajt is tartalmazhatnak. A reprezentációs algoritmusok a kevesebb, de humán annotált halmazokon precízebb eredményt érnek el.
+
+A magyar nyelv a kisebb körben használt nyelvek közé tartozik, így bátran vonhatjuk le azt a következtetést, hogy a web és egyéb források által hozzáférhető tartalmak mennyisége is erősen limitált. 
+Munkám során fontos tényezőnek tartottam, hogy olyan jellegű adatokkal dolgozzak, melyek könnyen megszerezhetőek. Megfelelő választásnak bizonyultak a többnyelvű, publikus adathalmazok és az olyan profilú online elérhető dokumentumok, melyeket valamely webscraper-el össze lehet gyűjteni. Az így kialakult módszerek alkalmasak lehetnek arra, hogy akár más, kevésbé széleskörűen beszélt nyelvek esetén is alkalmazzák őket.
+
+\subsection{Magyar wikipédia}
+
+
+
+\subsection{Oscar}
+
+\subsection{Hungarian web corpus}
+
+\subsection{Árukereső vélemények}
+
+\subsection{Értelmező kéziszótár}
+
+\subsection{Általános előkészítési lépések}
+
+A nyers szöveg előkészítése elengedhetetlen folyamat az NLP feladatok során, mely nélkül értelmetlen eredményeket kapnánk. A jól elkülöníthető lépések után olyan kimenetet kapunk, mely lényegesen jobb feltételeket biztosít algoritmusunknak ahhoz, hogy képes legyen a dokumentumokat numerikusan értelmezni.
+
+A nyers szöveget a legtöbb esetben úgynevezett token-ekre kell bontani. A \textbf{tokenizáció} a dokumentumok granularitásának növelésére szolgál. A bekezdéseket mondatokra, majd szavakra oszthatjuk, így hozzáférhetünk az olyan relációs információkhoz is, melyeket az alacsonyabb rétegek tárolnak.
+
+Az adathalmaz \textbf{tisztítása}, vagy zaj csökkentése az olyan karakterek és karakterláncok eltávolítását jelenti, amelyek nem elemei a célnyelvnek. Adataink tartalmazhatnak akár speciális karaktereket, írásjeleket, HTML tag-eket, számokat és túl rövid – például 1 karakter hosszú – token-eket is, melyek megzavarhatják modellünk működését. A tisztítás során törölhetjük az adott nyelvben sűrűn előforduló szavakat (\textit{stopword}) is, így csak azok a token-ek maradnak a halmazban, amelyek valódi információtartalommal bírnak.
+
+A szöveg \textbf{normálása} olyan módosításokat jelent, mely során az adathalmazunk token-eit hasonló formára hozzuk. A token-eket kis-, vagy nagybetűssé konvertálhatjuk, illetve a numerikus tartalommal rendelkező szavakat számokká alakíthatjuk. Természetesen ebben az esetben is célszerű törölni a numerikus token-eket, ha a tisztítás során is így jártunk el.
+
+Megkülönböztethetünk két \textbf{szótövezési} formát, a \textit{stemming}-et és a \textit{lemmatization}-t. Mindkét módszernek az a célja, hogy eltávolítsa a ragokat a szótövekről. Míg a \textit{stemming} egy nyers heurisztikákon alapuló módszer, addig a \textit{lemmatization} pontosan próbálja meg szótári alakba konvertálni a szavakat szótár és morfológiai analízis segítségével.
+
+
+
+n-grams - bigrams
+
+
+

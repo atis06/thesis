@@ -46,7 +46,7 @@
 
 % Teendők listája (final dokumentumban nincs)
 % List of todos (not in the final document)
-\listoftodos[\todolabel]
+%\listoftodos[\todolabel]
 
 % Dokumentum beállítások
 % Some document settings
@@ -70,10 +70,13 @@
 \input{chapters/related_work.tex}
 \cleardoublepage
 
-\input{chapters/user.tex}
+\input{chapters/datasets.tex}
 \cleardoublepage
 
-\input{chapters/impl.tex}
+\input{chapters/method.tex}
+\cleardoublepage
+
+\input{chapters/eval.tex}
 \cleardoublepage
 
 \input{chapters/sum.tex}
@@ -81,9 +84,9 @@
 
 % Függelékek (opcionális) - hosszabb részletező táblázatok, sok és/vagy nagy kép esetén hasznos
 % Appendices (optional) - useful for detailed information in long tables, many and/or large figures, etc.
-\appendix
-\input{appendices/sim.tex}
-\cleardoublepage
+%\appendix
+%\input{appendices/sim.tex}
+%\cleardoublepage
 
 % Irodalomjegyzék (kötelező)
 % Bibliography (mandatory)
@@ -99,15 +102,15 @@
 
 % Táblázatjegyzék (opcionális) - 3-5 táblázat fölött érdemes
 % List of tables (optional) - useful over 3-5 tables
-\addcontentsline{toc}{chapter}{\lsttablelabel}
-\listoftables
-\cleardoublepage
+%\addcontentsline{toc}{chapter}{\lsttablelabel}
+%\listoftables
+%\cleardoublepage
 
 % Forráskódjegyzék (opcionális) - 3-5 kódpélda fölött érdemes
 % List of codes (optional) - useful over 3-5 code samples
-\addcontentsline{toc}{chapter}{\lstcodelabel}
-\lstlistoflistings
-\cleardoublepage
+%\addcontentsline{toc}{chapter}{\lstcodelabel}
+%\lstlistoflistings
+%\cleardoublepage
 
 % Jelölésjegyzék (opcionális)
 % List of symbols (optional)
