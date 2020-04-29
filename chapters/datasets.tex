@@ -8,33 +8,84 @@ Bár az olyan nyelveken, amelyeken a kutatásokat folytatják és amelyeket szé
 A magyar nyelv a kisebb körben használt nyelvek közé tartozik, így bátran vonhatjuk le azt a következtetést, hogy a web és egyéb források által hozzáférhető tartalmak mennyisége is erősen limitált. 
 Munkám során fontos tényezőnek tartottam, hogy olyan jellegű adatokkal dolgozzak, melyek könnyen megszerezhetőek. Megfelelő választásnak bizonyultak a többnyelvű, publikus adathalmazok és az olyan profilú online elérhető dokumentumok, melyeket valamely webscraper-el össze lehet gyűjteni. Az így kialakult módszerek alkalmasak lehetnek arra, hogy akár más, kevésbé széleskörűen beszélt nyelvek esetén is alkalmazzák őket.
 
-\subsection{Magyar wikipédia}
+\subsection{Általános előkészítési lépések}
 
+A nyers szöveg előkészítése elengedhetetlen folyamat az NLP feladatok során, mely nélkül értelmetlen eredményeket kapnánk. A jól elkülöníthető lépések után olyan kimenethez jutunk hozzá, amely lényegesen jobb feltételeket biztosít algoritmusunknak ahhoz, hogy képes legyen a dokumentumokat numerikusan értelmezni.
+
+Az előkészítési szakasz a legtöbb esetben az úgynevezett token-ekre való bontással kezdődik. A \textbf{tokenizáció} a dokumentumok granularitásának növelésére szolgál. A bekezdéseket mondatokra, majd szavakra oszthatjuk, így hozzáférhetünk az olyan relációs információkhoz is, melyeket az alacsonyabb rétegek tárolnak.
+
+Az adathalmaz \textbf{tisztítása}, vagy zaj csökkentése az olyan karakterek és karakterláncok eltávolítását jelenti, amelyek nem elemei a célnyelvnek. Adataink tartalmazhatnak akár speciális karaktereket, írásjeleket, HTML tag-eket, számokat és túl rövid – például 1 karakter hosszú – token-eket is, melyek megzavarhatják modellünk működését. A tisztítás során törölhetjük az adott nyelvben sűrűn előforduló szavakat (\textit{stopword}) is – például névelők – , így csak azok a token-ek maradnak a halmazban, amelyek valódi információtartalommal bírnak.
+
+A szöveg \textbf{normálása} olyan módosításokat jelent, mely során az adathalmazunk token-eit azonos alakra hozzuk. A token-eket kis-, vagy nagybetűssé konvertálhatjuk, illetve a numerikus tartalommal rendelkező szavakat számokká alakíthatjuk. Természetesen ebben az esetben is célszerű törölni a numerikus token-eket, ha a tisztítás során is így jártunk el.
+
+Megkülönböztethetünk két \textbf{szótövezési} formát, a \textit{stemming}-et és a \textit{lemmatization}-t. Mindkét módszernek az a célja, hogy eltávolítsa a ragokat a szótövekről. Míg a \textit{stemming} egy nyers heurisztikákon alapuló módszer, addig a \textit{lemmatization} pontosan próbálja meg szótári alakba konvertálni a szavakat szótár és morfológiai analízis segítségével. A normálás és szótövezés után egy csökkentett elemszámú szótárat kapunk, így az eredeti állapothoz közelítő pontossággal, de szignifikánsan kevesebb számítás- és memóriaigénnyel el tudja végezni az algoritmusunk a feladatát.
+
+Az előkészítés végső lépése lehet az \textbf{n-gram}-ok bevezetése az adathalmazunkba. Az n-gram kifejezés egy n hosszú token szekvenciára utal, tehát a "New York" kifejezés 2-gram (bigram) lesz. Az n-gramok építése az n-gram modell feladata. A dokumentumhalmazunkon tanított n-gram modell az adott token prediktálását végzi el az előző $n-1$ token függvényében. Vegyük példának az előbbi bigram-ot:
+
+\begin{equation}
+\label{eq:n-grams}
+P(\text{New York bigram}) = \frac{P(\text{A szám, ahányszor New és York egyszerre szerepelt})}{P(\text{A szám, ahányszor New szerepelt})}
+\end{equation}
+
+N-gram modellünk minden n hosszú token szekvencia esetén elvégzi a számítást, majd a legmagasabb előfordulási valószínűségű szópárokat "\_" jellel konkatenálja, tehát "New York" esetén New\_York-ot kapunk. Egy jól működő bigram modell elegendő lehet a feladatra, általában nincs szükség magasabb szintű összevonásra. A bigramok megkönnyíthetik nyelvi modellünk munkáját azzal, hogy a vélhetően összetett fogalmak különálló token-eit konkatenálják, így a tanítás során az algoritmusunk egy token-ként kezelheti a népszerű kifejezéseket.
+
+Korábbi tapasztalataim azt mutatják, hogy a fenti technikák együttes alkalmazása lényegesen javíthatja az NLP feladatok megfelelő pontossággal való megoldásának esélyeit, ennél fogva a munkám során használt adathalmazok mindegyike maradéktalanul átesett az egyes előkészítési lépéseken.
+
+A szótövezés során két \textit{lemmatizer} teljesítményét hasonlítottam össze, ezek a BSI beépített \textit{lemmatizer}-e és a HungarianSpacy. Az adathalmazok előkészítése alatt úgy tűnt, hogy a HungarianSpacy kevésbé mohó módszerrel vágja le a ragokat, ezért úgy döntöttem, hogy a továbbiakban azt használom, ugyanakkor nem vetem el annak a lehetőségét sem, hogy az erősebb szótövezés pontosabb végeredményt hozhat. 
+
+\subsection{Magyar wikipédia}
+A Wikipédia a világ egyik legnagyobb többnyelvű, szabadon szerkesztett online enciklopédiája. Több, mint 6 000 000 dokumentumot tartalmaz, melyek egy-egy témakört, vagy fogalmat írnak le.
+
+A szemantikus reprezentációs algoritmusok tanítása Wikipédia cikkeken nem új keletű ötlet. Számos nyelvi modell alapszik ezen az adathalmazon, többek között a BERT is.
+
+Az online enciklopédia jól dokumentált alkalmazásprogramozási interfésszel rendelkezik, így tudtam én is hozzájutni a magyar nyelvű oldalak szövegéhez.
+
+A letöltött nyers adathalmaz mérete összesen 2.4 GB, melynek a wiki-hu nevet adtam. A wiki-hu 459286 darab magyar nyelven írt Wikipédia cikket, 16301289 sort és 150333446 token-t tartalmaz. 
+
+A tanításhoz szükséges előkészítés után az adathalmaz mérete 2 GB-ra, a sorok száma 12592489-re a token-ek száma pedig 86605435-re csökkent.
+
+A hozzáfűzött reményekkel ellentétben a magyar nyelvű cikkek relatíve elenyésző mennyiségben szerepelnek a Wikipédia adatbázisban. Következésképp a tanítóhalmaz nem bizonyult elegendőnek, így a továbbiakban csak a technikák tesztelésére szolgált.
 
 
 \subsection{Oscar}
 
-\subsection{Hungarian web corpus}
+Az OSCAR (\textit{Open Super-large Crawled ALMAnaCH coRpus}) nyelvi klasszifikáló algoritmussal készült adathalmaz, melyet a Common Crawl-ból válogattak szét, továbbá a halmaz sorait összekeverték. A Common Crawl egy 2011 óta gyűjtött publikus webarchívum.
+
+A magyar nyelvű szegmense összesen 40 GB szöveget tartalmaz. 
+
+Az előkészítési szakasz előtt kettévágtam, így két darab 20 GB-os halmazt kaptam. A továbbiakban az első felével folytattam tovább az előkészületeket. Az így kapott adathalmaznak az oscar\_hu nevet adtam.
+
+Az oscar\_hu nyers változata 
+
+oscar raw lines 127653877
+
+\subsection{Hungarian Webcorpus}
+
+A Hungarian Webcorpus a legnagyobb mai magyar nyelvű korpusz, melyet a Budapesti Műszaki Egyetem Média Oktató és Kutató Központ gyűjtött 2003-ban a WordSword projekt keretein belül.
+
+A korpusz 18 millió .hu domain-al rendelkező weboldal tartalmából áll, melyből eltávolították a duplikált tartalmakat és az értelmetlen szöveget. Az így kapott dokumentumokra helyesírás ellenőrző szoftvert is futtattak. A publikált tartalom dokumentumainak szavainak csak 4\% felismerhetetlen a helyesírás ellenőrző szerint, így a végeredményben szereplő dokumentumok kevesebb nyelvtani hibát tartalmaznak, mint egy átlagos nyomtatott dokumentum. Az így kapott korpusz 589 millió szót tartalmaz, melyet 1221 millió magyar nyelvű weboldalról töltöttek le.
+
+(ADATOK)
+
+A letölthető fájlok ISO Latin-2 formátumban voltak, így az előkészítési folyamat előtt átkonvertáltam őket utf-8 formátumba.
+
 
 \subsection{Árukereső vélemények}
+Az Árukereső a legnagyobb magyar online áruösszehasonlító oldala. Az oldalon több mint 16 millió termék és X ezer partnek adatai szerepelnek. 
+
+A felhasználóknak lehetőségük van szövegesen véleményezni az adott boltot, vagy árucikket továbbá 1-től 5 csillagig osztályozni azt.
+
+
+
+scraper
+
+adatok:
 
 \subsection{Értelmező kéziszótár}
 
-\subsection{Általános előkészítési lépések}
-
-A nyers szöveg előkészítése elengedhetetlen folyamat az NLP feladatok során, mely nélkül értelmetlen eredményeket kapnánk. A jól elkülöníthető lépések után olyan kimenetet kapunk, mely lényegesen jobb feltételeket biztosít algoritmusunknak ahhoz, hogy képes legyen a dokumentumokat numerikusan értelmezni.
-
-A nyers szöveget a legtöbb esetben úgynevezett token-ekre kell bontani. A \textbf{tokenizáció} a dokumentumok granularitásának növelésére szolgál. A bekezdéseket mondatokra, majd szavakra oszthatjuk, így hozzáférhetünk az olyan relációs információkhoz is, melyeket az alacsonyabb rétegek tárolnak.
-
-Az adathalmaz \textbf{tisztítása}, vagy zaj csökkentése az olyan karakterek és karakterláncok eltávolítását jelenti, amelyek nem elemei a célnyelvnek. Adataink tartalmazhatnak akár speciális karaktereket, írásjeleket, HTML tag-eket, számokat és túl rövid – például 1 karakter hosszú – token-eket is, melyek megzavarhatják modellünk működését. A tisztítás során törölhetjük az adott nyelvben sűrűn előforduló szavakat (\textit{stopword}) is, így csak azok a token-ek maradnak a halmazban, amelyek valódi információtartalommal bírnak.
-
-A szöveg \textbf{normálása} olyan módosításokat jelent, mely során az adathalmazunk token-eit hasonló formára hozzuk. A token-eket kis-, vagy nagybetűssé konvertálhatjuk, illetve a numerikus tartalommal rendelkező szavakat számokká alakíthatjuk. Természetesen ebben az esetben is célszerű törölni a numerikus token-eket, ha a tisztítás során is így jártunk el.
-
-Megkülönböztethetünk két \textbf{szótövezési} formát, a \textit{stemming}-et és a \textit{lemmatization}-t. Mindkét módszernek az a célja, hogy eltávolítsa a ragokat a szótövekről. Míg a \textit{stemming} egy nyers heurisztikákon alapuló módszer, addig a \textit{lemmatization} pontosan próbálja meg szótári alakba konvertálni a szavakat szótár és morfológiai analízis segítségével.
+???
 
 
-
-n-grams - bigrams
 
 
 
