@@ -33,6 +33,8 @@ Korábbi tapasztalataim azt mutatják, hogy a fenti technikák együttes alkalma
 
 A szótövezés során két \textit{lemmatizer} teljesítményét hasonlítottam össze, ezek a BSI beépített \textit{lemmatizer}-e és a HungarianSpacy. Az adathalmazok előkészítése alatt úgy tűnt, hogy a HungarianSpacy kevésbé mohó módszerrel vágja le a ragokat, ezért úgy döntöttem, hogy a továbbiakban azt használom, ugyanakkor nem vetem el annak a lehetőségét sem, hogy az erősebb szótövezés pontosabb végeredményt hozhat. 
 
+Az implementációt Python nyelven végeztem, továbbá a Spacy és az NLTK nevű könyvtárakat használtam segítségül.
+
 \subsection{Magyar wikipédia}
 A Wikipédia a világ egyik legnagyobb többnyelvű, szabadon szerkesztett online enciklopédiája. Több, mint 6 000 000 dokumentumot tartalmaz, melyek egy-egy témakört, vagy fogalmat írnak le.
 
@@ -40,46 +42,39 @@ A szemantikus reprezentációs algoritmusok tanítása Wikipédia cikkeken nem �
 
 Az online enciklopédia jól dokumentált alkalmazásprogramozási interfésszel rendelkezik, így tudtam én is hozzájutni a magyar nyelvű oldalak szövegéhez.
 
-A letöltött nyers adathalmaz mérete összesen 2.4 GB, melynek a wiki-hu nevet adtam. A wiki-hu 459286 darab magyar nyelven írt Wikipédia cikket, 16301289 sort és 150333446 token-t tartalmaz. 
+A letöltött nyers adathalmaz mérete összesen 2.4 GB, melynek a wiki-hu nevet adtam. A wiki-hu 459 286 darab magyar nyelven írt Wikipédia cikket, 16 301 289 sort és 150 333 446 token-t tartalmaz. 
 
-A tanításhoz szükséges előkészítés után az adathalmaz mérete 2 GB-ra, a sorok száma 12592489-re a token-ek száma pedig 86605435-re csökkent.
+A tanításhoz szükséges előkészítés után az adathalmaz mérete 2 GB-ra, a sorok száma 12 592 489-re a token-ek száma pedig 86 605 435-re csökkent.
 
-A hozzáfűzött reményekkel ellentétben a magyar nyelvű cikkek relatíve elenyésző mennyiségben szerepelnek a Wikipédia adatbázisban. Következésképp a tanítóhalmaz nem bizonyult elegendőnek, így a továbbiakban csak a technikák tesztelésére szolgált.
+A hozzáfűzött reményekkel ellentétben a magyar nyelvű cikkek relatíve elenyésző mennyiségben szerepelnek a Wikipédia adatbázisban. Következésképp a tanítóhalmaz nem bizonyult elegendőnek, így a továbbiakban csak a különböző technikák tesztelésére tudtam használni.
 
 
 \subsection{Oscar}
 
-Az OSCAR (\textit{Open Super-large Crawled ALMAnaCH coRpus}) nyelvi klasszifikáló algoritmussal készült adathalmaz, melyet a Common Crawl-ból válogattak szét, továbbá a halmaz sorait összekeverték. A Common Crawl egy 2011 óta gyűjtött publikus webarchívum.
+Az OSCAR (\textit{Open Super-large Crawled ALMAnaCH coRpus}) egy nyelvi klasszifikáló algoritmussal készült adathalmaz, melyet a szerzők a Common Crawl szétválogatásából és szűréséből kaptak, majd a sorait összekeverték. A Common Crawl egy 2011 óta gyűjtött publikus webarchívum. Az OSCAR magyar nyelvű szegmensének teljes mérete összesen 40 GB. 
 
-A magyar nyelvű szegmense összesen 40 GB szöveget tartalmaz. 
+Az előkészítési szakasz előtt szétválasztottam az adathalmazt két egyenlő részre, így két darab 20 GB-os szeletet kaptam. A továbbiakban az eredeti adatmennyiség első felével folytattam tovább az előkészületeket, melynek az oscar\_hu nevet adtam.
 
-Az előkészítési szakasz előtt kettévágtam, így két darab 20 GB-os halmazt kaptam. A továbbiakban az első felével folytattam tovább az előkészületeket. Az így kapott adathalmaznak az oscar\_hu nevet adtam.
+Az oscar\_hu nyers változata 127 654 271 darab sort és 5 168 152 283 darab token-t tartalmaz. Az előkészítési procedúra után 15 GB-ra csökkent a méret, 63 692 408 darab sor és 1 626 357 463 darab token maradt.
 
-Az oscar\_hu nyers változata 
-
-oscar raw lines 127653877
+Ugyan az oscar\_hu nem tartotta meg a sorok közti relációkat, azonban az így kapott adatsokaság a mennyiségénél és annál a ténynél fogva, hogy a Word2Vec csak lokális információkkal dolgozik alkalmasnak bizonyult a szóbeágyazás tanítására.
 
 \subsection{Hungarian Webcorpus}
 
-A Hungarian Webcorpus a legnagyobb mai magyar nyelvű korpusz, melyet a Budapesti Műszaki Egyetem Média Oktató és Kutató Központ gyűjtött 2003-ban a WordSword projekt keretein belül.
+A Hungarian Webcorpus a legnagyobb mai magyar nyelvű korpusz, melyet a Budapesti Műszaki Egyetem Média Oktató és Kutató Központja gyűjtött 2003-ban a WordSword projekt keretein belül.
 
-A korpusz 18 millió .hu domain-al rendelkező weboldal tartalmából áll, melyből eltávolították a duplikált tartalmakat és az értelmetlen szöveget. Az így kapott dokumentumokra helyesírás ellenőrző szoftvert is futtattak. A publikált tartalom dokumentumainak szavainak csak 4\% felismerhetetlen a helyesírás ellenőrző szerint, így a végeredményben szereplő dokumentumok kevesebb nyelvtani hibát tartalmaznak, mint egy átlagos nyomtatott dokumentum. Az így kapott korpusz 589 millió szót tartalmaz, melyet 1221 millió magyar nyelvű weboldalról töltöttek le.
+A korpusz 18 millió .hu domain-al rendelkező weboldal szövegéből áll, melyekből eltávolították a duplikált tartalmakat és az értelmetlen sorokat. Az így kapott dokumentumokra helyesírás ellenőrző szoftvert is futtattak. A publikált dokumentumok szavainak csupán 4\%-a volt felismerhetetlen a helyesírás ellenőrző szerint, így a végeredményben szereplő dokumentumok kevesebb nyelvtani hibát tartalmaznak, mint egy átlagos nyomtatott dokumentum. Az így kapott korpusz 589 millió szót tartalmaz, melyet 1221 millió magyar nyelvű weboldalról töltöttek le.
 
-(ADATOK)
-
-A letölthető fájlok ISO Latin-2 formátumban voltak, így az előkészítési folyamat előtt átkonvertáltam őket utf-8 formátumba.
-
+A letölthető fájlok ISO Latin-2 formátumban voltak, így az előkészítési folyamat előtt átkonvertáltam őket UTF-8 formátumba. Ez az átalakítás további megoldandó karakterproblémákhoz vezetett. A Hungarian Webcorpus mérete 18 GB volt, mely a tisztítási lépés után 7.8 GB-ra csökkent. A jelentős méretváltozás az XML tag-ek törlésére vezethető vissza. A token-izált változatban a méret tovább zsugorodott, így a végeredmény egy 6.6 GB-os adathalmaz lett.
 
 \subsection{Árukereső vélemények}
-Az Árukereső a legnagyobb magyar online áruösszehasonlító oldala. Az oldalon több mint 16 millió termék és X ezer partnek adatai szerepelnek. 
+Az Árukereső a legnagyobb magyar online áruösszehasonlító oldal, melyen több mint 16 millió termék és 3 500 partner részletes adata szerepel. A felhasználóknak lehetőségük van anoním módon szövegesen véleményezni az adott kereskedőt, vagy árucikket, továbbá 1-től 5 csillagig osztályozni annak minőségét.
 
-A felhasználóknak lehetőségük van szövegesen véleményezni az adott boltot, vagy árucikket továbbá 1-től 5 csillagig osztályozni azt.
+A weboldalon található adatokhoz egy saját kezűleg fejlesztett webscraper segítségével jutottam hozzá. A halmaz mérete összesen 943 MB, amely 141 064 termék és 2209 áruház véleményeit tartalmazza.
 
+X darab vélemény, 
+részletes adatok
 
-
-scraper
-
-adatok:
 
 \subsection{Értelmező kéziszótár}
 

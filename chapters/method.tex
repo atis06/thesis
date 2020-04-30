@@ -1,3 +1,21 @@
 \chapter{A módszer leírása}
 \label{ch:method}
 
+A szemantikus reprenzentációs módszerek kutatása intenzíven felgyorsult az elmúlt évtizedben. Bár a szélesebb körben beszélt nyelvek esetében – például angol, kínai – számos technika és adathalmaz is elérhető, a kis és közepes nyelveknek egyelőre nélkülözniük kell ezeket. A probléma  feltehetőleg részben a kutatási terület újszerű jellegéből és a nagy tömegek igényeinek hiányából fakad. 
+
+Ismereteim szerint magyar nyelven a tárgyalt kategóriák közül kizárólag szóbeágyazási modellek léteznek – mint a FastTex, Word2Vec és az ELMo – , továbbá a lehetséges tanítási feladatok is korlátozottak, így többnyire csak felügyelet nélküli tanítás elvégzése lehetséges. A diplomamunkám során megoldandó feladat egy mondat/paragrafus szintű nyelvi modell elkészítése, amely alapjául az előzményekben megismert módszerek szolgálnak. Továbbá olyan humán és autoannotált adathalmazok létrehozása és vizsgálata, melyeket a tanítási folyamathoz használok fel. Az így kapott előre tanított nyelvi modell reményeim szerint alkalmas lesz a későbbi NLP feladatokhoz szükséges finomhangolásra, továbbá a létrehozott adathalmazok és a tanításhoz használt algoritmusok más munkák segítségére is lehetnek.
+
+A feladat megoldására szolgáló módszer alapvetően három részből áll: a bemeneti rétegből, a reprezentáció létrehozásához használt neurális hálóból és a modell tanításához definiált feladatokból, az ehhez alkalmazott fejekből.
+
+Az implementációt Python nyelven végeztem a Tensorflow nevű könyvtár segítségével.
+
+\section{Bemeneti réteg}
+
+Ahogyan számos módszer esetén láthattuk, előfordulhat, hogy a neurális hálók bemenetére már eleve vektorizált formában érkeznek a token-ek. A feladat megoldásához használt architektúrában az input koordinálását egy bemeneti réteg végzi. Ezen réteg a felhasználó által konfigurálható attól függően, hogy az inputra a token-ek enkódolt formában érkeznek, vagy az algoritmus a számára megadható szóbeágyazási modellt használja. Ha a token-ek nem vektor formájában kerülnek a bemenetre, akkor a bemeneti réteg a token-ekhez rendelt egyedi azonosító számok szekvenciáját fogadja.
+
+A tanítás során minden esetben a mélyháló számára megadott szóbeágyazási modellt használtam. A választott algoritmus a Word2Vec - CBOW volt. Eleinte, az implementáció alatt a wiki-hu adathalmazon tanított szóbeágyazási modellt alkalmaztam, azonban az adatsor kis mérete miatt más megoldásokat kellett keresnem.  Ezek után több, az oscar\_hu halmazon tanított modellt is kipróbáltam. A végső és legjobb alternatíva egy kisebb, X méretű szótárral rendelkező, az oscar\_hu adatsoron tanított szóbeágyazás lett. A kiválasztási szempontok közé tartozott a pontosság és a memóriaigény, melyet a későbbiekben kifejtek.
+
+(ide még kéne valami, nem tanul a réteg, embedding\_lookup)
+
+\section{A reprezentáció neurális hálója}
+A bemeneti rétegből
