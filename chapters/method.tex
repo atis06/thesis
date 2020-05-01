@@ -5,17 +5,83 @@ A szemantikus reprenzentációs módszerek kutatása intenzíven felgyorsult az 
 
 Ismereteim szerint magyar nyelven a tárgyalt kategóriák közül kizárólag szóbeágyazási modellek léteznek – mint a FastTex, Word2Vec és az ELMo – , továbbá a lehetséges tanítási feladatok is korlátozottak, így többnyire csak felügyelet nélküli tanítás elvégzése lehetséges. A diplomamunkám során megoldandó feladat egy mondat/paragrafus szintű nyelvi modell elkészítése, amely alapjául az előzményekben megismert módszerek szolgálnak. Továbbá olyan humán és autoannotált adathalmazok létrehozása és vizsgálata, melyeket a tanítási folyamathoz használok fel. Az így kapott előre tanított nyelvi modell reményeim szerint alkalmas lesz a későbbi NLP feladatokhoz szükséges finomhangolásra, továbbá a létrehozott adathalmazok és a tanításhoz használt algoritmusok más munkák segítségére is lehetnek.
 
-A feladat megoldására szolgáló módszer alapvetően három részből áll: a bemeneti rétegből, a reprezentáció létrehozásához használt neurális hálóból és a modell tanításához definiált feladatokból, az ehhez alkalmazott fejekből.
+A feladat megoldására szolgáló módszer alapvetően három részből áll: a bemeneti rétegből, a reprezentáció létrehozásához használt neurális hálóból és a modell tanításához definiált feladatokból, az ehhez alkalmazott fejekből. Mivel a szóalapú megoldások általában pontosabb eredményt mutatnak, mint a karakter, vagy szótöredék alapú modellek, így ebben az esetben is szavak kerülnek feldolgozásra.
+
+(KÉP: architektúra)
 
 Az implementációt Python nyelven végeztem a Tensorflow nevű könyvtár segítségével.
 
 \section{Bemeneti réteg}
 
-Ahogyan számos módszer esetén láthattuk, előfordulhat, hogy a neurális hálók bemenetére már eleve vektorizált formában érkeznek a token-ek. A feladat megoldásához használt architektúrában az input koordinálását egy bemeneti réteg végzi. Ezen réteg a felhasználó által konfigurálható attól függően, hogy az inputra a token-ek enkódolt formában érkeznek, vagy az algoritmus a számára megadható szóbeágyazási modellt használja. Ha a token-ek nem vektor formájában kerülnek a bemenetre, akkor a bemeneti réteg a token-ekhez rendelt egyedi azonosító számok szekvenciáját fogadja.
+Ahogyan több módszer esetén is láthattuk, előfordulhat, hogy a neurális hálók bemenetére már eleve vektorizált formában érkeznek a token-ek. A feladat megoldásához használt architektúrában az input koordinálását egy bemeneti réteg végzi. Ezen réteg a felhasználó által konfigurálható attól függően, hogy az inputra a token-ek enkódolt formában érkeznek, vagy az algoritmus a számára megadható szóbeágyazási modellt használja. Ha a token-ek nem vektor formájában kerülnek a bemenetre, akkor a bemeneti réteg a token-ekhez rendelt egyedi azonosító számok szekvenciáját fogadja.
 
-A tanítás során minden esetben a mélyháló számára megadott szóbeágyazási modellt használtam. A választott algoritmus a Word2Vec - CBOW volt. Eleinte, az implementáció alatt a wiki-hu adathalmazon tanított szóbeágyazási modellt alkalmaztam, azonban az adatsor kis mérete miatt más megoldásokat kellett keresnem.  Ezek után több, az oscar\_hu halmazon tanított modellt is kipróbáltam. A végső és legjobb alternatíva egy kisebb, X méretű szótárral rendelkező, az oscar\_hu adatsoron tanított szóbeágyazás lett. A kiválasztási szempontok közé tartozott a pontosság és a memóriaigény, melyet a későbbiekben kifejtek.
+A tanítás során minden esetben a mélyháló számára megadott szóbeágyazási modellt használtam. A választott algoritmus a Word2Vec - CBOW volt. Eleinte, az implementáció alatt a wiki-hu adathalmazon tanított Word2Vec-et alkalmaztam, azonban az adatsor kis mérete miatt más megoldásokat kellett keresnem.  Ezek után több, az oscar\_hu halmazon tanított modellt is kipróbáltam. A végső és legjobb alternatíva egy kisebb, X méretű szótárral rendelkező, az oscar\_hu adatsoron tanított szóbeágyazás lett. A kiválasztási szempontok közé tartozott a pontosság és a memóriaigény, melyet a későbbiekben kifejtek.
 
-(ide még kéne valami, nem tanul a réteg, embedding\_lookup)
+(lookup kép)
+
+A bemeneti réteg fix súlyokkal rendelkezik, tehát a tanulási folyamat során nem változtatja azokat. A mélyháló a számára átadott beágyazási mátrix elemei közül kikeresi az azonosítóknak megfelelő elemeket, majd továbbítja őket a kimenetre. Ezt a folyamatot \textit{embedding lookup}-nak nevezzük.
+
+(ide még kéne valami)
+(speciális tokenek a w2vben)
 
 \section{A reprezentáció neurális hálója}
-A bemeneti rétegből
+
+A rekurrens neurális hálók (RNN) használata a szemantikus reprezentációs modellek esetén gyakori technika. Míg a mesterséges neurális hálók csak önálló bemenet fogadására képesek, addig a rekurrens neurális hálók alkalmasak szekvenciális input feldolgozására is. Ilyen szekvencia például az idősori adat, vagy a szöveges adat is. A szekvenciális bemenetet az különbözteti meg önálló bemenettől, hogy a szekvenciális input elemei függenek egymástól, hatással lehetnek a szomszéd elemekre, több önálló input esetén ez a reláció nem érvényes.
+A rekurrens neurális hálók képesek megtanulni az adatsor elemei közötti kapcsolatokat. Az RNN a tanulási folyamat során "emlékszik" az előző bemenetekből gyűjtött információkra, majd azok segítségével generálja a kimenetet/kimeneteket. A számítás során használt vektorokat nem csak az input súlyai befolyásolják, hanem a rekurrens háló rejtett állapotvektorai is. A rejtett állapot megtanulja a folytonos bemenet elemei közti függőségeket, majd minden tanítási lépés során frissül. Ennélfogva minden egyes bemeneti elem más és más műveleten esik át.
+
+(RNN kép)
+
+Bizonyos esetekben, ahol a múltból származó információ elegendő lehet a háló számára – például következő token generálása az előzőek függvényében – , az RNN jó opció lehet. Azonban olyan feladatok során, melyeknél fontos a bemeneti adatok kontextusa – például a nyelvi modellek – , más megoldásra van szükség. A BiRNN architektúra lényege, hogy az inputot két, egymással ellentétes irányú rekurrens háló olvassa. Az így kapott kimeneti vektorok páronkénti konkatenációja lesz a BiRNN output-ja.
+
+(BIRNN kép)
+
+Az RNN-ek legegyszerűbb formájának (\textit{Vanilla RNN}) azonban van egy nagy gyengesége, ami a hosszútávú információkat illeti. Gradiensnek hívjuk azokat az értékeket, melyeket a háló a súlyai frissítésére használ. Vanilla RNN esetén a visszaterjesztési művelet (\textit{backpropagation}) alatt annyira lecsökkenhetnek a túl kicsi gradiensek, hogy a hozzá tartozó rétegek megállnak a tanulásban. Ezt a problémát a \textit{vanishing gradients} problémának hívjuk.
+
+Az LSTM (\textit{Long short-term memory}) architektúra megoldást nyújt a \textit{vanishing gradient} problémára. Az LSTM a megszokott hosszútávú memória mellé bevezeti a rövidtávú memóriát is. Olyan belső műveletei vannak, melyek képesek szabályozni az adott cellán belüli információáramlást. Ezen műveleteket kapuknak nevezzük. A kapuk eldönthetik, hogy mely információ lesz fontos a továbbiakban és melyiket lehet törölni. A módszer csak releváns információt enged a hosszútávú memóriába.
+
+(LSTM kép)
+
+(Írjak még az LSTMről?, kapuk, aktivációk részletesen)
+
+Az általam a feladat megoldására választott architektúra az InferSent-ben kiváló eredményeket prezentáló BiLSTM + Max Pooling.
+
+\subsection{A BiLSTM}
+A BiLSTM egy kétirányú rekurrens architektúra (BiRNN), amely LSTM cellákat használ. Az NLP feladatok természetes nyelven írott szöveggel operálnak, így a rekurrens neurális háló az egyik alternatíva a változó hosszúságú szekvenciális adat feldolgozására. A kétirányú modell figyelembe veszi a feldolgozandó token kontextusát a tanulás során és eltárolja a sorrendi információkat is. Az LSTM cellák alkalmazása széles körben elterjedt technika, amely amellett, hogy képes kezelni az RNN gyengeségeit, az egyik jelenlegi legpontosabb megoldásnak bizonyul.
+
+(kép bilstm pooling)
+
+A sűrű rétegek tanítása közben az egyes neuronok között kialakulhatnak keresztfüggőségek, így túltanulhat a modellünk az adott adathalmazra. A \textit{dropout} egy olyan regularizációs technika, amely kikényszeríti, hogy az egyes neuronok önállóan tanuljanak, így véd a túltanulás ellen és a neurális háló is jobban fog generalizálni. A tanítási fázis során az összes iteráció, összes batch-e esetén minden neuron és hozzá tartozó aktiváció $1-p$ valószínűséggel véletlenszerűen kidobásra kerül. A teszt fázis alatt az összes neuron cselekvőképes, de az aktivációkat a helyes működés miatt $p$ állandóval szorozni kell. Bár a tanítási idő minden epoch során kevesebb lesz, a dropout körülbelül duplázza a konvergációhoz szükséges iterációk számát. A reprezentáció tanulására szolgáló neurális háló mindkét LSTM rétegére konfigurálható \textit{dropout}-ot alkalmaztam.
+
+A BiLSTM réteg által generált szekvenciális kimenet egy \textit{pooling} rétegbe vezet.
+
+\subsection{Pooling réteg}
+
+A \textit{pooling} ötletét szintén a számítógépes képfeldolgozás ágazatától kölcsönözte az NLP. Míg konvolúciós rétegek esetén a \textit{feature map}-ek kisebb szegmensein elvégzendő a \textit{pooling} művelet, addig az NLP-ben vektorokra értendő.
+A \textit{max pooling} réteg a kapott bemenet megadott tengelyei mentén választja ki a legnagyobb értékeket. Analóg módon a \textit{mean pooling} az átlagot veszi alapul.
+
+A BiLSTM-ben található rejtett rétegek kimeneteinek páronkénti konkatenációján végzett pooling művelet képes kiválasztani a hasznos információt az egyes token-eket/rész szekvenciákat reprezentáló vektorokból. Az így kapott sorvektor lesz a bemeneti szekvencia végső reprezentációja.
+
+A nyelvi modell neurális hálójának implementációja egy konfigurálható \textit{pooling} réteget tartalmaz, így a megoldás \textit{max} és \textit{mean pooling}-gal, továbbá pooling nélkül is képes dolgozni.
+
+\subsection{Paraméterek és konfigurálhatóság}
+
+
+
+\iffalse
+
+# Config
+w2v_dim = 300
+batch_size = 32
+use_embedding_layer = True
+if use_embedding_layer:
+	num_inputs = 1
+else:
+	num_inputs = w2v_dim + 4
+
+num_hidden = 1024
+dropout_keep_prob = 0.5
+pooling = 'max'
+
+\fi
+
+\section{Tanítás}
