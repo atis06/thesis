@@ -52,6 +52,8 @@ A BiLSTM egy kétirányú rekurrens architektúra (BiRNN), amely LSTM cellákat 
 
 A sűrű rétegek tanítása közben az egyes neuronok között kialakulhatnak keresztfüggőségek, így túltanulhat a modellünk az adott adathalmazra. A \textit{dropout} egy olyan regularizációs technika, amely kikényszeríti, hogy az egyes neuronok önállóan tanuljanak, így véd a túltanulás ellen és a neurális háló is jobban fog generalizálni. A tanítási fázis során az összes iteráció, összes batch-e esetén minden neuron és hozzá tartozó aktiváció $1-p$ valószínűséggel véletlenszerűen kidobásra kerül. A teszt fázis alatt az összes neuron cselekvőképes, de az aktivációkat a helyes működés miatt $p$ állandóval szorozni kell. Bár a tanítási idő minden epoch során kevesebb lesz, a dropout körülbelül duplázza a konvergációhoz szükséges iterációk számát. A reprezentáció tanulására szolgáló neurális háló mindkét LSTM rétegére konfigurálható \textit{dropout}-ot alkalmaztam.
 
+(kép dropout)
+
 A BiLSTM réteg által generált szekvenciális kimenet egy \textit{pooling} rétegbe vezet.
 
 \subsection{Pooling réteg}
@@ -65,23 +67,69 @@ A nyelvi modell neurális hálójának implementációja egy konfigurálható \t
 
 \subsection{Paraméterek és konfigurálhatóság}
 
+A reprezentáció neurális hálójának implementációja során törekedtem a minél széleskörűbb konfigurálhatóságra, így elősegítve a könnyebb testreszabhatóságot és az újrafelhasználhatóságot. 
 
+A felhasználó által állítható, modellre vonatkozó paraméterek a következők:
+\begin{itemize}
+	\item \textit{use\_embedding\_layer} : Alkalmazzon a háló bemeneti réteget, vagy vektorizált az input.
+	\item \textit{word\_embedding\_dim} : A bemeneti szóbeágyazási vektorok mérete.
+	\item \textit{num\_hidden} : A végső reprezentáció mérete, a rejtett LSTM rétegek méretének kétszerese.
+	\item \textit{dropout\_keep\_prob} : Dropout valószínűség.
+	\item \textit{pooling} : \textit{Pooling} fajtája. (Max, Mean, Nincs - ekkor szekvenciális kimenet)	
+\end{itemize}
 
-\iffalse
-
-# Config
-w2v_dim = 300
-batch_size = 32
-use_embedding_layer = True
-if use_embedding_layer:
-	num_inputs = 1
-else:
-	num_inputs = w2v_dim + 4
-
-num_hidden = 1024
-dropout_keep_prob = 0.5
-pooling = 'max'
-
-\fi
+A neurális háló paraméterezhetősége lehetőséget biztosít arra, hogy az architektúra más típusú bemenettel, más célra is felhasználható legyen. Ezen konfigurációkon felül több, a tanítási folyamathoz kapcsolódó érték is állítható.
 
 \section{Tanítás}
+
+Bár a szemantikus reprezentációs modellek pontosságához jelentősen hozzájárul az alkalmazott architektúra teljesítménye, az elmúlt néhány év során mégis inkább a tanítóhalmazok és a tanítási módszerek felé irányult a figyelem.
+
+A neurális hálóknak a korábbi hagyományos, feladatspecifikus tanítás alatt egyszerre kellett megérteni a dokumentumhalmaz nyelvét és megtanulni az adott feladathoz szükséges ismereteket. A \textit{transfer learning} technika segítségével ez a két folyamat különválasztható. Az előtanulás során feldolgozott nagy mennyiségű adat hatására a háló megragadja az adott dokumentumok nyelvi sajátosságait, így a finomhangolás alatt a modell koncentrálhat csak az adott feladatra. Az eredmény legtöbbször egy jobban működő reprezentáció.
+
+Az előtanítási feladatok olyan jellegű kihívások elé állítják a reprezentáció neurális hálóját, amelyek során egy erős, általános tudást képes megszerezni. A probléma megoldásához implementált feladat a BERT előtanításához hasonló \textit{multi-task learning}. 
+
+A \textit{multi-task learning} több feladaton egyszerre történő tanulást jelent, ami jobb generalizációra készteti a hálót. Az első feladat a \textbf{maszkolás}, amely az egyes szavak közötti szemantikai és szintaktikai jelentés ábrázolását támogatja. A második feladat a \textbf{következő mondat}, mely a mondatok közötti kohézió reprezentációját segíti.
+
+Mivel az említett feladatok számára tanítóadatot bármely célnyelvű korpuszból könnyedén lehet generálni, ezért elméletileg az előtanítás a végtelenségig skálázható.
+
+Bemenet hungarianWebcorpus -> hossz beállítás + grafikon
+
+Bemenet MLM - masking, többi bemeneti cucc generálás
+Bemenet NS random next sentence - balance
+
+padding (min max sentence length)
+
+Word2Vec 
+
+
+
+
+
+
+\pagebreak
+
+
+
+
+The training loss is the sum of the mean masked LM likelihood and mean next sentence prediction likelihood.
+
+input generálás
+
+padding
+
+masking technika
+
++ speciális tokenek
+
+LR decay
+
+konfigs
+
+
+
+\subsection{Maszkolás}
+
+\subsection{Következő mondat}
+
+
+\section{Vektorok generálása}
