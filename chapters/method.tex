@@ -22,24 +22,35 @@ A tanítás során minden esetben a mélyháló számára megadott szóbeágyaz�
 A bemeneti réteg fix súlyokkal rendelkezik, tehát a tanulási folyamat során nem változtatja azokat. A mélyháló a számára átadott beágyazási mátrix elemei közül kikeresi az azonosítóknak megfelelő elemeket, majd továbbítja őket a kimenetre. Ezt a folyamatot \textit{embedding lookup}-nak nevezzük.
 
 (ide még kéne valami)
-(speciális tokenek a w2vben)
 
 \section{A reprezentáció neurális hálója}
 
 A rekurrens neurális hálók (RNN) használata a szemantikus reprezentációs modellek esetén gyakori technika. Míg a mesterséges neurális hálók csak önálló bemenet fogadására képesek, addig a rekurrens neurális hálók alkalmasak szekvenciális input feldolgozására is. Ilyen szekvencia például az idősori adat, vagy a szöveges adat is. A szekvenciális bemenetet az különbözteti meg önálló bemenettől, hogy a szekvenciális input elemei függenek egymástól, hatással lehetnek a szomszéd elemekre, több önálló input esetén ez a reláció nem érvényes.
 A rekurrens neurális hálók képesek megtanulni az adatsor elemei közötti kapcsolatokat. Az RNN a tanulási folyamat során "emlékszik" az előző bemenetekből gyűjtött információkra, majd azok segítségével generálja a kimenetet/kimeneteket. A számítás során használt vektorokat nem csak az input súlyai befolyásolják, hanem a rekurrens háló rejtett állapotvektorai is. A rejtett állapot megtanulja a folytonos bemenet elemei közti függőségeket, majd minden tanítási lépés során frissül. Ennélfogva minden egyes bemeneti elem más és más műveleten esik át.
 
-(RNN kép)
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.55\textwidth,height=100px]{lstm}
+	\caption{Az RNN cella}
+\end{figure}
 
 Bizonyos esetekben, ahol a múltból származó információ elegendő lehet a háló számára – például következő token generálása az előzőek függvényében – , az RNN jó opció lehet. Azonban olyan feladatok során, melyeknél fontos a bemeneti adatok kontextusa – például a nyelvi modellek – , más megoldásra van szükség. A BiRNN architektúra lényege, hogy az inputot két, egymással ellentétes irányú rekurrens háló olvassa. Az így kapott kimeneti vektorok páronkénti konkatenációja lesz a BiRNN output-ja.
 
-(BIRNN kép)
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.7\textwidth,height=120px]{birnn}
+	\caption{A BiRNN architektúra}
+\end{figure}
 
 Az RNN-ek legegyszerűbb formájának (\textit{Vanilla RNN}) azonban van egy nagy gyengesége, ami a hosszútávú információkat illeti. Gradiensnek hívjuk azokat az értékeket, melyeket a háló a súlyai frissítésére használ. Vanilla RNN esetén a visszaterjesztési művelet (\textit{backpropagation}) alatt annyira lecsökkenhetnek a túl kicsi gradiensek, hogy a hozzá tartozó rétegek megállnak a tanulásban. Ezt a problémát a \textit{vanishing gradients} problémának hívjuk.
 
 Az LSTM (\textit{Long short-term memory}) architektúra megoldást nyújt a \textit{vanishing gradient} problémára. Az LSTM a megszokott hosszútávú memória mellé bevezeti a rövidtávú memóriát is. Olyan belső műveletei vannak, melyek képesek szabályozni az adott cellán belüli információáramlást. Ezen műveleteket kapuknak nevezzük. A kapuk eldönthetik, hogy mely információ lesz fontos a továbbiakban és melyiket lehet törölni. A módszer csak releváns információt enged a hosszútávú memóriába.
 
-(LSTM kép)
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.55\textwidth,height=100px]{lstm}
+	\caption{Az LSTM cella}
+\end{figure}
 
 (Írjak még az LSTMről?, kapuk, aktivációk részletesen)
 
@@ -48,11 +59,19 @@ Az általam a feladat megoldására választott architektúra az InferSent-ben k
 \subsection{A BiLSTM}
 A BiLSTM egy kétirányú rekurrens architektúra (BiRNN), amely LSTM cellákat használ. Az NLP feladatok természetes nyelven írott szöveggel operálnak, így a rekurrens neurális háló az egyik alternatíva a változó hosszúságú szekvenciális adat feldolgozására. A kétirányú modell figyelembe veszi a feldolgozandó token kontextusát a tanulás során és eltárolja a sorrendi információkat is. Az LSTM cellák alkalmazása széles körben elterjedt technika, amely amellett, hogy képes kezelni az RNN gyengeségeit, az egyik jelenlegi legpontosabb megoldásnak bizonyul.
 
-(kép bilstm pooling)
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.45\textwidth,height=180px]{biLSTM-max-pooling}
+	\caption{A BiLSTM + max pooling architektúra}
+\end{figure}
 
 A sűrű rétegek tanítása közben az egyes neuronok között kialakulhatnak keresztfüggőségek, így túltanulhat a modellünk az adott adathalmazra. A \textit{dropout} egy olyan regularizációs technika, amely kikényszeríti, hogy az egyes neuronok önállóan tanuljanak, így véd a túltanulás ellen és a neurális háló is jobban fog generalizálni. A tanítási fázis során az összes iteráció, összes batch-e esetén minden neuron és hozzá tartozó aktiváció $1-p$ valószínűséggel véletlenszerűen kidobásra kerül. A teszt fázis alatt az összes neuron cselekvőképes, de az aktivációkat a helyes működés miatt $p$ állandóval szorozni kell. Bár a tanítási idő minden epoch során kevesebb lesz, a dropout körülbelül duplázza a konvergációhoz szükséges iterációk számát. A reprezentáció tanulására szolgáló neurális háló mindkét LSTM rétegére konfigurálható \textit{dropout}-ot alkalmaztam.
 
-(kép dropout)
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.6\textwidth,height=140px]{dropout}
+	\caption{A dropout vizualizációja}
+\end{figure}
 
 A BiLSTM réteg által generált szekvenciális kimenet egy \textit{pooling} rétegbe vezet.
 
@@ -88,18 +107,51 @@ A neurális hálóknak a korábbi hagyományos, feladatspecifikus tanítás alat
 
 Az előtanítási feladatok olyan jellegű kihívások elé állítják a reprezentáció neurális hálóját, amelyek során egy erős, általános tudást képes megszerezni. A probléma megoldásához implementált feladat a BERT előtanításához hasonló \textit{multi-task learning}. 
 
-A \textit{multi-task learning} több feladaton egyszerre történő tanulást jelent, ami jobb generalizációra készteti a hálót. Az első feladat a \textbf{maszkolás}, amely az egyes szavak közötti szemantikai és szintaktikai jelentés ábrázolását támogatja. A második feladat a \textbf{következő mondat}, mely a mondatok közötti kohézió reprezentációját segíti.
+A \textit{multi-task learning} több feladaton egyszerre történő tanulást jelent, ami jobb generalizációra készteti a hálót. Az egyik feladat a \textbf{maszkolás}, amely az egyes szavak közötti szemantikai és szintaktikai jelentés ábrázolását támogatja. A másik feladat a \textbf{következő mondat}, mely a mondatok közötti kohézió reprezentációját segíti.
 
-Mivel az említett feladatok számára tanítóadatot bármely célnyelvű korpuszból könnyedén lehet generálni, ezért elméletileg az előtanítás a végtelenségig skálázható.
+Mivel az említett feladatok számára tanítóadatot bármely célnyelvű korpuszból könnyedén lehet generálni, ezért elméletileg az előtanítás a végtelenségig skálázható. Az input előállítása során a \textit{hungarianWebcorpus} nevű adathalmazzal dolgoztam, mivel az jelentős mennyiségű szöveges adatból áll, és a sorok az OSCAR adathalmazzal ellentétben sorrendtartóak.
 
-Bemenet hungarianWebcorpus -> hossz beállítás + grafikon
+A generálás során az algoritmus rögzített tokenszámú szekvenciákra osztotta a korpuszt. Olyan esetben, mikor nem volt elég token a szekvencia kitöltésére – például rövid dokumentumok, dokumentumvégek – , "[PAD]" speciális helykitöltő \textit{padding} token-eket konkatenált a dokumentum szavaihoz. 
+ 
+A maszkolás a BERT-ben alkalmazott technika alapján történt: az előállított token szekvenciák elemeinek 15\%-át véletlenszerűen kiválasztotta. 
+\begin{itemize}
+	\item A kiválasztott token-ek 80\%-át a "[MASK]" speciális token-nel helyettesítette. 
+	\item 10\%-át a szótárból választott véletlenszerű szóval helyettesítette.
+	\item A maradék 10\% esetében maradt az eredeti token.
+\end{itemize}
 
-Bemenet MLM - masking, többi bemeneti cucc generálás
-Bemenet NS random next sentence - balance
+A BERT szerzői szerint, ha a maszkolt token-ek 100\%-át prediktálná a rendszer, nem feltétlen lenne képes megfelelő minőségű reprezentációt generálni a nem maszkolt szavaknak. Ha a kiválasztott token-ek 90\%-át maszkolná és 10\%-ot random választott szóval helyettesítene, az arra késztetné a modellt, hogy úgy gondolja, az adott szó soha nem helyes. Ha pedig a kiválasztott token-ek 90\%-át maszkolná és 10\% maradna az eredeti szó, a modell lemásolná a nem kontextusfüggő beágyazásokat.
 
-padding (min max sentence length)
+A \textit{következő mondat} feladathoz szükséges "mondatpárokat" az így előállított tokenszekvenciákon végigiterálva generálta az algoritmus. $S$ szekvenciát $0.5$ valószínűséggel $S$ után következő szekvenciával, $0.5$ valószínűséggel a korpuszból választott véletlenszerű szekvenciával konkatenálta. A két szekvencia közé egy speciális "[SEP]" mondathatárt jelző token-t illesztett. A végső adathalmaz az így kapott A[SEP]B alakú maszkolt, fix méretű szekvenciákból álló halmaz, mely mérete $13.3$ GB.
 
-Word2Vec 
+\begin{note}
+A "mondat" szó ebben az esetben token-ek tetszőleges méretű sorozatát jelenti.
+\end{note}
+ 
+A bemenet előállításához szükség volt arra az információra, hogy maximum hány token hosszúságú szekvenciákra darabolja az algoritmus a dokumentumokat és mi a minimális soronkénti token-szám, amelyet még elfogadjon. 
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\textwidth,height=180px]{docLengths}
+	\caption{Az 1000 token alatti dokumentumok száma (balra); A 100 token alatti dokumentumok száma (jobbra)}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.6\textwidth,height=180px]{lineLengths}
+	\caption{Az 50 token hosszúság alatti mondatok}
+\end{figure}
+
+A dokumentumokra és a dokumentumok soraira vonatkozó mérések alapján minimális token-számnak 10-et, maximális szekvenciahossznak 100-at határoztam meg. A cél az volt, hogy a lehető legtöbb információt sikerüljön kinyerni a dokumentumokból és csak relatíve kevés esetben kelljen \textit{padding}-ot alkalmazni, továbbá ne legyen a konfigurációnak teljesíthetetlen memóriaigénye. A végső bemeneti hossz így 201 lett.
+
+Bemeneti réteg használata esetén a neurális háló inputjára a mondatpárok token-jeinek Word2Vec azonosítója kerül. Az \textit{embedding lookup} művelet ezen azonosítók segítségével választja ki a réteg számára átadott beágyazási mátrixból az adott token-ekhez tartozó szóvektorokat. Felmerülhet a kérdés, hogy mi történik a speciális token-ekkel ebben az esetben. A speciális token-eket a Word2Vec modell nem ismeri, így azok nem kerültek be a beágyazási mátrixba sem. A probléma megoldására bevezettem a meglévő Word2Vec dimenziók mellé minden egyes speciális token számára egy saját dimenziót és a hozzá tartozó azonosítókat. Ezen tokeneket reprezentáló vektorok kiterjedése a saját dimenziójukban 1, az összes többi dimenzióban 0. Így a speciális vektorok merőlegesek a többi vektorra és azonosan 1 távolságra kerültek tőlük. Ennek okán a speciális token-ek nem befolyásolják a tanulás során a szemantikai információkat. A bemeneti rétegnek átadott beágyazási mátrix mérete – az [UNK], Word2Vec modell által nem ismert szavakat jelölő token-nel együtt – $(\text{word\_embedding\_dim} + 4) \times \text{szótár méret} $ lesz.
+
+Bár a \textit{maszkolás} és a \textit{következő mondat} feladatok megosztják egymással a bemeneti réteget és a modellt a tanulási folyamat során, a feladatok megoldásához használt fejek és a feladatspecifikus bemenetek különböznek.
+
+\subsection{Maszkolás feladat}
+
+
+
 
 
 
@@ -108,28 +160,36 @@ Word2Vec
 
 \pagebreak
 
+ugyan az a háló, mások a fejek
+
+multitask learning -> itt 2 darab fej is
+
+sajátos fejek
+itt leirni hogy a cimkéket és a többi feladatspecifikus bemenetet is itt generáljuk
+
+MLM
+fej és a hozzá szükséges bemenet
 
 
+NS
+fej és a hozzá szükséges bemenet - balance, címkék
 
 The training loss is the sum of the mean masked LM likelihood and mean next sentence prediction likelihood.
 
-input generálás
-
-padding
-
-masking technika
-
-+ speciális tokenek
+példabemenet
 
 LR decay
 
-konfigs
+configs
 
 
 
-\subsection{Maszkolás}
 
-\subsection{Következő mondat}
+
+\subsection{Következő mondat feladathoz használt fej}
+
+Tanítási részletek? halmaz vágása
 
 
 \section{Vektorok generálása}
+mentett súlyok betöltése, súlyok fagyasztása, fej nélküli használat

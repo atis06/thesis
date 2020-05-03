@@ -1,0 +1,4 @@
+dropout: http://jmlr.org/papers/volume15/srivastava14a/srivastava14a.pdf
+lstm: http://colah.github.io/posts/2015-08-Understanding-LSTMs/
+rnn: http://colah.github.io/posts/2015-08-Understanding-LSTMs/
+birnn: http://colah.github.io/posts/2015-09-NN-Types-FP/
