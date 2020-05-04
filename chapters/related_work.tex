@@ -139,7 +139,7 @@ A modell tanításához használt neurális háló több réteg kétirányú LST
 	\caption{ELMo modell}
 \end{figure}
 
-Az ELMo a különböző rétegek kimenetének feladatspecifikus kombinációján alapszik. Egy adott NLP feladatra minden biLSTM réteg egyedi súlyt kap. A végső háló 2 darab biLSTM rétegből áll, minden LSTM réteg 4096 széles.
+Az ELMo a különböző rétegek kimenetének feladatspecifikus kombinációján alapszik. Egy adott NLP feladatra minden BiLSTM réteg egyedi súlyt kap. A végső háló 2 darab BiLSTM rétegből áll, minden LSTM réteg 4096 széles.
 
 Az így kapott sekély kétirányú módszer jelentősen javított a szóvektorok pontosságán.
 
@@ -200,12 +200,12 @@ Bár a \textit{Skip-thought} módszer képes a mondaton belüli és kívüli sor
 
 Az SNLI adathalmaz 570 ezer darab – ember által írt és címkézett – mondatpárból áll. A címkék a következők: következmény, ellentmondás és semleges.
 
-Négyféle neurális architektúrát összemérve a legpontosabb eredményt a biLSTM + max pooling mutatta. 
+Négyféle neurális architektúrát összemérve a legpontosabb eredményt a BiLSTM + max pooling mutatta. 
 
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.5\textwidth,height=200px]{biLSTM-max-pooling}
-	\caption{A biLSTM + max pooling architektúra}
+	\caption{A BiLSTM + max pooling architektúra}
 \end{figure}
 
 Az SNLI feldolgozásához szükséges NLI feladat speciális szerkezetet igényel. Mivel kontextusfüggetlen reprezentációt akartak előállítani, amely izolált formában is működik, a mondatpárok GloVe vektorait szeparáltan enkódolták.

@@ -30,7 +30,7 @@ A rekurrens neurális hálók képesek megtanulni az adatsor elemei közötti ka
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.55\textwidth,height=100px]{lstm}
+	\includegraphics[width=0.55\textwidth,height=100px]{rnn}
 	\caption{Az RNN cella}
 \end{figure}
 
@@ -94,7 +94,7 @@ A felhasználó által állítható, modellre vonatkozó paraméterek a követke
 	\item \textit{word\_embedding\_dim} : A bemeneti szóbeágyazási vektorok mérete.
 	\item \textit{num\_hidden} : A végső reprezentáció mérete, a rejtett LSTM rétegek méretének kétszerese.
 	\item \textit{dropout\_keep\_prob} : Dropout valószínűség.
-	\item \textit{pooling} : \textit{Pooling} fajtája. (Max, Mean, Nincs - ekkor szekvenciális kimenet)	
+	\item \textit{pooling} : \textit{Pooling} fajtája. (Max, Mean)	
 \end{itemize}
 
 A neurális háló paraméterezhetősége lehetőséget biztosít arra, hogy az architektúra más típusú bemenettel, más célra is felhasználható legyen. Ezen konfigurációkon felül több, a tanítási folyamathoz kapcsolódó érték is állítható.
@@ -146,50 +146,38 @@ A dokumentumokra és a dokumentumok soraira vonatkozó mérések alapján minim�
 
 Bemeneti réteg használata esetén a neurális háló inputjára a mondatpárok token-jeinek Word2Vec azonosítója kerül. Az \textit{embedding lookup} művelet ezen azonosítók segítségével választja ki a réteg számára átadott beágyazási mátrixból az adott token-ekhez tartozó szóvektorokat. Felmerülhet a kérdés, hogy mi történik a speciális token-ekkel ebben az esetben. A speciális token-eket a Word2Vec modell nem ismeri, így azok nem kerültek be a beágyazási mátrixba sem. A probléma megoldására bevezettem a meglévő Word2Vec dimenziók mellé minden egyes speciális token számára egy saját dimenziót és a hozzá tartozó azonosítókat. Ezen tokeneket reprezentáló vektorok kiterjedése a saját dimenziójukban 1, az összes többi dimenzióban 0. Így a speciális vektorok merőlegesek a többi vektorra és azonosan 1 távolságra kerültek tőlük. Ennek okán a speciális token-ek nem befolyásolják a tanulás során a szemantikai információkat. A bemeneti rétegnek átadott beágyazási mátrix mérete – az [UNK], Word2Vec modell által nem ismert szavakat jelölő token-nel együtt – $(\text{word\_embedding\_dim} + 4) \times \text{szótár méret} $ lesz.
 
-Bár a \textit{maszkolás} és a \textit{következő mondat} feladatok megosztják egymással a bemeneti réteget és a modellt a tanulási folyamat során, a feladatok megoldásához használt fejek és a feladatspecifikus bemenetek különböznek.
+Bár a \textit{maszkolás} és a \textit{következő mondat} feladatok megosztják egymással a bemeneti réteget és a modellt a \textit{multitask learning} során, a feladatok megoldásához használt fejek és a feladatspecifikus bemenetek különböznek.
 
 \subsection{Maszkolás feladat}
 
+A maszkolási feladat során a neurális háló célja kitalálni, milyen token-ek voltak a [MASK] token-ek helyén. A feladat abszolválásához a fejnek szüksége van a mondatpárok generálása során létrejött egyéb információra is. Ilyen információ a maszkolt token-ek szekvencián belüli pozíciója, Word2Vec azonosítója és súlya. Mivel a [MASK] token-ek megfelelő eloszlása érdekében az algoritmus a [PAD] token-eket is letakarja, ezért fontos a súlyok bevezetése. Egy maszkolt token súlya 0 lesz, ha a token eredetileg [PAD] token volt, egyébként 1. 
+
+A fej a BiLSTM háló \textit{pooling} nélküli, szekvenciális kimenetével dolgozik. A kimenetből kiválasztja a maszkolt szavak reprezentációit. Az így kapott \textit{num\_hidden} hosszú vektorokat egy sűrűn kapcsolt, GELU aktivációval ellátott rétegen vezeti át, melynek kimeneti mérete megegyezik a kibővített Word2Vec modell beágyazási dimenziójával. Majd a sűrű rétegtől kapott kimenetet megszorozza a beágyazási mátrixszal, annak érdekében, hogy az egyes vektorok a szótár dimenziójába kerüljenek, továbbá \textit{log softmax} aktivációt alkalmaz, hozzájutva a maszkolt token-ekre vonatkozó valószínűségek logaritmusához a teljes szótárra nézve. A feladat tanítási \textit{loss} függvénye az egyes eredeti token-ekre vonatkozó logaritmusok összegének ellentettjének átlaga.
 
 
+\subsection{Következő mondat feladat}
 
+A \textit{következő mondat} feladat alatt a neurális hálónak ki kell találnia, hogy A[SEP]B bemenet esetén B szekvencia A rákövetkezője-e. A tanítás során a fej számára biztosítani kell a szekvenciákhoz tartozó címkéket. Ezen címkéket a bemeneti adathalmazt előállító algoritmus generálja. Előfordulhat olyan eset, mikor az algoritmus nem tud az adott dokumentumból A mondat mellé B mondatot választani, mert a dokumentum túl rövid, vagy éppen dokumentumhatárra ért. Ekkor értelemszerűen minden esetben hamis lesz a címkéje az adott bemeneti szekvenciának. Ez a működés kiegyensúlyozatlansági problémához vezethet, melyet az algoritmusban alkalmazott számláló hatékonyan ki tud védeni. Ha többségbe kerül a negatív esetek száma, az algoritmus 1 valószínűséggel pozitív eseteket generál. 
 
+\begin{note}
+	A jobb megértés érdekében a dolgozathoz mellékeltem egy példa bemenetet.
+\end{note}
 
+A fej a BiLSTM háló \textit{max pooling} utáni vektoriális kimenetével, tehát a mondatokat reprezentáló vektorokkal dolgozik. A mondatvektorokra klasszikus bináris klasszifikációt alkalmaz, azaz egy sűrűn kapcsolt rétegen vezeti át őket, melynek kimenete 2 széles és az aktivációs függvénye a \textit{log softmax}. A feladat tanítási \textit{loss} függvénye az így kapott logaritmusok összegének ellentettjének átlaga lesz.
 
-
-
-\pagebreak
-
-ugyan az a háló, mások a fejek
-
-multitask learning -> itt 2 darab fej is
-
-sajátos fejek
-itt leirni hogy a cimkéket és a többi feladatspecifikus bemenetet is itt generáljuk
-
-MLM
-fej és a hozzá szükséges bemenet
-
-
-NS
-fej és a hozzá szükséges bemenet - balance, címkék
-
-The training loss is the sum of the mean masked LM likelihood and mean next sentence prediction likelihood.
-
-példabemenet
-
-LR decay
+\subsection*{Tanítás - folytatás}
+A \textit{multitask learning} során a neurális háló egyszerre két feladatot próbál megoldani, így jobban generalizál. A háló az SGD (\textit{Stochastic Gradient Descent}) nevű algoritmus segítségével minimalizálja a globális \textit{loss} függvényt, amely a két feladat \textit{loss} függvényének összege.
+Az SGD számára implementáltam egy konfigurálható \textit{decay} algoritmust. A \textit{learning rate decay} a \textit{loss} függvény értékének \textit{epoch}-onkénti túl lassú csökkenése esetén öttel osztja a \textit{learning rate}-et, így elérve a jobb konvergációs képességet.
 
 configs
 
-
-
-
-
-\subsection{Következő mondat feladathoz használt fej}
-
-Tanítási részletek? halmaz vágása
+Tanítási részletek? halmaz vágása, befejezés
 
 
 \section{Vektorok generálása}
+
+
+
 mentett súlyok betöltése, súlyok fagyasztása, fej nélküli használat
+
+két kép kicserélése

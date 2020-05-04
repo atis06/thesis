@@ -67,35 +67,24 @@ A korpusz 18 millió .hu domain-al rendelkező weboldal szövegéből áll, mely
 
 A letölthető fájlok ISO Latin-2 formátumban voltak, így az előkészítési folyamat előtt átkonvertáltam őket UTF-8 formátumba. Ez az átalakítás további megoldandó karakterproblémákhoz vezetett. A Hungarian Webcorpus mérete 18 GB volt, mely a tisztítási lépés után 7.8 GB-ra csökkent. A jelentős méretváltozás az XML tag-ek törlésére vezethető vissza. A token-izált változatban a méret tovább zsugorodott, így a végeredmény egy 6.6 GB-os adathalmaz lett.
 
-1221405 darab fájl
-
-Tisztítás után:
-Lines num: 127711725
-Tokens num: 589209017
-
+A 1 221 405 darab fájl a tisztítás után összesen 127 711 725 darab sort és 589 209 017 darab token-t tartalmaz.
 
 \subsection{Árukereső vélemények}
 Az Árukereső a legnagyobb magyar online áruösszehasonlító oldal, melyen több mint 16 millió termék és 3 500 partner részletes adata szerepel. A felhasználóknak lehetőségük van anoním módon szövegesen véleményezni az adott kereskedőt, vagy árucikket, továbbá 1-től 5 csillagig osztályozni annak minőségét.
 
-A weboldalon található adatokhoz egy saját kezűleg fejlesztett webscraper segítségével jutottam hozzá. A halmaz mérete összesen 943 MB, amely 141 064 termék és 2209 áruház véleményeit tartalmazza.
+A weboldalon található adatokhoz egy saját kezűleg fejlesztett webscraper segítségével jutottam hozzá. A halmaz mérete összesen 943 MB, amely 141 064 termék és 2209 áruház véleményeit tartalmazza. 
 
-X darab vélemény, 
-részletes adatok
+Az összesen 2 006 369 darab vélemény eloszlása a csillagok száma szerint a következő:
 
-Max token hossz: 842
+\begin{figure}[H]
+	\centering
+	\subfigure[Összes]{
+		\includegraphics[width=0.45\linewidth]{arukereso}}
+	\hspace{5pt}
+	\subfigure[Legalább 10 hosszú]{
+		\includegraphics[width=0.45\linewidth]{arukereso10}}
+	\caption{Vélemények eloszlása}
+	\label{fig:example-2}
+\end{figure}
 
-megkötés nélkül: {'5': 1633908, '4': 252380, '3': 46309, '2': 40230, '1': 33542}
-
-10 vagy hosszabb tokenszám:
-{'3': 27737, '5': 447336, '4': 98858, '2': 25726, '1': 22416}
-
-
-
-\subsection{Értelmező kéziszótár}
-
-???
-
-
-
-
-
+A túl rövid vélemények kevés információval szolgálnak, így eltávolítottam az eredeti adathalmazból a 10 token-nál rövidebb véleményeket. A leghosszabb vélemény 842 token-ből áll.
