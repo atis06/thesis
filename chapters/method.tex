@@ -7,7 +7,11 @@ Ismereteim szerint magyar nyelven a tárgyalt kategóriák közül kizárólag s
 
 A feladat megoldására szolgáló módszer alapvetően három részből áll: a bemeneti rétegből, a reprezentáció létrehozásához használt neurális hálóból és a modell tanításához definiált feladatokból, az ehhez alkalmazott fejekből. Mivel a szóalapú megoldások általában pontosabb eredményt mutatnak, mint a karakter, vagy szótöredék alapú modellek, így ebben az esetben is szavak kerülnek feldolgozásra.
 
-(KÉP: architektúra)
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.3\textwidth,height=220px]{architecture}
+	\caption{A módszer magasszintű architektúrája}
+\end{figure}
 
 Az implementációt Python nyelven végeztem a Tensorflow nevű könyvtár segítségével.
 
@@ -15,13 +19,15 @@ Az implementációt Python nyelven végeztem a Tensorflow nevű könyvtár segí
 
 Ahogyan több módszer esetén is láthattuk, előfordulhat, hogy a neurális hálók bemenetére már eleve vektorizált formában érkeznek a token-ek. A feladat megoldásához használt architektúrában az input koordinálását egy bemeneti réteg végzi. Ezen réteg a felhasználó által konfigurálható attól függően, hogy az inputra a token-ek enkódolt formában érkeznek, vagy az algoritmus a számára megadható szóbeágyazási modellt használja. Ha a token-ek nem vektor formájában kerülnek a bemenetre, akkor a bemeneti réteg a token-ekhez rendelt egyedi azonosító számok szekvenciáját fogadja.
 
-A tanítás során minden esetben a mélyháló számára megadott szóbeágyazási modellt használtam. A választott algoritmus a Word2Vec - CBOW volt. Eleinte, az implementáció alatt a wiki-hu adathalmazon tanított Word2Vec-et alkalmaztam, azonban az adatsor kis mérete miatt más megoldásokat kellett keresnem.  Ezek után több, az oscar\_hu halmazon tanított modellt is kipróbáltam. A végső és legjobb alternatíva egy kisebb, X méretű szótárral rendelkező, az oscar\_hu adatsoron tanított szóbeágyazás lett. A kiválasztási szempontok közé tartozott a pontosság és a memóriaigény, melyet a későbbiekben kifejtek.
+A tanítás során minden esetben a mélyháló számára megadott Word2Vec - CBOW szóbeágyazási modelleket használtam, melyek 300 dimenziós szóvektorokat tartalmaznak. A szóbeágyazások tanítóalgoritmusa 5 token széles ablakot alkalmazott. A wiki\_hu 658 129, az oscar modell 2 335 673, az oscar\_sm pedig 645 136 darab vektorból áll. Az előtanítás során átadott reprezentációs mátrixot a GPU a memóriában tárolja és műveleteket is végez vele, ezért a nagyobb, oscar\_hu halmazon tanított modell rendkívül memóriaigényesnek, továbbá a wiki\_hu tanítóhalmaz a Word2Vec tanításához túl kisméretűnek bizonyult, így a végső választás az oscar\_sm modellre esett. 
 
-(lookup kép)
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.6\textwidth,height=220px]{embedding}
+	\caption{Az embedding lookup}
+\end{figure}
 
 A bemeneti réteg fix súlyokkal rendelkezik, tehát a tanulási folyamat során nem változtatja azokat. A mélyháló a számára átadott beágyazási mátrix elemei közül kikeresi az azonosítóknak megfelelő elemeket, majd továbbítja őket a kimenetre. Ezt a folyamatot \textit{embedding lookup}-nak nevezzük.
-
-(ide még kéne valami)
 
 \section{A reprezentáció neurális hálója}
 
@@ -152,7 +158,7 @@ Bár a \textit{maszkolás} és a \textit{következő mondat} feladatok megosztj�
 
 A maszkolási feladat során a neurális háló célja kitalálni, milyen token-ek voltak a [MASK] token-ek helyén. A feladat abszolválásához a fejnek szüksége van a mondatpárok generálása során létrejött egyéb információra is. Ilyen információ a maszkolt token-ek szekvencián belüli pozíciója, Word2Vec azonosítója és súlya. Mivel a [MASK] token-ek megfelelő eloszlása érdekében az algoritmus a [PAD] token-eket is letakarja, ezért fontos a súlyok bevezetése. Egy maszkolt token súlya 0 lesz, ha a token eredetileg [PAD] token volt, egyébként 1. 
 
-A fej a BiLSTM háló \textit{pooling} nélküli, szekvenciális kimenetével dolgozik. A kimenetből kiválasztja a maszkolt szavak reprezentációit. Az így kapott \textit{num\_hidden} hosszú vektorokat egy sűrűn kapcsolt, GELU aktivációval ellátott rétegen vezeti át, melynek kimeneti mérete megegyezik a kibővített Word2Vec modell beágyazási dimenziójával. Majd a sűrű rétegtől kapott kimenetet megszorozza a beágyazási mátrixszal, annak érdekében, hogy az egyes vektorok a szótár dimenziójába kerüljenek, továbbá \textit{log softmax} aktivációt alkalmaz, hozzájutva a maszkolt token-ekre vonatkozó valószínűségek logaritmusához a teljes szótárra nézve. A feladat tanítási \textit{loss} függvénye az egyes eredeti token-ekre vonatkozó logaritmusok összegének ellentettjének átlaga.
+A fej a BiLSTM háló \textit{pooling} nélküli, szekvenciális kimenetével dolgozik. A kimenetből kiválasztja a maszkolt szavak reprezentációit. Az így kapott \textit{num\_hidden} hosszú vektorokat egy sűrűn kapcsolt, GELU aktivációval \cite{gelu} ellátott rétegen vezeti át, melynek kimeneti mérete megegyezik a kibővített Word2Vec modell beágyazási dimenziójával. Majd a sűrű rétegtől kapott kimenetet megszorozza a beágyazási mátrixszal, annak érdekében, hogy az egyes vektorok a szótár dimenziójába kerüljenek, továbbá \textit{log softmax} aktivációt alkalmaz, hozzájutva a maszkolt token-ekre vonatkozó valószínűségek logaritmusához a teljes szótárra nézve. A feladat tanítási \textit{loss} függvénye az egyes eredeti token-ekre vonatkozó logaritmusok összegének ellentettjének átlaga.
 
 
 \subsection{Következő mondat feladat}
@@ -167,11 +173,26 @@ A fej a BiLSTM háló \textit{max pooling} utáni vektoriális kimenetével, teh
 
 \subsection*{Tanítás - folytatás}
 A \textit{multitask learning} során a neurális háló egyszerre két feladatot próbál megoldani, így jobban generalizál. A háló az SGD (\textit{Stochastic Gradient Descent}) nevű algoritmus segítségével minimalizálja a globális \textit{loss} függvényt, amely a két feladat \textit{loss} függvényének összege.
-Az SGD számára implementáltam egy konfigurálható \textit{decay} algoritmust. A \textit{learning rate decay} a \textit{loss} függvény értékének \textit{epoch}-onkénti túl lassú csökkenése esetén öttel osztja a \textit{learning rate}-et, így elérve a jobb konvergációs képességet.
+Az SGD számára implementáltam egy konfigurálható \textit{decay} algoritmust. A \textit{learning rate decay} a \textit{loss} függvény értékének \textit{epoch}-onkénti túl lassú csökkenése esetén öttel osztja a \textit{learning rate}-et, így elérve a jobb konvergációs képességet. Az algoritmus minden \textit{epoch} során menti a \textit{transfer} számára szükséges súlyokat és a tanítás aktuális állapotát is.
 
-configs
+A jól paraméterezhető tanítás érdekében az implementáció során törekedtem a minél széleskörűbb konfigurálhatóságra. A következő tanításra vonatkozó értékeket állíthatja a felhasználó:
+\begin{itemize}
+	\item \textit{batch\_size} : A tanításhoz használt \textit{minibatch}-ek mérete.
+	\item \textit{num\_inputs} : Az input vektorok mérete.
+	\item \textit{num\_time\_steps} : A bemenet szélessége.
+	\item \textit{min\_sentence\_length} : A legkisebb token-szám amit az algoritmusnak figyelembe kell vennie.
+	\item \textit{max\_sentence\_length} : Az egyes mondatok \textit{padding} utáni hossza.
+	\item \textit{masked\_lm\_prob} : A token-ek maszkolási valószínűsége.
+	\item \textit{max\_predictions\_per\_seq} : A legnagyobb maszkolható tokenszám egy mondatpár esetén.
+	
+	\item \textit{learning\_rate\_start} : A \textit{learning rate} kezdőértéke.
+	\item \textit{lr\_decay} : \textit{Learning rate decay} ki/be.
+	\item \textit{lr\_decay\_threshold} : Az előző és az aktuális \textit{epoch loss} érték mekkora különbsége estén ossza le a \textit{learning rate}-et öttel. Az alapérték 0, tehát ha magasabb, vagy ugyan akkora az aktuális \textit{epoch loss} érték, mint az előző.
+	\item \textit{epochs} : Az adathalmazon történő iterációk száma.
+	\item \textit{mask\_padding} : Maszkolja-e a \textit{padding} karaktereket.
+\end{itemize}
 
-Tanítási részletek? halmaz vágása, befejezés
+tanítási részletek 2 modell
 
 
 \section{Vektorok generálása}
@@ -180,4 +201,4 @@ Tanítási részletek? halmaz vágása, befejezés
 
 mentett súlyok betöltése, súlyok fagyasztása, fej nélküli használat
 
-két kép kicserélése
+%két kép kicserélése
