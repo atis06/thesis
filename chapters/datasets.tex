@@ -36,7 +36,7 @@ A szótövezés során két \textit{lemmatizer} teljesítményét hasonlítottam
 Az implementációt Python nyelven végeztem, továbbá a Spacy és az NLTK nevű könyvtárakat használtam segítségül.
 
 \subsection{Magyar wikipédia}
-A Wikipédia a világ egyik legnagyobb többnyelvű, szabadon szerkesztett online enciklopédiája. Több, mint 6 000 000 dokumentumot tartalmaz, melyek egy-egy témakört, vagy fogalmat írnak le.
+A Wikipédia \cite{wikipedia} a világ egyik legnagyobb többnyelvű, szabadon szerkesztett online enciklopédiája. Több, mint 6 000 000 dokumentumot tartalmaz, melyek egy-egy témakört, vagy fogalmat írnak le.
 
 A szemantikus reprezentációs algoritmusok tanítása Wikipédia cikkeken nem új keletű ötlet. Számos nyelvi modell alapszik ezen az adathalmazon, többek között a BERT is.
 
@@ -51,7 +51,7 @@ A hozzáfűzött reményekkel ellentétben a magyar nyelvű cikkek relatíve ele
 
 \subsection{OSCAR}
 
-Az OSCAR (\textit{Open Super-large Crawled ALMAnaCH coRpus}) egy nyelvi klasszifikáló algoritmussal készült adathalmaz, melyet a szerzők a Common Crawl szétválogatásából és szűréséből kaptak, majd a sorait összekeverték. A Common Crawl egy 2011 óta gyűjtött publikus webarchívum. Az OSCAR magyar nyelvű szegmensének teljes mérete összesen 40 GB. 
+Az OSCAR (\textit{Open Super-large Crawled ALMAnaCH coRpus}) \cite{oscar} egy nyelvi klasszifikáló algoritmussal készült adathalmaz, melyet a szerzők a Common Crawl szétválogatásából és szűréséből kaptak, majd a sorait összekeverték. A Common Crawl egy 2011 óta gyűjtött publikus webarchívum. Az OSCAR magyar nyelvű szegmensének teljes mérete összesen 40 GB. 
 
 Az előkészítési szakasz előtt szétválasztottam az adathalmazt két egyenlő részre, így két darab 20 GB-os szeletet kaptam. A továbbiakban az eredeti adatmennyiség első felével folytattam tovább az előkészületeket, melynek az oscar\_hu nevet adtam.
 
@@ -61,7 +61,7 @@ Ugyan az oscar\_hu nem tartotta meg a sorok közti relációkat, azonban az így
 
 \subsection{Hungarian Webcorpus}
 
-A Hungarian Webcorpus a legnagyobb mai magyar nyelvű korpusz, melyet a Budapesti Műszaki Egyetem Média Oktató és Kutató Központja gyűjtött 2003-ban a SzóSzablya projekt keretein belül.
+A Hungarian Webcorpus \cite{hungarian_webcorpus} a legnagyobb mai magyar nyelvű korpusz, melyet a Budapesti Műszaki Egyetem Média Oktató és Kutató Központja gyűjtött 2003-ban a SzóSzablya projekt keretein belül.
 
 A korpusz 18 millió .hu domain-al rendelkező weboldal szövegéből áll, melyekből eltávolították a duplikált tartalmakat és az értelmetlen sorokat. Az így kapott dokumentumokra helyesírás ellenőrző szoftvert is futtattak. A publikált dokumentumok szavainak csupán 4\%-a volt felismerhetetlen a helyesírás ellenőrző szerint, így a végeredményben szereplő dokumentumok kevesebb nyelvtani hibát tartalmaznak, mint egy átlagos nyomtatott dokumentum. Az így kapott korpusz 589 millió szót tartalmaz, melyet 1221 millió magyar nyelvű weboldalról töltöttek le.
 
@@ -70,7 +70,7 @@ A letölthető fájlok ISO Latin-2 formátumban voltak, így az előkészítési
 A 1 221 405 darab fájl a tisztítás után összesen 127 711 725 darab sort és 589 209 017 darab token-t tartalmaz.
 
 \subsection{Árukereső vélemények}
-Az Árukereső a legnagyobb magyar online áruösszehasonlító oldal, melyen több mint 16 millió termék és 3 500 partner részletes adata szerepel. A felhasználóknak lehetőségük van anoním módon szövegesen véleményezni az adott kereskedőt, vagy árucikket, továbbá 1-től 5 csillagig osztályozni annak minőségét.
+Az Árukereső \cite{arukereso} a legnagyobb magyar online áruösszehasonlító oldal, melyen több mint 16 millió termék és 3 500 partner részletes adata szerepel. A felhasználóknak lehetőségük van anoním módon szövegesen véleményezni az adott kereskedőt, vagy árucikket, továbbá 1-től 5 csillagig osztályozni annak minőségét.
 
 A weboldalon található adatokhoz egy saját kezűleg fejlesztett \textit{webscraper} segítségével jutottam hozzá. A halmaz mérete összesen 943 MB, amely 141 064 termék és 2209 áruház véleményeit tartalmazza. 
 
@@ -87,4 +87,4 @@ Az összesen 2 006 369 darab vélemény eloszlása a csillagok száma szerint a 
 	\label{fig:example-2}
 \end{figure}
 
-A túl rövid vélemények kevés információval szolgálnak, így eltávolítottam az eredeti adathalmazból a 10 token-nál rövidebb véleményeket. A leghosszabb vélemény 842 token-ből áll.
+A leghosszabb vélemény 842 token-ből áll. A túl rövid vélemények kevés információval szolgálnak, így eltávolítottam az eredeti adathalmazból a 10 token-nál rövidebb véleményeket. 
