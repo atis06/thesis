@@ -37,7 +37,7 @@ A rekurrens neurális hálók képesek megtanulni az adatsor elemei közötti ka
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.55\textwidth,height=100px]{rnn}
-	\caption{Az RNN cella}
+	\caption{Az RNN cella \cite{rnn}}
 \end{figure}
 
 Bizonyos esetekben, ahol a múltból származó információ elegendő lehet a háló számára – például következő token generálása az előzőek függvényében – , az RNN jó opció lehet. Azonban olyan feladatok során, melyeknél fontos a bemeneti adatok kontextusa – például a nyelvi modellek – , más megoldásra van szükség. A BiRNN architektúra lényege, hogy az inputot két, egymással ellentétes irányú rekurrens háló olvassa. Az így kapott kimeneti vektorok páronkénti konkatenációja lesz a BiRNN output-ja.
@@ -45,7 +45,7 @@ Bizonyos esetekben, ahol a múltból származó információ elegendő lehet a h
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.7\textwidth,height=120px]{birnn}
-	\caption{A BiRNN architektúra}
+	\caption{A BiRNN architektúra \cite{birnn}}
 \end{figure}
 
 Az RNN-ek legegyszerűbb formájának (\textit{Vanilla RNN}) azonban van egy nagy gyengesége, ami a hosszútávú információkat illeti. Gradiensnek hívjuk azokat az értékeket, melyeket a háló a súlyai frissítésére használ. Vanilla RNN esetén a visszaterjesztési művelet (\textit{backpropagation}) alatt annyira lecsökkenhetnek a túl kicsi gradiensek, hogy a hozzá tartozó rétegek megállnak a tanulásban. Ezt a problémát a \textit{vanishing gradients} problémának hívjuk.
@@ -55,10 +55,8 @@ Az LSTM (\textit{Long short-term memory}) architektúra megoldást nyújt a \tex
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.55\textwidth,height=100px]{lstm}
-	\caption{Az LSTM cella}
+	\caption{Az LSTM cella \cite{rnn}}
 \end{figure}
-
-(Írjak még az LSTMről?, kapuk, aktivációk részletesen)
 
 Az általam a feladat megoldására választott architektúra az InferSent-ben kiváló eredményeket prezentáló BiLSTM + Max Pooling.
 
@@ -76,7 +74,7 @@ A sűrű rétegek tanítása közben az egyes neuronok között kialakulhatnak k
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.6\textwidth,height=140px]{dropout}
-	\caption{A dropout vizualizációja}
+	\caption{A dropout vizualizációja \cite{dropout}}
 \end{figure}
 
 A BiLSTM réteg által generált szekvenciális kimenet egy \textit{pooling} rétegbe vezet.
@@ -166,7 +164,7 @@ A fej a BiLSTM háló \textit{pooling} nélküli, szekvenciális kimenetével do
 A \textit{következő mondat} feladat alatt a neurális hálónak ki kell találnia, hogy A[SEP]B bemenet esetén B szekvencia A rákövetkezője-e. A tanítás során a fej számára biztosítani kell a szekvenciákhoz tartozó címkéket. Ezen címkéket a bemeneti adathalmazt előállító algoritmus generálja. Előfordulhat olyan eset, mikor az algoritmus nem tud az adott dokumentumból A mondat mellé B mondatot választani, mert a dokumentum túl rövid, vagy éppen dokumentumhatárra ért. Ekkor értelemszerűen minden esetben hamis lesz a címkéje az adott bemeneti szekvenciának. Ez a működés kiegyensúlyozatlansági problémához vezethet, melyet az algoritmusban alkalmazott számláló hatékonyan ki tud védeni. Ha többségbe kerül a negatív esetek száma, az algoritmus 1 valószínűséggel pozitív eseteket generál. 
 
 \begin{note}
-	A jobb megértés érdekében a dolgozathoz mellékeltem egy példa bemenetet.
+	A jobb megértés érdekében a dolgozathoz mellékeltem egy példa bemenetet. [\ref{appx:input}]
 \end{note}
 
 A fej a BiLSTM háló \textit{max pooling} utáni vektoriális kimenetével, tehát a mondatokat reprezentáló vektorokkal dolgozik. A mondatvektorokra klasszikus bináris klasszifikációt alkalmaz, azaz egy sűrűn kapcsolt rétegen vezeti át őket, melynek kimenete 2 széles és az aktivációs függvénye a \textit{log softmax}. A feladat tanítási \textit{loss} függvénye az így kapott logaritmusok összegének ellentettjének átlaga lesz.
@@ -192,25 +190,19 @@ A jól paraméterezhető tanítás érdekében az implementáció során töreke
 	\item \textit{mask\_padding} : Maszkolja-e a \textit{padding} karaktereket.
 \end{itemize}
 
+A futtatáshoz használt szervergép konfigurációja a következő: 2 x Intel\textregistered Xeon\textregistered  Processor E5-2640 v4 25M Cache 2.40GHz (10 mag) CPU, 2 x NVIDIA GeForce GTX 1080 Ti GPU, 4 x 32 GB DDR4 RAM.
 
-tanítási részletek 2 modell - halmaz vágása 
+A neurális modellek kezdeti, teljes adathalmazon történő tanítása epoch-onként 4 napot vett volna igénybe, így a generált halmaz méretét a negyedére csökkentettem. Minden modell tanítása esetén 32 méretű \textit{batch}-et és 0.1 kezdeti \textit{learning rate}-et használtam. 
 
-befejezés
+%5 epoch
 
 \section{Vektorok generálása}
 
+A szemantikus reprezentációs vektorok felhasználási területe igen széleskörű. Többek között alkalmazhatóak írott szöveg összegzésére, dokumentumok keresésére, chatbot-ok implementálására, dokumentumok szemantikus hasonlóságának mérésére és szemantikai tartalom szerinti ajánlásra is.
 
+Egy eleve betanított modell mentett súlyainak használata nem igényel komoly erőforrásokat és tárhelyet. A vektorok generálása egy egyszerű folyamat, mely során a reprezentáció fej nélküli neurális hálója – azaz a BiLSTM max pooling – ezen súlyok szerint inicializálásra kerül. Ezt követően a bemenetet a tanításéhoz hasonló módon az input-ra juttatva a neurális modell előállítja a szövegrészletet reprezentáló vektort. A művelet során a háló súlyai nem változnak, azaz képtelen a további tanulásra.
 
-tanított modell tök jó dolog -> mentett súlyok
+A műveletek elvégzésére elegendő lehet egy CPU is, így a kellő pontosságot elérve a módszer akár ipari rendszerekbe is építhető, vagy különböző webes alkalmazások esetén felhasználói élmény fokozására is felhasználható.
 
-fej nélküli háló, súlyok inicializálása
-
-hatékony használat, gyors, nem igényel komoly erőforrást, helytakarékos, egyszerű a használata
-
-mentett súlyok betöltése, súlyok fagyasztása, fej nélküli használat
-
-bemenet, a szokásos eljárások -> BiLSTM max pooling utáni kimenete
-
-micsoda sok dologra fel lehet használni a vektorokat
 
 %két kép kicserélése

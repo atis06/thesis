@@ -1,14 +1,14 @@
 \chapter{Az adathamazok és az előkészítés}
 \label{ch:datasets}
 
-Ahogy az előzmények fejezetben is láthattuk, a mai modern szemantikus reprezentációs modellek neurális hálók segítségével képezik le a nyelvi elemeket valamely vektortérbe. A neurális modellek a feladatok során felfedezik az adathalmaz rejtett mintáit és megtanulják az halmaz elemeinek eloszlását. Kevés adat esetén nem várhatjuk el a hálónktól a megfelelő pontosságot, mivel az adathalmazunk nem reprezentatív az adott problémára, továbbá a kis tanítóminta a túltanulás miatt is erősen eltérítheti a tanulási folyamatot.
+Ahogy az előzmények fejezetben is láthattuk, a mai modern szemantikus reprezentációs modellek többsége neurális hálók segítségével képezi le a nyelvi elemeket valamely vektortérbe. A neurális modellek a feladatok során felfedezik az adathalmaz rejtett mintáit és megtanulják az elemeinek eloszlását. Kevés adat esetén nem várhatjuk el a hálónktól a megfelelő pontosságot, mivel a tanítóminta nem reprezentatív az adott problémára. Ezen felül a túltanulás is erősen eltérítheti a tanulási folyamatot.
 
-Bár az olyan nyelveken, amelyeken a kutatásokat folytatják és amelyeket széles körben beszélnek előfordulhat ember által annotált adat is – ilyen például az SNLI – , a reprezentációs módszerek tanítását jellemzően auto-annotált adatokon végzik. Auto-annotált adatnak tekintünk minden olyan adatot, amelyek címkézését nem ember hajtotta végre. Az auto-annotált tanítóhalmazok hátulütője, hogy pontosságuk sokszor nem éri el az emberi szintet és jelentős zajt is tartalmazhatnak. A reprezentációs algoritmusok a kevesebb, de humán annotált halmazokon precízebb eredményt érnek el.
+Bár az olyan nyelveken, amelyeken a kutatásokat folytatják és amelyeket széles körben beszélnek előfordulhat ember által annotált adat is – ilyen például az SNLI – , a reprezentációs módszerek tanítását jellemzően auto-annotált adatokon végzik. Auto-annotált adatnak tekintünk minden olyan adatot, amelyek címkézését nem ember hajtotta végre. Az auto-annotált tanítóhalmazok hátulütője, hogy pontosságuk sokszor nem éri el az emberi szintet és jelentős zajt is tartalmazhatnak. A reprezentációs algoritmusok a kisebb méretű, de humán annotált halmazokon precízebb eredményt érnek el. \cite{infer}
 
-A magyar nyelv a kisebb körben használt nyelvek közé tartozik, így bátran vonhatjuk le azt a következtetést, hogy a web és egyéb források által hozzáférhető tartalmak mennyisége is erősen limitált. 
-Munkám során fontos tényezőnek tartottam, hogy olyan jellegű adatokkal dolgozzak, melyek könnyen megszerezhetőek. Megfelelő választásnak bizonyultak a többnyelvű, publikus adathalmazok és az olyan profilú online elérhető dokumentumok, melyeket valamely webscraper-el össze lehet gyűjteni. Az így kialakult módszerek alkalmasak lehetnek arra, hogy akár más, kevésbé széleskörűen beszélt nyelvek esetén is alkalmazzák őket.
+A magyar nyelv a kisebb körben használt, közepes nyelvek közé tartozik, így bátran vonhatjuk le azt a következtetést, hogy a web és egyéb források által hozzáférhető szöveges tartalmak mennyisége is erősen limitált.
+Ennek okán munkám során fontos tényezőnek tartottam, hogy olyan jellegű adatokkal dolgozzak, melyek könnyen megszerezhetőek. Megfelelő választásnak bizonyultak a többnyelvű, publikus adathalmazok és az olyan profilú online elérhető dokumentumok, melyeket valamely webscraper-el össze lehet gyűjteni. Az így kialakult módszerek alkalmasak lehetnek arra, hogy akár más, kevésbé széleskörűen beszélt nyelvek esetén is alkalmazzák őket.
 
-\subsection{Általános előkészítési lépések}
+\section{Általános előkészítési lépések}
 
 A nyers szöveg előkészítése elengedhetetlen folyamat az NLP feladatok során, mely nélkül értelmetlen eredményeket kapnánk. A jól elkülöníthető lépések után olyan kimenethez jutunk hozzá, amely lényegesen jobb feltételeket biztosít algoritmusunknak ahhoz, hogy képes legyen a dokumentumokat numerikusan értelmezni.
 
@@ -16,50 +16,50 @@ Az előkészítési szakasz a legtöbb esetben az úgynevezett token-ekre való 
 
 Az adathalmaz \textbf{tisztítása}, vagy zaj csökkentése az olyan karakterek és karakterláncok eltávolítását jelenti, amelyek nem elemei a célnyelvnek. Adataink tartalmazhatnak akár speciális karaktereket, írásjeleket, HTML tag-eket, számokat és túl rövid – például 1 karakter hosszú – token-eket is, melyek megzavarhatják modellünk működését. A tisztítás során törölhetjük az adott nyelvben sűrűn előforduló szavakat (\textit{stopword}) is – például névelők – , így csak azok a token-ek maradnak a halmazban, amelyek valódi információtartalommal bírnak.
 
-A szöveg \textbf{normálása} olyan módosításokat jelent, mely során az adathalmazunk token-eit azonos alakra hozzuk. A token-eket kis-, vagy nagybetűssé konvertálhatjuk, illetve a numerikus tartalommal rendelkező szavakat számokká alakíthatjuk. Természetesen ebben az esetben is célszerű törölni a numerikus token-eket, ha a tisztítás során is így jártunk el.
+A szöveg \textbf{normálása} olyan módosításokat jelent, amelyek során az adathalmazunk token-eit azonos alakra hozzuk. A token-eket kis-, vagy nagybetűssé konvertálhatjuk, illetve a numerikus tartalommal rendelkező szavakat számokká alakíthatjuk. Természetesen ebben az esetben is célszerű törölni a numerikus token-eket, ha a tisztítás során is így jártunk el.
 
 Megkülönböztethetünk két \textbf{szótövezési} formát, a \textit{stemming}-et és a \textit{lemmatization}-t. Mindkét módszernek az a célja, hogy eltávolítsa a ragokat a szótövekről. Míg a \textit{stemming} egy nyers heurisztikákon alapuló módszer, addig a \textit{lemmatization} pontosan próbálja meg szótári alakba konvertálni a szavakat szótár és morfológiai analízis segítségével. A normálás és szótövezés után egy csökkentett elemszámú szótárat kapunk, így az eredeti állapothoz közelítő pontossággal, de szignifikánsan kevesebb számítás- és memóriaigénnyel el tudja végezni az algoritmusunk a feladatát.
 
-Az előkészítés végső lépése lehet az \textbf{n-gram}-ok bevezetése az adathalmazunkba. Az n-gram kifejezés egy n hosszú token szekvenciára utal, tehát a "New York" kifejezés 2-gram (bigram) lesz. Az n-gramok építése az n-gram modell feladata. A dokumentumhalmazunkon tanított n-gram modell az adott token prediktálását végzi el az előző $n-1$ token függvényében. Vegyük példának az előbbi bigram-ot:
+Az előkészítés végső lépése lehet az \textbf{n-gram}-ok bevezetése az adatsorunkba. Az n-gram kifejezés egy n hosszú tokenszekvenciára utal, tehát a "New York" szóösszetétel 2-gram (bigram) lesz. Az n-gramok építése az n-gram modell feladata. A dokumentumhalmazunkon tanított n-gram modell az adott token prediktálását végzi el az előző $n-1$ token függvényében. Vegyük példának az előbbi bigram-ot ($n=2$):
 
 \begin{equation}
 \label{eq:n-grams}
 P(\text{New York bigram}) = \frac{P(\text{A szám, ahányszor New és York egyszerre szerepelt})}{P(\text{A szám, ahányszor New szerepelt})}
 \end{equation}
 
-N-gram modellünk minden n hosszú token szekvencia esetén elvégzi a számítást, majd a legmagasabb előfordulási valószínűségű szópárokat "\_" jellel konkatenálja, tehát "New York" esetén New\_York-ot kapunk. Egy jól működő bigram modell elegendő lehet a feladatra, általában nincs szükség magasabb szintű összevonásra. A bigramok megkönnyíthetik nyelvi modellünk munkáját azzal, hogy a vélhetően összetett fogalmak különálló token-eit konkatenálják, így a tanítás során az algoritmusunk egy token-ként kezelheti a népszerű kifejezéseket.
+N-gram modellünk minden n hosszú tokenszekvencia esetén elvégzi a számítást, majd a legmagasabb előfordulási valószínűségű szópárokat "\_" jellel konkatenálja, tehát "New York" esetén New\_York-ot kapunk. Egy jól működő bigram modell elegendő lehet a feladatra, általában nincs szükség magasabb szintű összevonásra. A bigramok megkönnyíthetik nyelvi modellünk munkáját azzal, hogy a vélhetően összetett fogalmak különálló token-eit konkatenálják, így a tanítás során az algoritmusunk egy token-ként kezelheti a népszerű kifejezéseket.
 
-Korábbi tapasztalataim azt mutatják, hogy a fenti technikák együttes alkalmazása lényegesen javíthatja az NLP feladatok megfelelő pontossággal való megoldásának esélyeit, ennél fogva a munkám során használt adathalmazok mindegyike maradéktalanul átesett az egyes előkészítési lépéseken.
+Korábbi tapasztalataim azt mutatják, hogy a fenti technikák együttes alkalmazása lényegesen javíthatja az NLP feladatok – megfelelő pontossággal való – megoldásának esélyeit, ennélfogva a munkám során használt adathalmazok mindegyike maradéktalanul átesett az egyes előkészítési lépéseken.
 
-A szótövezés során két \textit{lemmatizer} teljesítményét hasonlítottam össze, ezek a BSI beépített \textit{lemmatizer}-e és a HungarianSpacy. Az adathalmazok előkészítése alatt úgy tűnt, hogy a HungarianSpacy kevésbé mohó módszerrel vágja le a ragokat, ezért úgy döntöttem, hogy a továbbiakban azt használom, ugyanakkor nem vetem el annak a lehetőségét sem, hogy az erősebb szótövezés pontosabb végeredményt hozhat. 
+A szótövezés során két \textit{lemmatizer} algoritmust hasonlítottam össze, ezek a Black Sheep \cite{bsi} Engine beépített \textit{lemmatizer}-e és a Hungarian SpaCy \cite{hunspacy}. Az adathalmazok előkészítése alatt úgy tűnt, hogy a Hungarian SpaCy kevésbé mohó módszerrel vágja le a ragokat, ezért úgy döntöttem, hogy a továbbiakban azt használom, ugyanakkor nem vetem el annak a lehetőségét sem, hogy az erősebb szótövezés pontosabb végeredményt hozhat. 
 
-Az implementációt Python nyelven végeztem, továbbá a Spacy és az NLTK nevű könyvtárakat használtam segítségül.
+Az implementációt Python nyelven végeztem, továbbá a SpaCy \cite{spacy} és az NLTK \cite{nltk} nevű könyvtárakat használtam segítségül.
 
-\subsection{Magyar wikipédia}
+\section{Magyar Wikipédia}
 A Wikipédia \cite{wikipedia} a világ egyik legnagyobb többnyelvű, szabadon szerkesztett online enciklopédiája. Több, mint 6 000 000 dokumentumot tartalmaz, melyek egy-egy témakört, vagy fogalmat írnak le.
 
 A szemantikus reprezentációs algoritmusok tanítása Wikipédia cikkeken nem új keletű ötlet. Számos nyelvi modell alapszik ezen az adathalmazon, többek között a BERT is.
 
 Az online enciklopédia jól dokumentált alkalmazásprogramozási interfésszel rendelkezik, így tudtam én is hozzájutni a magyar nyelvű oldalak szövegéhez.
 
-A letöltött nyers adathalmaz mérete összesen 2.4 GB, melynek a wiki-hu nevet adtam. A wiki-hu 459 286 darab magyar nyelven írt Wikipédia cikket, 16 301 289 sort és 150 333 446 token-t tartalmaz. 
+A letöltött nyers adathalmaz mérete összesen 2.4 GB, melynek a wiki\_hu nevet adtam. A wiki-hu 459 286 darab magyar nyelven írt Wikipédia cikket, 16 301 289 sort és 150 333 446 token-t tartalmaz. 
 
-A tanításhoz szükséges előkészítés után az adathalmaz mérete 2 GB-ra, a sorok száma 12 592 489-re a token-ek száma pedig 86 605 435-re csökkent.
+A tanításhoz szükséges előkészítés után az adathalmaz mérete 2 GB-ra, a sorok száma 12 592 489-re, a token-ek száma pedig 86 605 435-re csökkent.
 
-A hozzáfűzött reményekkel ellentétben a magyar nyelvű cikkek relatíve elenyésző mennyiségben szerepelnek a Wikipédia adatbázisban. Következésképp a tanítóhalmaz nem bizonyult elegendőnek, így a továbbiakban csak a különböző technikák tesztelésére tudtam használni.
+A hozzáfűzött reményekkel ellentétben magyar nyelvű cikkek relatíve elenyésző mennyiségben szerepelnek a Wikipédia adatbázisban. Következésképp a halmaz nem bizonyult megfelelőnek a probléma megoldására, így a továbbiakban csak a különböző technikák tesztelésére tudtam használni.
 
 
-\subsection{OSCAR}
+\section{OSCAR}
 
-Az OSCAR (\textit{Open Super-large Crawled ALMAnaCH coRpus}) \cite{oscar} egy nyelvi klasszifikáló algoritmussal készült adathalmaz, melyet a szerzők a Common Crawl szétválogatásából és szűréséből kaptak, majd a sorait összekeverték. A Common Crawl egy 2011 óta gyűjtött publikus webarchívum. Az OSCAR magyar nyelvű szegmensének teljes mérete összesen 40 GB. 
+Az OSCAR (\textit{Open Super-large Crawled ALMAnaCH coRpus}) \cite{oscar} egy nyelvi klasszifikáló algoritmussal készült adathalmaz, melyet a szerzők a Common Crawl \cite{common} szétválogatásából és szűréséből kaptak, majd a sorait összekeverték. A Common Crawl egy 2011 óta gyűjtött publikus webarchívum. Az OSCAR magyar nyelvű szegmensének teljes mérete összesen 40 GB. 
 
-Az előkészítési szakasz előtt szétválasztottam az adathalmazt két egyenlő részre, így két darab 20 GB-os szeletet kaptam. A továbbiakban az eredeti adatmennyiség első felével folytattam tovább az előkészületeket, melynek az oscar\_hu nevet adtam.
+Az előkészítési szakasz előtt szétválasztottam az adathalmazt két egyenlő részre, így két darab 20 GB-os szeletet kaptam. A továbbiakban az eredeti adatsor első felével folytattam tovább az előkészületeket, melynek az oscar\_hu nevet adtam.
 
-Az oscar\_hu nyers változata 127 654 271 darab sort és 5 168 152 283 darab token-t tartalmaz. Az előkészítési procedúra után 15 GB-ra csökkent a méret, 63 692 408 darab sor és 1 626 357 463 darab token maradt.
+Az oscar\_hu nyers változata 127 654 271 sort és 5 168 152 283 darab token-t tartalmaz. Az előkészítési procedúra után 15 GB-ra csökkent a méret, 63 692 408 sor és 1 626 357 463 darab token maradt.
 
-Ugyan az oscar\_hu nem tartotta meg a sorok közti relációkat, azonban az így kapott adatsokaság a mennyiségénél és annál a ténynél fogva, hogy a Word2Vec csak lokális információkkal dolgozik alkalmasnak bizonyult a szóbeágyazás tanítására.
+Ugyan az oscar\_hu nem tartotta meg a sorok közti relációkat, azonban az így kapott adatsokaság – a mennyiségénél és annál a ténynél fogva, hogy a Word2Vec csak lokális információkkal dolgozik – alkalmasnak bizonyult a szóbeágyazás tanítására.
 
-\subsection{Hungarian Webcorpus}
+\section{Hungarian Webcorpus}
 
 A Hungarian Webcorpus \cite{hungarian_webcorpus} a legnagyobb mai magyar nyelvű korpusz, melyet a Budapesti Műszaki Egyetem Média Oktató és Kutató Központja gyűjtött 2003-ban a SzóSzablya projekt keretein belül.
 
@@ -69,7 +69,7 @@ A letölthető fájlok ISO Latin-2 formátumban voltak, így az előkészítési
 
 A 1 221 405 darab fájl a tisztítás után összesen 127 711 725 darab sort és 589 209 017 darab token-t tartalmaz.
 
-\subsection{Árukereső vélemények}
+\section{Árukereső vélemények}
 Az Árukereső \cite{arukereso} a legnagyobb magyar online áruösszehasonlító oldal, melyen több mint 16 millió termék és 3 500 partner részletes adata szerepel. A felhasználóknak lehetőségük van anoním módon szövegesen véleményezni az adott kereskedőt, vagy árucikket, továbbá 1-től 5 csillagig osztályozni annak minőségét.
 
 A weboldalon található adatokhoz egy saját kezűleg fejlesztett \textit{webscraper} segítségével jutottam hozzá. A halmaz mérete összesen 943 MB, amely 141 064 termék és 2209 áruház véleményeit tartalmazza. 
@@ -88,3 +88,5 @@ Az összesen 2 006 369 darab vélemény eloszlása a csillagok száma szerint a 
 \end{figure}
 
 A leghosszabb vélemény 842 token-ből áll. A túl rövid vélemények kevés információval szolgálnak, így eltávolítottam az eredeti adathalmazból a 10 token-nál rövidebb véleményeket. 
+
+%többi lépés a mérésig
