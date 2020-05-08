@@ -61,20 +61,20 @@ Ugyan az oscar\_hu nem tartotta meg a sorok közti relációkat, azonban az így
 
 \section{Hungarian Webcorpus}
 
-A Hungarian Webcorpus \cite{hungarian_webcorpus} a legnagyobb mai magyar nyelvű korpusz, melyet a Budapesti Műszaki Egyetem Média Oktató és Kutató Központja gyűjtött 2003-ban a SzóSzablya projekt keretein belül.
+A Hungarian Webcorpus \cite{hungarian_webcorpus} a ma létező legnagyobb magyar nyelvű korpusz, melyet a Budapesti Műszaki Egyetem Média Oktató és Kutató Központja gyűjtött 2003-ban a SzóSzablya projekt keretein belül.
 
-A korpusz 18 millió .hu domain-al rendelkező weboldal szövegéből áll, melyekből eltávolították a duplikált tartalmakat és az értelmetlen sorokat. Az így kapott dokumentumokra helyesírás ellenőrző szoftvert is futtattak. A publikált dokumentumok szavainak csupán 4\%-a volt felismerhetetlen a helyesírás ellenőrző szerint, így a végeredményben szereplő dokumentumok kevesebb nyelvtani hibát tartalmaznak, mint egy átlagos nyomtatott dokumentum. Az így kapott korpusz 589 millió szót tartalmaz, melyet 1221 millió magyar nyelvű weboldalról töltöttek le.
+A korpusz 18 millió .hu domain-al rendelkező weboldal szövegéből áll, melyekből eltávolították a duplikált tartalmakat és az értelmetlen sorokat. Az így kapott adathalmazra helyesírás ellenőrző szoftvert is futtattak. A publikált dokumentumok szavainak csupán 4\%-a volt felismerhetetlen a helyesírás ellenőrző szerint, így a végeredményben szereplő dokumentumok kevesebb nyelvtani hibát tartalmaznak, mint egy átlagos nyomtatott dokumentum. A végső korpusz 589 millió szót tartalmaz, melyet 1221 millió magyar nyelvű weboldalról töltöttek le.
 
-A letölthető fájlok ISO Latin-2 formátumban voltak, így az előkészítési folyamat előtt átkonvertáltam őket UTF-8 formátumba. Ez az átalakítás további megoldandó karakterproblémákhoz vezetett. A Hungarian Webcorpus mérete 18 GB volt, mely a tisztítási lépés után 7.8 GB-ra csökkent. A jelentős méretváltozás az XML tag-ek törlésére vezethető vissza. A token-izált változatban a méret tovább zsugorodott, így a végeredmény egy 6.6 GB-os adathalmaz lett.
+Az elérhető fájlok ISO Latin-2 formátumban voltak, így az előkészítési folyamat előtt átkonvertáltam őket UTF-8 formátumba. Ez az átalakítás további megoldandó karakterproblémákhoz vezetett. A Hungarian Webcorpus mérete 18 GB volt, mely a tisztítási lépés után 7.8 GB-ra csökkent. A jelentős méretváltozás az XML tag-ek törlésére vezethető vissza. A token-izált változatban a méret tovább zsugorodott, így a végeredmény egy 6.6 GB-os adathalmaz lett.
 
-A 1 221 405 darab fájl a tisztítás után összesen 127 711 725 darab sort és 589 209 017 darab token-t tartalmaz.
+Az 1 221 405 fájl a tisztítás után összesen 127 711 725 sort és 589 209 017 darab token-t tartalmaz.
 
 \section{Árukereső vélemények}
-Az Árukereső \cite{arukereso} a legnagyobb magyar online áruösszehasonlító oldal, melyen több mint 16 millió termék és 3 500 partner részletes adata szerepel. A felhasználóknak lehetőségük van anoním módon szövegesen véleményezni az adott kereskedőt, vagy árucikket, továbbá 1-től 5 csillagig osztályozni annak minőségét.
+Az Árukereső \cite{arukereso} a legnépszerűbb magyar nyelvű online áruösszehasonlító oldal, melyen több mint 16 millió termék és 3 500 partner részletes adata szerepel. A felhasználóknak lehetőségük van anoním módon szövegesen véleményezni az adott kereskedőt, vagy árucikket, továbbá 1-től 5 csillagig osztályozni annak minőségét.
 
-A weboldalon található adatokhoz egy saját kezűleg fejlesztett \textit{webscraper} segítségével jutottam hozzá. A halmaz mérete összesen 943 MB, amely 141 064 termék és 2209 áruház véleményeit tartalmazza. 
+A weboldalon található publikus véleményekhez egy saját kezűleg fejlesztett \textit{webscraper} segítségével jutottam hozzá. A letöltött halmaz mérete összesen 943 MB, amely 141 064 termék és 2209 áruház értékelését tartalmazza. 
 
-Az összesen 2 006 369 darab vélemény eloszlása a csillagok száma szerint a következő:
+A 2 006 369 darab vélemény eloszlása a csillagok száma szerint a következő:
 
 \begin{figure}[H]
 	\centering
@@ -84,9 +84,18 @@ Az összesen 2 006 369 darab vélemény eloszlása a csillagok száma szerint a 
 	\subfigure[Legalább 10 hosszú]{
 		\includegraphics[width=0.45\linewidth]{arukereso10}}
 	\caption{Vélemények eloszlása}
-	\label{fig:example-2}
+	\label{fig:arukereso}
 \end{figure}
 
-A leghosszabb vélemény 842 token-ből áll. A túl rövid vélemények kevés információval szolgálnak, így eltávolítottam az eredeti adathalmazból a 10 token-nál rövidebb véleményeket. 
+A leghosszabb vélemény 842 token-ből áll. A túl rövid értékelések kevés információval szolgálnak, így az eredeti adathalmazból a 10 token-nál rövidebb bejegyzéseket eltávolítottam.
+
+Az így kapott adatsor átesett a szokásos előkészítési lépéseken. Ezen felül a 3 csillagos "semleges" véleményeket eltávolítottam, az 1-2 csillaggal rendelkező értékelések "negatív", a 4-5 csillaggal rendelkezők pedig "pozitív" címkét kaptak.
+
+A halmazban a "pozitív" címkéjű vélemények szerepelnek túlnyomó többségben. A kiegyensúlyozatlansági probléma kivédésére több elemet töröltem a "pozitív" címkéjű elemek közül, így a két csoport egyenlő elemszámmal szerepel. Az előállított humán-annotált tanítóhalmaz 94982 adatponttal rendelkezik, mindegyik osztály 47491 méretű. 
+
+Az \textit{arukereso}-nek elnevezett adathalmaz alkalmas lehet a szöveg érzelmi tartalma szerinti bináris klasszifikáció kivitelezésére. 
+
+
+
 
 %többi lépés a mérésig
