@@ -106,26 +106,26 @@ A neurális háló paraméterezhetősége lehetőséget biztosít arra, hogy az 
 
 \section{Tanítás}
 
-Bár a szemantikus reprezentációs modellek pontosságához jelentősen hozzájárul az alkalmazott architektúra teljesítménye, az elmúlt néhány év során mégis inkább a tanítóhalmazok és a tanítási módszerek felé irányult a figyelem.
+Bár az alkalmazott architektúra teljesítménye jelentősen hozzájárul a szemantikus reprezentációs modellek pontosságához, az elmúlt néhány év során mégis inkább a tanítóhalmazok és a tanítási módszerek felé irányult a figyelem.
 
-A neurális hálóknak a korábbi hagyományos, feladatspecifikus tanítás alatt egyszerre kellett megérteni a dokumentumhalmaz nyelvét és megtanulni az adott feladathoz szükséges ismereteket. A \textit{transfer learning} technika segítségével ez a két folyamat különválasztható. Az előtanulás során feldolgozott nagy mennyiségű adat hatására a háló megragadja az adott dokumentumok nyelvi sajátosságait, így a finomhangolás alatt a modell koncentrálhat csak az adott feladatra. Az eredmény legtöbbször egy jobban működő reprezentáció.
+A neurális hálóknak a korábbi hagyományos, feladatspecifikus tanítás alatt egyszerre kellett megérteni a dokumentumhalmaz nyelvét és megtanulni az adott feladathoz szükséges ismereteket. A \textit{transfer learning} technika segítségével ez a két folyamat különválasztható. Az előtanulás során feldolgozott nagy mennyiségű adat hatására a háló megragadja a dokumentumok nyelvi sajátosságait, így a finomhangolás alatt a modell koncentrálhat csak az adott feladatra. Az eredmény legtöbbször egy jobban működő reprezentáció.
 
-Az előtanítási feladatok olyan jellegű kihívások elé állítják a reprezentáció neurális hálóját, amelyek során egy erős, általános tudást képes megszerezni. A probléma megoldásához implementált feladat a BERT előtanításához hasonló \textit{multi-task learning}. 
+Az előtanítási feladatok olyan jellegű kihívások elé állítják a reprezentáció neurális hálóját, amelyek során egy erős, általános tudást képes megszerezni. A probléma megoldására implementált feladat a BERT előtanításához hasonló \textit{multi-task learning}. 
 
-A \textit{multi-task learning} több feladaton egyszerre történő tanulást jelent, ami jobb generalizációra készteti a hálót. Az egyik feladat a \textbf{maszkolás}, amely az egyes szavak közötti szemantikai és szintaktikai jelentés ábrázolását támogatja. A másik feladat a \textbf{következő mondat}, mely a mondatok közötti kohézió reprezentációját segíti.
+A \textit{multi-task learning} egyszerre több feladaton történő tanulást jelent, ami jobb generalizációra készteti a hálót. Az egyik feladat a \textbf{maszkolás}, amely az egyes szavak közötti szemantikai és szintaktikai relációk ábrázolását támogatja. A másik feladat a \textbf{következő mondat}, mely a mondatok közötti kohézió reprezentációját segíti.
 
-Mivel az említett feladatok számára tanítóadatot bármely célnyelvű korpuszból könnyedén lehet generálni, ezért elméletileg az előtanítás a végtelenségig skálázható. Az input előállítása során a \textit{hungarianWebcorpus} nevű adathalmazzal dolgoztam, mivel az jelentős mennyiségű szöveges adatból áll, és a sorok az OSCAR adathalmazzal ellentétben sorrendtartóak.
+Mivel az említett feladatok számára tanítóadatot bármely célnyelvű korpuszból könnyedén lehet generálni, ezért elméletileg az előtanítás a végtelenségig skálázható. Az input előállítása során a \textit{hungarianWebcorpus} nevű adathalmazzal dolgoztam, mivel az jelentős mennyiségű szöveges adatból áll, és a mondatok az \textit{oscar\_hu} adathalmazzal ellentétben sorrendtartóak.
 
-A generálás során az algoritmus rögzített tokenszámú szekvenciákra osztotta a korpuszt. Olyan esetben, mikor nem volt elég token a szekvencia kitöltésére – például rövid dokumentumok, dokumentumvégek – , "[PAD]" speciális helykitöltő \textit{padding} token-eket konkatenált a dokumentum szavaihoz. 
+A generálás során az algoritmus rögzített token-számú szekvenciákra osztotta a korpuszt. Olyan esetben, mikor nem volt elég token a szekvencia kitöltésére – például rövid dokumentumok, dokumentumvégek – , "[PAD]" speciális helykitöltő \textit{padding} token-eket konkatenált a dokumentum szavaihoz. 
  
-A maszkolás a BERT-ben alkalmazott technika alapján történt: az előállított token szekvenciák elemeinek 15\%-át véletlenszerűen kiválasztotta. 
+A maszkolás a BERT-ben alkalmazott technika alapján történt: az algoritmus az előállított token-szekvenciák elemeinek 15\%-át véletlenszerűen kiválasztotta. 
 \begin{itemize}
 	\item A kiválasztott token-ek 80\%-át a "[MASK]" speciális token-nel helyettesítette. 
-	\item 10\%-át a szótárból választott véletlenszerű szóval helyettesítette.
+	\item 10\%-át a szótárból választott véletlenszerű szóra cserélte.
 	\item A maradék 10\% esetében maradt az eredeti token.
 \end{itemize}
 
-A BERT szerzői szerint, ha a maszkolt token-ek 100\%-át prediktálná a rendszer, nem feltétlen lenne képes megfelelő minőségű reprezentációt generálni a nem maszkolt szavaknak. Ha a kiválasztott token-ek 90\%-át maszkolná és 10\%-ot random választott szóval helyettesítene, az arra késztetné a modellt, hogy úgy gondolja, az adott szó soha nem helyes. Ha pedig a kiválasztott token-ek 90\%-át maszkolná és 10\% maradna az eredeti szó, a modell lemásolná a nem kontextusfüggő beágyazásokat.
+A BERT szerzője szerint, ha a maszkolt token-ek 100\%-át prediktálná a rendszer, akkor nem feltétlen lenne képes megfelelő minőségű reprezentációt generálni a nem maszkolt szavaknak. Ha a kiválasztott token-ek 90\%-át maszkolná és 10\%-ot random választott szóval helyettesítene, az arra késztetné a modellt, hogy úgy gondolja, az adott szó soha nem helyes. Ha pedig a kiválasztott token-ek 90\%-át maszkolná és 10\% maradna az eredeti szó, a modell lemásolná a nem kontextusfüggő beágyazásokat. \cite{bertappendix}
 
 A \textit{következő mondat} feladathoz szükséges "mondatpárokat" az így előállított tokenszekvenciákon végigiterálva generálta az algoritmus. $S$ szekvenciát $0.5$ valószínűséggel $S$ után következő szekvenciával, $0.5$ valószínűséggel a korpuszból választott véletlenszerű szekvenciával konkatenálta. A két szekvencia közé egy speciális "[SEP]" mondathatárt jelző token-t illesztett. A végső adathalmaz az így kapott A[SEP]B alakú maszkolt, fix méretű szekvenciákból álló halmaz, mely mérete $13.3$ GB.
 
@@ -147,22 +147,22 @@ A bemenet előállításához szükség volt arra az információra, hogy maximu
 	\caption{Az 50 token hosszúság alatti mondatok}
 \end{figure}
 
-A dokumentumokra és a dokumentumok soraira vonatkozó mérések alapján minimális token-számnak 10-et, maximális szekvenciahossznak 100-at határoztam meg. A cél az volt, hogy a lehető legtöbb információt sikerüljön kinyerni a dokumentumokból és csak relatíve kevés esetben kelljen \textit{padding}-ot alkalmazni, továbbá ne legyen a konfigurációnak teljesíthetetlen memóriaigénye. A végső bemeneti hossz így 201 lett.
+A dokumentumokra és a dokumentumok soraira vonatkozó mérések alapján minimális token-számnak 10-et, maximális szekvenciahossznak 100-at határoztam meg. A cél az volt, hogy a lehető legtöbb információt sikerüljön kinyerni a dokumentumokból és csak relatíve kevés esetben kelljen \textit{padding}-et alkalmazni, továbbá ne legyen a konfigurációnak teljesíthetetlen memóriaigénye. A végső bemeneti hossz így 201 lett.
 
-Bemeneti réteg használata esetén a neurális háló inputjára a mondatpárok token-jeinek Word2Vec azonosítója kerül. Az \textit{embedding lookup} művelet ezen azonosítók segítségével választja ki a réteg számára átadott beágyazási mátrixból az adott token-ekhez tartozó szóvektorokat. Felmerülhet a kérdés, hogy mi történik a speciális token-ekkel ebben az esetben. A speciális token-eket a Word2Vec modell nem ismeri, így azok nem kerültek be a beágyazási mátrixba sem. A probléma megoldására bevezettem a meglévő Word2Vec dimenziók mellé minden egyes speciális token számára egy saját dimenziót és a hozzá tartozó azonosítókat. Ezen tokeneket reprezentáló vektorok kiterjedése a saját dimenziójukban 1, az összes többi dimenzióban 0. Így a speciális vektorok merőlegesek a többi vektorra. Ennek okán a speciális token-ek elméletileg nem befolyásolják a tanulás során a szemantikai információkat. A bemeneti rétegnek átadott beágyazási mátrix mérete – az [UNK], Word2Vec modell által nem ismert szavakat jelölő token-nel együtt – $(\text{word\_embedding\_dim} + 4) \times \text{szótár méret} $ lesz.
+Bemeneti réteg használata esetén a neurális háló inputjára a mondatpárok token-jeinek Word2Vec azonosítója kerül. Az \textit{embedding lookup} művelet ezen azonosítók segítségével választja ki a réteg számára átadott beágyazási mátrixból az adott token-ekhez tartozó szóvektorokat. Felmerülhet a kérdés, hogy mi történik a speciális token-ekkel ebben az esetben. A speciális token-eket a Word2Vec modell nem ismeri, így azok nem kerültek be a beágyazási mátrixba sem. A probléma megoldására bevezettem a meglévő Word2Vec dimenziók mellé minden egyes speciális token számára egy saját dimenziót és a hozzá tartozó azonosítókat. Ezen token-eket reprezentáló vektorok kiterjedése a saját dimenziójukban 1, az összes többi dimenzióban 0. Így a speciális vektorok merőlegesek a többi vektorra. Ennek okán a speciális token-ek elméletileg nem befolyásolják a tanulás során a szemantikai információkat. A bemeneti rétegnek átadott beágyazási mátrix mérete – az [UNK], Word2Vec modell által nem ismert szavakat jelölő token-nel együtt – $(\text{word\_embedding\_dim} + 4) \times \text{szótár méret} $ lesz.
 
-Bár a \textit{maszkolás} és a \textit{következő mondat} feladatok megosztják egymással a bemeneti réteget és a modellt a \textit{multitask learning} során, a feladatok megoldásához használt fejek és a feladatspecifikus bemenetek különböznek.
+Bár a \textit{maszkolás} és a \textit{következő mondat} feladatok a \textit{multitask learning} során megosztják egymással a bemeneti réteget és a modellt, a feladatok megoldásához használt fejek és a feladatspecifikus bemenetek különböznek.
 
 \subsection{Maszkolás feladat}
 
-A maszkolási feladat során a neurális háló célja kitalálni, milyen token-ek voltak a [MASK] token-ek helyén. A feladat abszolválásához a fejnek szüksége van a mondatpárok generálása során létrejött egyéb információra is. Ilyen információ a maszkolt token-ek szekvencián belüli pozíciója, Word2Vec azonosítója és súlya. Mivel a [MASK] token-ek megfelelő eloszlása érdekében az algoritmus a [PAD] token-eket is letakarja, ezért fontos a súlyok bevezetése. Egy maszkolt token súlya 0 lesz, ha a token eredetileg [PAD] token volt, egyébként 1. 
+A maszkolási feladat alatt a fej célja kitalálni, milyen token-ek voltak a [MASK] token-ek helyén. A feladat abszolválásához a fejnek szüksége van a mondatpárok generálása során létrejött egyéb információra is. Ilyen információ a maszkolt token-ek szekvencián belüli pozíciója, Word2Vec azonosítója és súlya. Mivel a [MASK] token-ek megfelelő eloszlása érdekében az algoritmus a [PAD] token-eket is letakarja, ezért fontos tényező a súlyok bevezetése. Egy maszkolt token súlya 0 lesz, ha a token eredetileg [PAD] token volt, egyébként 1. 
 
 A fej a BiLSTM háló \textit{pooling} nélküli, szekvenciális kimenetével dolgozik. A kimenetből kiválasztja a maszkolt szavak reprezentációit. Az így kapott \textit{num\_hidden} hosszú vektorokat egy sűrűn kapcsolt, GELU aktivációval \cite{gelu} ellátott rétegen vezeti át, melynek kimeneti mérete megegyezik a kibővített Word2Vec modell beágyazási dimenziójával. Majd a sűrű rétegtől kapott kimenetet megszorozza a beágyazási mátrixszal, annak érdekében, hogy az egyes vektorok a szótár dimenziójába kerüljenek, továbbá \textit{log softmax} aktivációt alkalmaz, hozzájutva a maszkolt token-ekre vonatkozó valószínűségek logaritmusához a teljes szótárra nézve. A feladat tanítási \textit{loss} függvénye az egyes eredeti token-ekre vonatkozó logaritmusok összegének ellentettjének átlaga.
 
 
 \subsection{Következő mondat feladat}
 
-A \textit{következő mondat} feladat alatt a neurális hálónak ki kell találnia, hogy A[SEP]B bemenet esetén B szekvencia A rákövetkezője-e. A tanítás során a fej számára biztosítani kell a szekvenciákhoz tartozó címkéket. Ezen címkéket a bemeneti adathalmazt előállító algoritmus generálja. Előfordulhat olyan eset, mikor az algoritmus nem tud az adott dokumentumból A mondat mellé B mondatot választani, mert a dokumentum túl rövid, vagy éppen dokumentumhatárra ért. Ekkor értelemszerűen minden esetben hamis lesz a címkéje az adott bemeneti szekvenciának. Ez a működés kiegyensúlyozatlansági problémához vezethet, melyet az algoritmusban alkalmazott számláló hatékonyan ki tud védeni. Ha többségbe kerül a negatív esetek száma, az algoritmus 1 valószínűséggel pozitív eseteket generál. 
+A \textit{következő mondat} feladat során a fejnek ki kell találnia, hogy A[SEP]B bemenet esetén B szekvencia A rákövetkezője-e. A tanítás során a fej számára biztosítani kell a szekvenciákhoz tartozó címkéket. Ezen címkéket a bemeneti adathalmazt előállító algoritmus generálja. Előfordulhat olyan eset, mikor az algoritmus nem tud az adott dokumentumból A mondat mellé B mondatot választani, mert a dokumentum túl rövid, vagy éppen dokumentumhatárra ért. Ekkor értelemszerűen minden esetben hamis lesz a címkéje az adott bemeneti szekvenciának. Ez a működés kiegyensúlyozatlansági problémához vezethet, melyet az algoritmusban alkalmazott számláló hatékonyan ki tud védeni. Ha többségbe kerül a negatív esetek száma, az algoritmus 1 valószínűséggel pozitív eseteket generál. 
 
 \begin{note}
 	A jobb megértés érdekében a dolgozathoz mellékeltem egy példa bemenetet. [\ref{appx:input}]
@@ -193,7 +193,7 @@ A jól paraméterezhető tanítás érdekében az implementáció során töreke
 
 A futtatáshoz használt szervergép konfigurációja a következő: 2 x Intel\textregistered Xeon\textregistered  Processor E5-2640 v4 25M Cache 2.40GHz (10 mag) CPU, 2 x NVIDIA GeForce GTX 1080 Ti GPU, 4 x 32 GB DDR4 RAM.
 
-A neurális modellek kezdeti, teljes adathalmazon történő tanítása epoch-onként 4 napot vett volna igénybe, így a generált halmaz méretét a negyedére csökkentettem. Minden modell tanítása esetén 32 méretű \textit{batch}-et és 0.1 kezdeti \textit{learning rate}-et használtam. 
+A neurális modellek kezdeti, teljes adathalmazon történő tanítása \textit{epoch}-onként 4 napot vett volna igénybe, így a generált halmaz méretét a negyedére csökkentettem. Minden modell tanítása esetén 32 méretű \textit{batch}-et és 0.1 kezdeti \textit{learning rate}-et használtam. 
 
 %5 epoch
 
