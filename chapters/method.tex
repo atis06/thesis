@@ -133,18 +133,23 @@ A \textit{következő mondat} feladathoz szükséges "mondatpárokat" az így el
 A "mondat" szó ebben az esetben token-ek tetszőleges méretű sorozatát jelenti.
 \end{note}
  
-A bemenet előállításához szükség volt arra az információra, hogy maximum hány token hosszúságú szekvenciákra darabolja az algoritmus a dokumentumokat és mi a minimális soronkénti token-szám, amelyet még elfogadjon. 
+A bemenet előállításához szükség volt arra az információra, hogy maximum hány token hosszúságú szekvenciákra darabolja az algoritmus a dokumentumokat és mi a minimális soronkénti token-szám, amelyet még elfogadjon.
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=1\textwidth,height=180px]{docLengths}
-	\caption{Az 1000 token alatti dokumentumok száma (balra); A 100 token alatti dokumentumok száma (jobbra)}
+	\subfigure[Az 1000 token alatti dokumentumok száma]{
+		\includegraphics[width=0.45\linewidth]{docLengths2}}
+	\hspace{5pt}
+	\subfigure[Az 50 token alatti dokumentumok száma]{
+		\includegraphics[width=0.45\linewidth]{docLengths1}}
+	\caption{Dokumentumok hosszának eloszlása}
+	\label{fig:doc_lengths}
 \end{figure}
 
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.6\textwidth,height=180px]{lineLengths}
-	\caption{Az 50 token hosszúság alatti mondatok}
+	\caption{A 100 token hosszúság alatti mondatok}
 \end{figure}
 
 A dokumentumokra és a dokumentumok soraira vonatkozó mérések alapján minimális token-számnak 10-et, maximális szekvenciahossznak 100-at határoztam meg. A cél az volt, hogy a lehető legtöbb információt sikerüljön kinyerni a dokumentumokból és csak relatíve kevés esetben kelljen \textit{padding}-et alkalmazni, továbbá ne legyen a konfigurációnak teljesíthetetlen memóriaigénye. A végső bemeneti hossz így 201 lett.
