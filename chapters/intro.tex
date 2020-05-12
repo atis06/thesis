@@ -1,23 +1,13 @@
 \chapter{Bevezetés} % Introduction
 \label{ch:intro}
 
-A természetesnyelv-feldolgozás (NLP) a mesterséges intelligencia azon részterülete, amely az emberi eredetű beszélt és írott nyelvből történő információkinyeréssel és ezen tudás felhasználásával foglalkozik. A szemantikus reprezentációk az NLP intenzíven kutatott témaköre, amely algoritmusai képesek a természetes nyelven írott szövegek és szövegrészletek numerikus ábrázolására. A módszerek alapja, hogy a szavakat, vagy szavak listáját leképezzék valamely vektortérbe azok szemantikai tartalma alapján.
+A természetesnyelv-feldolgozás (NLP) a mesterséges intelligencia azon részterülete, amely az emberi eredetű beszélt és írott nyelvből történő információkinyeréssel és ezen tudás felhasználásával foglalkozik. A szemantikus reprezentációk az NLP intenzíven kutatott témaköre, amely algoritmusai képesek a természetes nyelven írott szövegek és szövegrészletek numerikus ábrázolására. A módszerek alapja, hogy a szavakat, vagy szavak listáját leképezzék valamely vektortérbe azok szemantikai tartalma alapján. 
 
-Az így készült vekto
+Az így kapott vektoroknak számos felhasználási módja létezik, például információ visszakeresés, dokumentum összegzés, chatbot-ok implementálása, gépi fordítás, stb. Napjainkban a legjobb eredményeket az ezeken a területeken kutató és fejlesztő óriáscégek által publikált módszerek érik el, de a hasonló technikák akadémiai körökben is nagy figyelmet kapnak.
 
-\pagebreak
+A modern reprezentációs módszerek meghatározó paraméterei az alapjukként szolgáló neurális háló és a tanításukra használt feladatok, adathalmazok.
+Bár léteznek többnyelvű reprezentációs modellek is, a meglévő technikák nagy részéről kijelenthető, hogy az nyelvfüggő. A nyelvfüggőség azt jelenti, hogy egy adott modell csak olyan nyelvű problémák esetén alkalmazható, amilyen nyelven tanították azt.
 
-AI -> NLP
-mi az a semantic representation?
-milyen elméleti problémát old meg?
-nagy cégek, gyorsan fejlődik
-thought vectors
-hol használják?
-translation
-nyelvfüggő
-kevés adat és módszer magyarul
-mi a célom? 
-adat, tanítási lehetőség, algoritmus vizsgálat
-finnugor relációt el lehetne sütni
-esetleg matematikai formalizmusa (szólista -> vektor)
+A friss eredmények azt mutatják, hogy a címkézett adatokon történő felügyelt tanítás által modellünk magasabb teljesítményre lehet képes. Ez a tény problémát jelenthet a kevésbé beszélt nyelvek esetén, ahol csak elvétve, vagy egyáltalán nem léteznek ilyen tanítóadatok. A kevésbé populáris nyelvek jellemzően csak a nem felügyelt tanulás eszköztárából választhatnak.
 
+A magyar nyelv egy nem túl széles körben beszélt nyelv, így a nyelvi modellek tanításához használható források is limitáltak. Diplomamunkám célja a meglévő módszerek vizsgálata, majd ezen tudás alapján olyan technikák implementálása, amelyek alkalmasak lehetnek a kis és közepes nyelvek – így a magyar nyelv – szemantikai és szintaktikai tulajdonságainak ábrázolására. 
