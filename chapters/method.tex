@@ -154,7 +154,9 @@ A bemenet előállításához szükség volt arra az információra, hogy maximu
 
 A dokumentumokra és a dokumentumok soraira vonatkozó mérések alapján minimális token-számnak 10-et, maximális szekvenciahossznak 100-at határoztam meg. A cél az volt, hogy a lehető legtöbb információt sikerüljön kinyerni a dokumentumokból és csak relatíve kevés esetben kelljen \textit{padding}-et alkalmazni, továbbá ne legyen a konfigurációnak teljesíthetetlen memóriaigénye. A végső bemeneti hossz így 201 lett.
 
-Bemeneti réteg használata esetén a neurális háló inputjára a mondatpárok token-jeinek Word2Vec azonosítója kerül. Az \textit{embedding lookup} művelet ezen azonosítók segítségével választja ki a réteg számára átadott beágyazási mátrixból az adott token-ekhez tartozó szóvektorokat. Felmerülhet a kérdés, hogy mi történik a speciális token-ekkel ebben az esetben. A speciális token-eket a Word2Vec modell nem ismeri, így azok nem kerültek be a beágyazási mátrixba sem. A probléma megoldására bevezettem a meglévő Word2Vec dimenziók mellé minden egyes speciális token számára egy saját dimenziót és a hozzá tartozó azonosítókat. Ezen token-eket reprezentáló vektorok kiterjedése a saját dimenziójukban 1, az összes többi dimenzióban 0. Így a speciális vektorok merőlegesek a többi vektorra. Ennek okán a speciális token-ek elméletileg nem befolyásolják a tanulás során a szemantikai információkat. A bemeneti rétegnek átadott beágyazási mátrix mérete – az [UNK], Word2Vec modell által nem ismert szavakat jelölő token-nel együtt – $(\text{word\_embedding\_dim} + 4) \times \text{szótár méret} $ lesz.
+Bemeneti réteg használata esetén a neurális háló inputjára a mondatpárok token-jeinek Word2Vec azonosítója kerül. Az \textit{embedding lookup} művelet ezen azonosítók segítségével választja ki a réteg számára átadott beágyazási mátrixból az adott token-ekhez tartozó szóvektorokat. Felmerülhet a kérdés, hogy mi történik a speciális token-ekkel ebben az esetben. A speciális token-eket a Word2Vec modell nem ismeri, így azok nem kerültek be a beágyazási mátrixba sem. A probléma megoldására bevezettem a meglévő Word2Vec dimenziók mellé minden egyes speciális token számára egy saját dimenziót és a hozzá tartozó azonosítókat. Ezen token-eket reprezentáló vektorok kiterjedése a saját dimenziójukban 1, az összes többi dimenzióban 0. Így a speciális vektorok merőlegesek a többi vektorra. Ennek okán a speciális token-ek elméletileg nem befolyásolják a szemantikai információkat a tanulás során. A bemeneti rétegnek átadott beágyazási mátrix mérete – az [UNK], Word2Vec modell által nem ismert szavakat jelölő token-nel együtt – $(\text{word\_embedding\_dim} + 4) \times \text{szótár méret} $ lesz.
+
+A beágyazási mátrixban tárolt vektorok hosszának felhasználhatóságáról megoszlanak a vélemények. Egyesek szerint a hosszok eltéríthetik a modellt és bizonyos feladatok esetén hatékonyabban működhetnek az azonos hosszú vektorok, így a tanítás során mindkét lehetőséget – azaz normálva és normálás nélkül is – kipróbáltam.
 
 Bár a \textit{maszkolás} és a \textit{következő mondat} feladatok a \textit{multitask learning} során megosztják egymással a bemeneti réteget és a modellt, a feladatok megoldásához használt fejek és a feladatspecifikus bemenetek különböznek.
 
@@ -198,9 +200,8 @@ A jól paraméterezhető tanítás érdekében az implementáció során töreke
 
 A futtatáshoz használt szervergép konfigurációja a következő: 2 x Intel\textregistered Xeon\textregistered  Processor E5-2640 v4 25M Cache 2.40GHz (10 mag) CPU, 2 x NVIDIA GeForce GTX 1080 Ti GPU, 4 x 32 GB DDR4 RAM.
 
-A neurális modellek kezdeti, teljes adathalmazon történő tanítása \textit{epoch}-onként 4 napot vett volna igénybe, így a generált halmaz méretét a negyedére csökkentettem. Minden modell tanítása esetén 32 méretű \textit{batch}-et és 0.1 kezdeti \textit{learning rate}-et használtam. 
+A neurális modellek kezdeti, teljes adathalmazon történő tanítása \textit{epoch}-onként 4 napot vett volna igénybe, így a generált halmaz méretét a negyedére csökkentettem. Minden modell tanítása esetén 32 méretű \textit{batch}-et és 0.1 kezdeti \textit{learning rate}-et használtam, a \textit{dropout} valószínűsége 0.5, az \textit{epoch}-ok száma 5 volt.
 
-%5 epoch
 
 \section{Vektorok generálása}
 
@@ -209,6 +210,3 @@ A szemantikus reprezentációs vektorok felhasználási területe igen szélesk�
 Egy eleve betanított modell mentett súlyainak használata nem igényel komoly erőforrásokat és tárhelyet. A vektorok generálása egy egyszerű folyamat, mely során a reprezentáció fej nélküli neurális hálója – azaz a BiLSTM max pooling – ezen súlyok szerint inicializálásra kerül. Ezt követően a bemenetet a tanításéhoz hasonló módon az input-ra juttatva a neurális modell előállítja a szövegrészletet reprezentáló vektort. A művelet során a háló súlyai nem változnak, azaz képtelen a további tanulásra.
 
 A műveletek elvégzésére elegendő lehet egy CPU is, így a kellő pontosságot elérve a módszer akár ipari rendszerekbe is építhető, vagy különböző webes alkalmazások esetén felhasználói élmény fokozására is felhasználható.
-
-
-%két kép kicserélése
