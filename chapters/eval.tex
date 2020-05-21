@@ -9,23 +9,30 @@ Mivel a munkám során tanított modellek mindegyike magyar nyelvű, így nem ha
 
 \section{Árukereső kommentek bináris érzelmi analízise}
 
+Az általam létrehozott modellek pontosságának mérésére használt feladatnak több szempont szerint is meg kellett felelni. Jó kiértékelési feladat az, amelyik kellőképpen "nehéz", így a modellek közti teljesítménybeli különbségek jól interpretálhatóak. Továbbá a feladathoz tartozó adathalmaznak elég elemet kell tartalmaznia ahhoz, hogy a feladat elkerülje a túltanulás problémáját és hiteles eredményt kapjunk végeredményül. Az \textit{arukereso}-nek nevezett adathalmaz bináris osztályozása a kommentek érzelmi tartalma alapján megfelelő kihívásnak minősült ahhoz, hogy az általam tanított modellek pontosságát meg tudjam határozni.
 
+A mérés során az annotált tanítóhalmaz elemeit – azaz pozitív vagy negatív osztályba tartozó kommenteket – a meglévő modellek segítségével vektortérbe képeztem. Majd az így kapott vektor-címke párokkal tanítottam különféle osztályozó algoritmusokat. Ezen algoritmusok teszthalmazon történő kiértékelésének kimenete adta meg az adott szemantikus modell pontosságát.
+
+Szükségem volt egy olyan viszonyítási alapra, amely a már létező magyar nyelvű módszerek teljesítményét szimbolizálja. Erre a célra a kommentek szavait az előre betanított \textit{oscar} és \textit{oscar\_sm} Word2Vec modellekkel leképezve, majd átlagolva megkaptam az adott kommentet reprezentáló 300 hosszú vektorokat.
+
+Mivel a vélemények változó méretűek, továbbá legalább 10 token-ből állnak, a BiLSTM esetén csak az első 201 token került a bemenetre a vektorok generálása során. A túl rövid paragrafusokat a tanításhoz hasonlóan \textit{padding}-eltem.
+
+Egy bináris osztályozási feladat teljesítményét többféle metrika szerint is lehet mérni. Ezek közül a legnépszerűbb a klasszifikációs \textbf{pontosság} (\textit{accuracy}), amely a helyesen prediktált elemek számának és az összes elem számának hányadosa. A \textbf{tévesztési mátrix} (\textit{confusion matrix}) leírja és vizualizálja modellünk teljesítményét az igaz pozitívként, igaz negatívként, hamis pozitívként és hamis negatívként prediktált elemek számának segítségével. A \textbf{vevő működési karakterisztika} (\textit{receiver operating characteristic}) görbe az igaz pozitív és a hamis negatív arányok közötti kapcsolatot vizualizálja. Egy véletlenszerű modell görbéje a főátlón helyezkedik el, ahol y tengelyen az igaz pozitív, x tengelyen a hamis negatív arányok szerepelnek. Minél nagyobb a görbe alatti terület, annál jobb a modellünk performanciája.
 
 %\pagebreak
 
-%Szükség volt a modellek hatékonyságának/pontosságának kimérésére valamely szempont alapján. Ehhez kellett egy feladat, melyet magamnak kellett implementálni. Ez a feladat kellően nehéz kell hogy legyen. Árukereső adathalmaz erre pontosan jó, egyszerűen interpretálható végeredmény -> jó összehasonlítási alap
-
-%saját halmaz - nem túl kiterjedt, tehát nem a nyelvi modell egészét méri de adott feladatra jó
-
-%metrikák: tanítási accuracy, árukereső accuracy, mátrix, roc
-
+%-------------------------------------------------------------------------------
 %w2v vektorok átlaga - baseline: w2v_lg, w2v_lg_normed, w2v_sm, w2v_sm_normed
 %teljes szövek kódolása
 
 %saját modellek és részletes leírásaik: lstm_1024, lstm_1024_normed, lstm_4096
 %201 token levágása és kódolása
 
+%befejezés:
+%saját halmaz - nem túl kiterjedt, tehát nem a nyelvi modell egészét méri de adott feladatra jó
+
 %arukereso auto annotált/humán annotált?
+%tanítási accuracy
 
 
 
