@@ -164,7 +164,7 @@ Bár a \textit{maszkolás} és a \textit{következő mondat} feladatok a \textit
 
 A maszkolási feladat alatt a fej célja kitalálni, milyen token-ek voltak a [MASK] token-ek helyén. A feladat abszolválásához a fejnek szüksége van a mondatpárok generálása során létrejött egyéb információra is. Ilyen információ a maszkolt token-ek szekvencián belüli pozíciója, Word2Vec azonosítója és súlya. Mivel a [MASK] token-ek megfelelő eloszlása érdekében az algoritmus a [PAD] token-eket is letakarja, ezért fontos tényező a súlyok bevezetése. Egy maszkolt token súlya 0 lesz, ha a token eredetileg [PAD] token volt, egyébként 1. 
 
-A fej a BiLSTM háló \textit{pooling} nélküli, szekvenciális kimenetével dolgozik. A kimenetből kiválasztja a maszkolt szavak reprezentációit. Az így kapott \textit{num\_hidden} hosszú vektorokat egy sűrűn kapcsolt, GELU aktivációval \cite{gelu} ellátott rétegen vezeti át, melynek kimeneti mérete megegyezik a kibővített Word2Vec modell beágyazási dimenziójával. Majd a sűrű rétegtől kapott kimenetet megszorozza a beágyazási mátrixszal, annak érdekében, hogy az egyes vektorok a szótár dimenziójába kerüljenek, továbbá \textit{log softmax} aktivációt alkalmaz, hozzájutva a maszkolt token-ekre vonatkozó valószínűségek logaritmusához a teljes szótárra nézve. A feladat tanítási \textit{loss} függvénye az egyes eredeti token-ekre vonatkozó logaritmusok összegének ellentettjének átlaga.
+A fej a BiLSTM háló \textit{pooling} nélküli, szekvenciális kimenetével dolgozik. A kimenetből kiválasztja a maszkolt szavak reprezentációit. Az így kapott \textit{num\_hidden} hosszú vektorokat egy sűrűn kapcsolt, GELU aktivációval \cite{gelu} ellátott rétegen vezeti át, melynek kimeneti mérete megegyezik a kibővített Word2Vec modell beágyazási dimenziójával. Majd a sűrű rétegtől kapott kimenetet réteg normálja \cite{layer} és megszorozza a beágyazási mátrixszal, annak érdekében, hogy az egyes vektorok a szótár dimenziójába kerüljenek, továbbá \textit{log softmax} aktivációt alkalmaz, hozzájutva a maszkolt token-ekre vonatkozó valószínűségek logaritmusához a teljes szótárra nézve. A feladat tanítási \textit{loss} függvénye az egyes eredeti token-ekre vonatkozó logaritmusok összegének ellentettjének átlaga.
 
 
 \subsection{Következő mondat feladat}
@@ -201,6 +201,29 @@ A jól paraméterezhető tanítás érdekében az implementáció során töreke
 A futtatáshoz használt szervergép konfigurációja a következő: 2 x Intel\textregistered Xeon\textregistered  Processor E5-2640 v4 25M Cache 2.40GHz (10 mag) CPU, 2 x NVIDIA GeForce GTX 1080 Ti GPU, 4 x 32 GB DDR4 RAM.
 
 A neurális modellek kezdeti, teljes adathalmazon történő tanítása \textit{epoch}-onként 4 napot vett volna igénybe, így a generált halmaz méretét a negyedére csökkentettem. Minden modell tanítása esetén 32 méretű \textit{batch}-et és 0.1 kezdeti \textit{learning rate}-et használtam, a \textit{dropout} valószínűsége 0.5, az \textit{epoch}-ok száma 5 volt.
+
+\begin{table}[htb]
+	\centering
+	\begin{tabular}{ | c | r | r | r |}
+		\hline
+		\multirow{2}{*}{\textbf{Méret}} & \multirow{2}{*}{\textbf{Normált bemenet}} & \multicolumn{2}{ c | }{\textbf{Tanítási pontosság}} \\
+		\cline{3-4}
+		& & Maszkolás & Következő mondat \\
+		\hline \hline		
+		1024 & Nem & 13,76\% & 94,29\% \\
+		\hline
+		1024 & Igen & 16,01\% & 99,21\% \\
+		\hline
+		4096 & Igen & X\% & X\% \\
+		\hline 
+	\end{tabular}
+	\caption[Tanítási pontosság]{A különböző méretű és bemenetű modellek tanítási pontossága az egyes feladatokra}
+	\label{tab:training-acc}
+\end{table}
+
+%TODO
+
+
 
 
 \section{Vektorok generálása}

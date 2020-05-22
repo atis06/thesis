@@ -19,20 +19,49 @@ Mivel a vélemények változó méretűek, továbbá legalább 10 token-ből ál
 
 Egy bináris osztályozási feladat teljesítményét többféle metrika szerint is lehet mérni. Ezek közül a legnépszerűbb a klasszifikációs \textbf{pontosság} (\textit{accuracy}), amely a helyesen prediktált elemek számának és az összes elem számának hányadosa. A \textbf{tévesztési mátrix} (\textit{confusion matrix}) leírja és vizualizálja modellünk teljesítményét az igaz pozitívként, igaz negatívként, hamis pozitívként és hamis negatívként prediktált elemek számának segítségével. A \textbf{vevő működési karakterisztika} (\textit{receiver operating characteristic}) görbe az igaz pozitív és a hamis negatív arányok közötti kapcsolatot vizualizálja. Egy véletlenszerű modell görbéje a főátlón helyezkedik el, ahol y tengelyen az igaz pozitív, x tengelyen a hamis negatív arányok szerepelnek. Minél nagyobb a görbe alatti terület, annál jobb a modellünk performanciája.
 
+
+\begin{table}[htb]
+	\centering
+	\begin{tabular}{ | c | r | r | r | r | r | r |}
+		\hline
+		\multirow{2}{*}{\textbf{Modell / Osztályozó}} & \multirow{2}{*}{\textbf{Linear SVM}} & \multirow{2}{*}{\textbf{XGBoost}} & \multirow{2}{*}{\textbf{Random Forest}} \\
+		& & & \\
+		\hline \hline		
+		\textbf{w2v\_sm} & Nem & 13,76\% & 94,29\% \\
+		\hline
+		\textbf{w2v\_sm\_norm} & Igen & 16,01\% & 99,21\% \\
+		\hline
+		\textbf{w2v\_lg} & Igen & X\% & X\% \\
+		\hline
+		\textbf{w2v\_lg\_norm} & Igen & X\% & X\% \\
+		\hline  
+		\textbf{1024} & Igen & X\% & X\% \\
+		\hline  
+		\textbf{1024\_norm} & Igen & X\% & X\% \\
+		\hline  
+	\end{tabular}
+	\caption[A modellek pontossága]{A modellek klasszifikációs pontossága az arukereso adathalmazon. A norm posztfix a normalizált bemenetet jelöli.}
+	\label{tab:evaluation}
+\end{table}
+
+%TODO
+
 %\pagebreak
 
 %-------------------------------------------------------------------------------
-%w2v vektorok átlaga - baseline: w2v_lg, w2v_lg_normed, w2v_sm, w2v_sm_normed
-%teljes szövek kódolása
+% w2v_lg, w2v_lg_normed, w2v_sm, w2v_sm_normed
 
 %saját modellek és részletes leírásaik: lstm_1024, lstm_1024_normed, lstm_4096
-%201 token levágása és kódolása
+
+
+%hogyan értelmezem?
 
 %befejezés:
 %saját halmaz - nem túl kiterjedt, tehát nem a nyelvi modell egészét méri de adott feladatra jó
 
+
+
 %arukereso auto annotált/humán annotált?
-%tanítási accuracy
 
 
 
