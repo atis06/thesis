@@ -27,20 +27,20 @@ Egy bináris osztályozási feladat teljesítményét többféle metrika szerint
 		\multirow{2}{*}{\textbf{Modell / Osztályozó}} & \multirow{2}{*}{\textbf{Linear SVM}} & \multirow{2}{*}{\textbf{XGBoost}} & \multirow{2}{*}{\textbf{Random Forest}} \\
 		& & & \\
 		\hline \hline		
-		\textbf{w2v\_sm} & Nem & 13,76\% & 94,29\% \\
+		\textbf{w2v\_sm} & 85,45\% & 82,18\% & 83,64\% \\
 		\hline
-		\textbf{w2v\_sm\_norm} & Igen & 16,01\% & 99,21\% \\
+		\textbf{w2v\_sm\_norm} & 85,57\% & 82,71\% & \textbf{84,18\%} \\
 		\hline
-		\textbf{w2v\_lg} & Igen & X\% & X\% \\
+		\textbf{w2v\_lg} & 85,28\% & 82,87\% & 83,77\% \\
 		\hline
-		\textbf{w2v\_lg\_norm} & Igen & X\% & X\% \\
+		\textbf{w2v\_lg\_norm} & \textbf{85,59\%} & 83,15\% & 83,85\% \\
 		\hline  
-		\textbf{1024} & Igen & X\% & X\% \\
+		\textbf{lstm\_1024} & 81,53\% & 80,82\% & 80,84\% \\
 		\hline  
-		\textbf{1024\_norm} & Igen & X\% & X\% \\
+		\textbf{lstm\_1024\_norm} & 85,37\% & \textbf{83,48\%} & 83,41\% \\
 		\hline  
 	\end{tabular}
-	\caption[A modellek pontossága]{A modellek klasszifikációs pontossága az arukereso adathalmazon. A norm posztfix a normalizált bemenetet jelöli.}
+	\caption[A modellek pontossága]{A modellek klasszifikációs pontossága az arukereso adathalmazon. A norm posztfix a normált bemenetet jelöli.}
 	\label{tab:evaluation}
 \end{table}
 
@@ -53,11 +53,16 @@ Egy bináris osztályozási feladat teljesítményét többféle metrika szerint
 
 %saját modellek és részletes leírásaik: lstm_1024, lstm_1024_normed, lstm_4096
 
+%accuracy
+
+%
 
 %hogyan értelmezem?
 
 %befejezés:
 %saját halmaz - nem túl kiterjedt, tehát nem a nyelvi modell egészét méri de adott feladatra jó
+
+%más módszereket is ki lehet vele mérni, publikusan elérhető adathalmaz
 
 
 
