@@ -1,35 +1,38 @@
 \chapter{Összegzés} % Conclusion
 \label{ch:sum}
 
-Diplomamunkám végeredménye egy mondat- és paragrafusszintű szemantikus reprezentációs algoritmus, amely képes leképezni a magyar nyelven írt mondatokat a szemantikus térbe.
+A természetes szövegfeldolgozás és annak ágazata, a szemantikus reprezentációk mind akadémiai, mind ipari értelemben gyorsuló ütemben fejlődő területek, amelyek a mai napig rengeteg felderítésre váró lehetőséget tartogatnak. A numerikus ábrázoló algoritmusok teljesítményének növekedése olyan gyakorlati alkalmazások pontosságának javulását indukálják, melyek segítségével hatékonyan kiszűrhető a gyűlöletbeszéd a szociális médiából, vagy akár eredményesen felvehető a harc az álhírek terjedésével szemben. 
+
+Diplomamunkám végeredménye egy kétirányú mondat- és paragrafusszintű előre tanított szemantikus reprezentációs modell, amely képes leképezni a magyar nyelven írt mondatokat a szemantikus térbe.
+
+Magyar nyelvű tanítóadat a nyelv beszéltségéből fakadóan nem, vagy csak elvétve elérhető. A módszer tanításához használt adathalmaz előállítása nem igényel emberi címkézést, olcsó és a végtelenségig skálázható. Továbbá a tanításra szolgáló feladatok jellegéből fakadóan, az algoritmus jó eséllyel átültethető más kis és közepes nyelvre is.
+
+A munkám során több, különféle magyar nyelvű adathalmazt vizsgáltam, melyek akár Word2Vec modellek, akár a bemutatott nyelvi modell létrehozására is alkalmasak lehetnek. Majd konstruáltam egy olyan, a magyar nyelvű szemantikus reprezentációs algoritmusok teljesítményének összehasonlítására használható halmazt, amelyen bináris klasszifikáció végezhető az elemek érzelmi tartalma alapján.
  
-(adatok + háló + feladatok)
-
-Jó eséllyel a módszer alkalmazható más kis és közepes nyelvre is.
-
-
-
-A munka során kipróbáltam több adathalmazt is, melyekkel a Word2Vec modelleket és a saját modellt tanítottam,
-
- továbbá létrehoztam egy magyar nyelvű adathalmazt is, amelyen érzelmi tartalom szerinti bináris klasszifikációt lehet végezni.
- 
- kimértem több osztályozó algoritmussal a teljesítményeket(Saját mérési adathalmaz + baseline módszer)
-
-
-
-
-
-
-
+A dolgozatban bemutatott modellek tanítása során számos paraméterrel és beállítással próbálkoztam, majd ezek közül a legjobban teljesítő jelöltek teljesítményét a prezentált adathalmaz segítségével kimértem és összehasonlító elemzéseket végeztem.
 
 %TODO: EREDMÉNYEK
-kísérleteztem és tanítottam számos modellt különböző paraméterekkel -> legjobb
+interpretálás
 
 
-jövőben: maszkolt UNK-ok 0 súllyal, finomhangolás, stacked bilstm, GloVe, gru,  értelmező kéziszótár, mean pooling
 
-új terület -> fel kell térképezni, más más beállításokat alkalmazni, 
+\section{Javítási lehetőségek}
+A szemantikus reprezentációs módszerekben rejlő lehetőségek a mai napig ismeretlenek és feltérképezetlenek. A tanulás vagy vektorgenerálás során optimalizált paraméterbeállítások és kombinációk további teljesítménybeli javulást hozhatnak.
 
-magyar NLP ezen ágát eg kicsit katalizálja és a benchmarkot is fel tudják használni
+A jövőben érdemes lehet az SGD helyett más optimalizáló algoritmust választani, továbbá a mélyhálóban alkalmazott \textit{max pooling}-ot \textit{mean pooling}-ra cserélni.
+
+A megfigyelések alapján a GloVe szóbeágyazási módszer jobb eredményeket ér el, mint a Word2Vec, így célravezető lehet a beágyazási rétegben GloVe-ot használni.
+
+Bizonyos esetekben a mélyebb architektúrák hatékonyabban tudják kinyerni a szekvenciális szöveges adatokból származó információkat, így több egymásra illesztett BiLSTM, vagy akár BiGRU réteg együttes tanítása pontosabb végeredményhez vezethet.
+
+Az általam létrehozott nyelvi modellek mindegyike előtanított, finomhangolást nem végeztem rajtuk. A \textit{transfer learning} segítségével finomhangolt modellek több esetben jelentősen jobban teljesítenek, továbbá adatigényük is kisebb az előtanításénál. A jövőben a meglévő neurális modelleket egy olyan feladattal tervezem tovább tanítani, amelyben a háló célja egy értelmező kéziszótárból kinyert cikkek alapján kitalálni a cikkekhez tartozó szót.
+
+Jelen működés szerint a maszkolt szavak közül csak a \textit{padding} token-ek kerülnek 0 súllyal a bemenetre. Ha sok ismeretlen szó található a tanítási halmazban, akkor a modellünk elfogulttá válhat az ismeretlen szavakat reprezentáló token felé, így nehezebbé téve a tanulási folyamatot. Ennélfogva előfordulhat, hogy az ilyen token-ek nullával való súlyozása jobb konvergációra készteti a modellt.
+
+\chapter*{Összegzés - folytatás}
+
+\section{Köszönetnyilvánítás}
+
+magyar NLP ezen ágát egy kicsit katalizálja; az előtanítási módszereket és a benchmarkot is fel tudják használni és tovább tanítani
 
 köszönet
