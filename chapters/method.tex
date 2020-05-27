@@ -214,16 +214,36 @@ A neurális modellek kezdeti, teljes adathalmazon történő tanítása \textit{
 		\hline
 		1024 & Igen & 16,01\% & 99,21\% \\
 		\hline
-		4096 & Igen & X\% & X\% \\
+		4096 & Igen & 17,83\% & 99,69\% \\
 		\hline 
 	\end{tabular}
-	\caption[Tanítási pontosság]{A különböző méretű és bemenetű modellek tanítási pontossága az egyes feladatokra}
+	\caption[Tanítási pontosság]{A különböző méretű és bemenetű modellek tanítási pontossága az egyes feladatokra az utolsó epoch után}
 	\label{tab:training-acc}
 \end{table}
 
-%TODO
+Ahogy a fenti táblázat mutatja, a normált bemenettel való tanítás jelentősen emelte a modellek tanítási pontosságát, továbbá a rejtett méret növelése is további javuláshoz vezetett. A legjobb eredményt a 4096 széles rejtett réteggel rendelkező modell érte el, amely bemeneti rétege normált Word2Vec vektorokkal dolgozott. A modell tanítási pontossága az 5. \textit{epoch} után a maszkolás feladatra 17,83\%, a következő mondat feladatra 99,69\% volt.
 
+\begin{figure}[H]
+	\centering
+	\subfigure[Maszkolás feladat]{
+		\includegraphics[width=0.45\linewidth]{mlmAcc}}
+	\hspace{5pt}
+	\subfigure[Következő mondat feladat]{
+		\includegraphics[width=0.45\linewidth]{nsAcc}}
+	\caption{A különböző modellek tanítási pontosságának alakulása}
+	\label{fig:train-acc-epoch}
+\end{figure}
 
+A \ref{fig:train-acc-epoch}-es ábrán látható, hogy a normált bemenetű modellek eleve magasabb tanítási pontossággal kezdtek, továbbá a modell méretének növelésével a konvergálás is hatékonyabbá vált. %Valószínűsíthető, hogy a 4096 méretű modell további tanítást követően jobb teljesítménnyel oldaná meg a maszkolási feladatot.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.45\textwidth]{loss}
+	\caption{A loss függvények alakulása a különböző modellek esetén}
+	\label{fig:train-loss-epoch}
+\end{figure}
+
+A \ref{fig:train-loss-epoch}-es ábra alapján elmondható, hogy normált bemenet esetén kisebb loss értékről indult a tanítás és a nagyméretű modellnek sikerült elérni a 7 alatti értéket is. %A normált bemenetű modellek görbéi alapján érdemes lehet kisebb \textit{learning rate}-ekkel próbálkozni.
 
 
 \section{Vektorok generálása}

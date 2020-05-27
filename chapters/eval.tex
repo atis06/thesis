@@ -17,12 +17,11 @@ Szükségem volt egy olyan viszonyítási alapra, amely a már létező magyar n
 
 Mivel a vélemények változó méretűek, továbbá legalább 10 token-ből állnak, a BiLSTM esetén csak az első 201 token került a bemenetre a vektorok generálása során. A túl rövid paragrafusokat a tanításhoz hasonlóan \textit{padding}-eltem.
 
-Egy bináris osztályozási feladat teljesítményét többféle metrika szerint is lehet mérni. Ezek közül a legnépszerűbb a klasszifikációs \textbf{pontosság} (\textit{accuracy}), amely a helyesen prediktált elemek számának és az összes elem számának hányadosa. A \textbf{tévesztési mátrix} (\textit{confusion matrix}) leírja és vizualizálja modellünk teljesítményét az igaz pozitívként, igaz negatívként, hamis pozitívként és hamis negatívként prediktált elemek számának segítségével. A \textbf{vevő működési karakterisztika} (\textit{receiver operating characteristic}) görbe az igaz pozitív és a hamis negatív arányok közötti kapcsolatot vizualizálja. Egy véletlenszerű modell görbéje a főátlón helyezkedik el, ahol y tengelyen az igaz pozitív, x tengelyen a hamis negatív arányok szerepelnek. Minél nagyobb a görbe alatti terület, annál jobb a modellünk performanciája.
+Egy bináris osztályozási feladat teljesítménye többféle metrika szerint is mérhető. Ezek közül a legnépszerűbb a klasszifikációs \textbf{pontosság} (\textit{accuracy}), amely a helyesen prediktált elemek számának és az összes elem számának hányadosa. A \textbf{tévesztési mátrix} (\textit{confusion matrix}) leírja és vizualizálja modellünk teljesítményét az igaz pozitívként, igaz negatívként, hamis pozitívként és hamis negatívként prediktált elemek számának segítségével. A \textbf{vevő működési karakterisztika} (\textit{receiver operating characteristic}) görbe az igaz pozitív és a hamis negatív arányok közötti kapcsolatot vizualizálja. Egy véletlenszerű modell görbéje a főátlón helyezkedik el, ahol y tengelyen az igaz pozitív, x tengelyen a hamis negatív arányok szerepelnek. Minél nagyobb a görbe alatti terület, annál jobb a modellünk performanciája.
 
-
-\begin{table}[htb]
+\begin{table}[H]
 	\centering
-	\begin{tabular}{ | c | r | r | r | r | r | r |}
+	\begin{tabular}{ | c | r | r | r | r | r | r | r |}
 		\hline
 		\multirow{2}{*}{\textbf{Modell / Osztályozó}} & \multirow{2}{*}{\textbf{Linear SVM}} & \multirow{2}{*}{\textbf{XGBoost}} & \multirow{2}{*}{\textbf{Random Forest}} \\
 		& & & \\
@@ -33,29 +32,48 @@ Egy bináris osztályozási feladat teljesítményét többféle metrika szerint
 		\hline
 		\textbf{w2v\_lg} & 85,28\% & 82,87\% & 83,77\% \\
 		\hline
-		\textbf{w2v\_lg\_norm} & \textbf{85,59\%} & 83,15\% & 83,85\% \\
+		\textbf{w2v\_lg\_norm} & 85,59\% & 83,15\% & 83,85\% \\
 		\hline  
 		\textbf{lstm\_1024} & 81,53\% & 80,82\% & 80,84\% \\
 		\hline  
-		\textbf{lstm\_1024\_norm} & 85,37\% & \textbf{83,48\%} & 83,41\% \\
-		\hline  
+		\textbf{lstm\_1024\_norm} & 85,37\% & 83,48\% & 83,41\% \\
+		\hline
+		\textbf{lstm\_4096\_norm} & \textbf{87.16\%} & \textbf{83,71\%} & 83,90\% \\
+		\hline
 	\end{tabular}
 	\caption[A modellek pontossága]{A modellek klasszifikációs pontossága az arukereso adathalmazon. A w2v\_sm az oscar\_sm, a w2v\_lg az oscar halmazon tanított modelleket, a norm posztfix a normált bemenetet jelöli. A számok a modellek nevében a reprezentációs vektor méretére utalnak.}
 	\label{tab:evaluation}
 \end{table}
 
-%TODO
+A \ref{tab:evaluation}-es táblázat az arukereso adathalmazon mért klasszifikációs pontosságokat foglalja össze. A kiértékeléshez használt osztályozó algoritmusok a Linear SVM, XGBoost és Random Forest. A \textit{w2v\_sm} Word2vec modellt az \textit{oscar\_sm} halmazon, a \textit{w2v\_lg}-t az \textit{oscar} halmazon tanítottam. Az \textit{lstm} prefixű modellek a bemutatott módszerrel előállított nyelvi modellek.
 
-%\pagebreak
+A mért eredmények azt mutatják, hogy az általam ismertetett módszer esetén a bemeneti rétegnek átadott \textit{w2v\_sm} és a jelentősen nagyobb szótárral rendelkező \textit{w2v\_lg} teljesítménye közötti különbség elenyésző. Emellett a normált bemenettel tanított modellek használata közben az algoritmusok nagyobb százalékban osztályoznak megfelelően. A feladatot legnagyobb pontossági értékkel abszolváló modell a \textit{lstm\_4096\_norm}, amely alkalmazása során a helyesen klasszifikált elemek aránya 87,16\% volt.
+
+\begin{figure}[H]
+	\centering
+	\subfigure[lstm\_4096\_norm]{
+		\includegraphics[width=0.6\linewidth]{matrix-4096}}
+	\subfigure[w2v\_lg\_norm]{
+		\includegraphics[width=0.6\linewidth]{matrix-w2v}}
+	\caption{A legjobban teljesítő LSTM és Word2Vec alapú modellek tévesztési mátrixa}
+	\label{fig:matrix}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\subfigure[lstm\_4096\_norm]{
+		\includegraphics[width=0.6\linewidth]{roc-4096}}
+	\subfigure[w2v\_lg\_norm]{
+		\includegraphics[width=0.6\linewidth]{roc-w2v}}
+	\caption{A legjobban teljesítő LSTM és Word2Vec alapú modellek ROC görbéje}
+	\label{fig:roc}
+\end{figure}
+
 
 %-------------------------------------------------------------------------------
-% w2v_lg, w2v_lg_normed, w2v_sm, w2v_sm_normed
 
-%saját modellek és részletes leírásaik: lstm_1024, lstm_1024_normed, lstm_4096
-
-%accuracy
-
-%
+%mátrix - darab
+%roc
 
 %hogyan értelmezem?
 
@@ -63,10 +81,6 @@ Egy bináris osztályozási feladat teljesítményét többféle metrika szerint
 %saját halmaz - nem túl kiterjedt, tehát nem a nyelvi modell egészét méri de adott feladatra jó
 
 %más módszereket is ki lehet vele mérni, publikusan elérhető adathalmaz
-
-
-
-%arukereso auto annotált/humán annotált?
 
 
 
