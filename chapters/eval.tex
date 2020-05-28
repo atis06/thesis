@@ -9,15 +9,13 @@ Mivel a munkám során tanított modellek mindegyike magyar nyelvű, így nem ha
 
 \section{Árukereső kommentek bináris érzelmi analízise}
 
-Az általam létrehozott modellek pontosságának mérésére használt feladatnak több szempont szerint is meg kellett felelni. Jó kiértékelési feladat az, amelyik kellőképpen "nehéz", így a modellek közti teljesítménybeli különbségek jól interpretálhatóak. Továbbá a feladathoz tartozó adathalmaznak elég elemet kell tartalmaznia ahhoz, hogy a feladat elkerülje a túltanulás problémáját és hiteles eredményt kapjunk végeredményül. Az \textit{arukereso}-nek nevezett adathalmaz bináris osztályozása a kommentek érzelmi tartalma alapján megfelelő kihívásnak minősült ahhoz, hogy az általam tanított modellek pontosságát meg tudjam határozni.
+Az általam létrehozott modellek pontosságának mérésére használt feladatnak több szempont szerint is meg kellett felelni. Jó kiértékelési feladat az, amelyik kellőképpen "nehéz", így a modellek közti teljesítménybeli különbségek jól interpretálhatóak. Továbbá a feladathoz tartozó adathalmaznak elegendő elemet kell tartalmaznia ahhoz, hogy a feladat elkerülje a túltanulás problémáját és hiteles kimenetet kapjunk végeredményül. Az \textit{arukereso}-nek nevezett adathalmaz bináris osztályozása a vélemények érzelmi tartalma alapján megfelelő kihívásnak minősült ahhoz, hogy az általam tanított modellek pontosságát meg tudjam határozni.
 
-A mérés során az annotált tanítóhalmaz elemeit – azaz pozitív vagy negatív osztályba tartozó kommenteket – a meglévő modellek segítségével vektortérbe képeztem. Majd az így kapott vektor-címke párokkal tanítottam különféle osztályozó algoritmusokat. Ezen algoritmusok teszthalmazon történő kiértékelésének kimenete adta meg az adott szemantikus modell pontosságát.
+A mérés során az annotált tanítóhalmaz elemeit – azaz pozitív vagy negatív osztályba tartozó értékeléseket – a meglévő modellek segítségével vektortérbe képeztem. Majd az így kapott vektor-címke párokkal tanítottam különféle osztályozó algoritmusokat. Ezen algoritmusok teszthalmazon történő kiértékelésének kimenete adta meg az adott szemantikus modell pontosságát.
 
-Szükségem volt egy olyan viszonyítási alapra, amely a már létező magyar nyelvű módszerek teljesítményét szimbolizálja. Erre a célra a kommentek szavait az előre betanított \textit{oscar} és \textit{oscar\_sm} Word2Vec modellekkel leképezve, majd átlagolva megkaptam az adott kommentet reprezentáló 300 hosszú vektorokat.
+Szükségem volt egy olyan viszonyítási alapra, amely a már létező magyar nyelvű módszerek teljesítményét szimbolizálja. Erre a célra az értékelések szavait az előre betanított \textit{oscar} és \textit{oscar\_sm} Word2Vec modellekkel leképezve, majd átlagolva megkaptam a véleményeket reprezentáló 300 hosszú vektorokat. Mivel az értékelések változó méretűek, továbbá legalább 10 token-ből állnak, a BiLSTM modellek esetén csak az első 201 token került a bemenetre a vektorok generálása során. A túl rövid paragrafusokat a tanításhoz hasonlóan \textit{padding}-eltem.
 
-Mivel a vélemények változó méretűek, továbbá legalább 10 token-ből állnak, a BiLSTM esetén csak az első 201 token került a bemenetre a vektorok generálása során. A túl rövid paragrafusokat a tanításhoz hasonlóan \textit{padding}-eltem.
-
-Egy bináris osztályozási feladat teljesítménye többféle metrika szerint is mérhető. Ezek közül a legnépszerűbb a klasszifikációs \textbf{pontosság} (\textit{accuracy}), amely a helyesen prediktált elemek számának és az összes elem számának hányadosa. A \textbf{tévesztési mátrix} (\textit{confusion matrix}) leírja és vizualizálja modellünk teljesítményét az igaz pozitívként, igaz negatívként, hamis pozitívként és hamis negatívként prediktált elemek számának segítségével. A \textbf{vevő működési karakterisztika} (\textit{receiver operating characteristic}) görbe az igaz pozitív és a hamis pozitív arányok közötti kapcsolatot vizualizálja. Egy véletlenszerű modell görbéje a főátlón helyezkedik el, ahol y tengelyen az igaz pozitív, x tengelyen a hamis pozitív arányok szerepelnek. Minél nagyobb a görbe alatti terület, annál jobb a modellünk performanciája.
+Egy bináris osztályozási feladat teljesítménye többféle metrika szerint is mérhető. Ezek közül a legnépszerűbb a klasszifikációs \textbf{pontosság} (\textit{accuracy}), amely a helyesen prediktált elemek számának és az összes elem számának hányadosa. A \textbf{tévesztési mátrix} (\textit{confusion matrix}) leírja és vizualizálja modellünk teljesítményét az igaz pozitívként, igaz negatívként, hamis pozitívként és hamis negatívként prediktált elemek számának segítségével. A \textbf{vevő működési karakterisztika} (\textit{receiver operating characteristic} - ROC) görbe az igaz pozitív és a hamis pozitív arányok közötti kapcsolatot szemlélteti. Egy véletlenszerű modell görbéje a főátlón helyezkedik el, ahol a függőleges tengelyen az igaz pozitív, a vízszintes tengelyen a hamis pozitív arányok szerepelnek. Minél nagyobb a görbe alatti terület, annál jobb a modellünk performanciája.
 
 \begin{table}[H]
 	\centering
@@ -45,9 +43,9 @@ Egy bináris osztályozási feladat teljesítménye többféle metrika szerint i
 	\label{tab:evaluation}
 \end{table}
 
-A \ref{tab:evaluation}-es táblázat az arukereso adathalmazon mért klasszifikációs pontosságokat foglalja össze. A kiértékeléshez használt osztályozó algoritmusok a Linear SVM, XGBoost és Random Forest. A \textit{w2v\_sm} Word2vec modellt az \textit{oscar\_sm} halmazon, a \textit{w2v\_lg}-t az \textit{oscar} halmazon tanítottam. Az \textit{lstm} prefixű modellek a bemutatott módszerrel előállított nyelvi modellek.
+Az \ref{tab:evaluation}-es táblázat az arukereso adathalmazon mért klasszifikációs pontosságokat foglalja össze. A kiértékeléshez használt osztályozó algoritmusok a Linear SVM, XGBoost és Random Forest. A \textit{w2v\_sm} Word2vec modellt az \textit{oscar\_sm} halmazon, a \textit{w2v\_lg}-t az \textit{oscar} halmazon tanítottam. Az \textit{lstm} prefixű modellek a bemutatott módszerrel előállított nyelvi modellek.
 
-A mért eredmények azt mutatják, hogy az általam ismertetett módszer esetén a bemeneti rétegnek átadott \textit{w2v\_sm} és a jelentősen nagyobb szótárral rendelkező \textit{w2v\_lg} teljesítménye közötti különbség elenyésző. Emellett a normált bemenettel tanított modellek használata közben az algoritmusok nagyobb százalékban osztályoznak megfelelően. A feladatot legnagyobb pontossági értékkel abszolváló modell a \textit{lstm\_4096\_norm}, amely alkalmazása során a helyesen klasszifikált elemek aránya 87,16\% volt.
+A mért eredmények azt mutatják, hogy az általam ismertetett módszer esetén a bemeneti rétegnek átadott \textit{w2v\_sm} és a jelentősen nagyobb szótárral rendelkező \textit{w2v\_lg} teljesítménye közötti különbség elenyésző. Továbbá a normált bemenettel tanított modellek használata közben az algoritmusok nagyobb százalékban osztályoznak megfelelően. A feladatot legnagyobb pontossági értékkel abszolváló modell az \textit{lstm\_4096\_norm}, amely alkalmazása során a helyesen klasszifikált elemek aránya 87,16\% volt.
 
 \begin{figure}[H]
 	\centering
@@ -59,7 +57,7 @@ A mért eredmények azt mutatják, hogy az általam ismertetett módszer esetén
 	\label{fig:matrix}
 \end{figure}
 
-Az \ref{fig:matrix}-es ábra a legpontosabb általam bemutatott és Word2Vec alapú modell tévesztési mátrixát ábrázolja a Linear SVM oszályozó algoritmusra. Az \textit{lstm\_4096\_norm} segítségével az osztályozó 298 esetben helyes döntést hozott, míg a Word2Vec vektorok alkalmazása során helytelenül választott. Az igaz pozitív, igaz negatív, hamis pozitív, hamis negatív csoportok mindkét esetben relatíve kiegyensúlyozottak.
+Az \ref{fig:matrix}-es ábra a legpontosabb általam bemutatott és Word2Vec alapú modell tévesztési mátrixát ábrázolja a Linear SVM oszályozó algoritmusra. Az \textit{lstm\_4096\_norm} segítségével az osztályozó 298 esetben helyes döntést hozott, míg a Word2Vec vektorok alkalmazása során helytelenül választott. Az igaz pozitív, igaz negatív, hamis pozitív, hamis negatív csoportok a két esetben relatíve kiegyensúlyozottak.
 
 \begin{figure}[H]
 	\centering
@@ -71,17 +69,18 @@ Az \ref{fig:matrix}-es ábra a legpontosabb általam bemutatott és Word2Vec ala
 	\label{fig:roc}
 \end{figure}
 
-A \ref{fig:roc}-es ábra a fent található tévesztési mátrixokhoz tartozó ROC görbéket illusztrálja. A \textit{lstm\_4096\_norm} modellre vonatkozó függvény görbe alatti területe nagyobb, mint a Word2Vec modell esetén, amely szerint az LSTM alapú reprezentációs módszer segítségével a Linear SVM algoritmus pontosabb osztályozásra képes.
+Az \ref{fig:roc}-es ábra a fent található tévesztési mátrixokhoz tartozó ROC görbéket illusztrálja. Az \textit{lstm\_4096\_norm} modellre vonatkozó függvény görbe alatti területe nagyobb, mint a Word2Vec modell esetén, amely szerint az LSTM alapú reprezentációs módszer segítségével a Linear SVM algoritmus pontosabb osztályozásra képes.
+
+KONKLÚZIÓ
 
 
+BEFEJEZÉS
 
-
-%-------------------------------------------------------------------------------
-
-%TODO: hogyan értelmezem??
 
 %befejezés:
-%saját halmaz - nem túl kiterjedt, tehát nem a nyelvi modell egészét méri de adott feladatra jó
+%saját halmaz - nem túl kiterjedt, tehát nem a nyelvi modell egészét méri de adott feladatra jó - cite
+
+% kód cite
 
 %más módszereket is ki lehet vele mérni, publikusan elérhető adathalmaz
 
