@@ -17,7 +17,7 @@ Szükségem volt egy olyan viszonyítási alapra, amely a már létező magyar n
 
 Mivel a vélemények változó méretűek, továbbá legalább 10 token-ből állnak, a BiLSTM esetén csak az első 201 token került a bemenetre a vektorok generálása során. A túl rövid paragrafusokat a tanításhoz hasonlóan \textit{padding}-eltem.
 
-Egy bináris osztályozási feladat teljesítménye többféle metrika szerint is mérhető. Ezek közül a legnépszerűbb a klasszifikációs \textbf{pontosság} (\textit{accuracy}), amely a helyesen prediktált elemek számának és az összes elem számának hányadosa. A \textbf{tévesztési mátrix} (\textit{confusion matrix}) leírja és vizualizálja modellünk teljesítményét az igaz pozitívként, igaz negatívként, hamis pozitívként és hamis negatívként prediktált elemek számának segítségével. A \textbf{vevő működési karakterisztika} (\textit{receiver operating characteristic}) görbe az igaz pozitív és a hamis negatív arányok közötti kapcsolatot vizualizálja. Egy véletlenszerű modell görbéje a főátlón helyezkedik el, ahol y tengelyen az igaz pozitív, x tengelyen a hamis negatív arányok szerepelnek. Minél nagyobb a görbe alatti terület, annál jobb a modellünk performanciája.
+Egy bináris osztályozási feladat teljesítménye többféle metrika szerint is mérhető. Ezek közül a legnépszerűbb a klasszifikációs \textbf{pontosság} (\textit{accuracy}), amely a helyesen prediktált elemek számának és az összes elem számának hányadosa. A \textbf{tévesztési mátrix} (\textit{confusion matrix}) leírja és vizualizálja modellünk teljesítményét az igaz pozitívként, igaz negatívként, hamis pozitívként és hamis negatívként prediktált elemek számának segítségével. A \textbf{vevő működési karakterisztika} (\textit{receiver operating characteristic}) görbe az igaz pozitív és a hamis pozitív arányok közötti kapcsolatot vizualizálja. Egy véletlenszerű modell görbéje a főátlón helyezkedik el, ahol y tengelyen az igaz pozitív, x tengelyen a hamis pozitív arányok szerepelnek. Minél nagyobb a görbe alatti terület, annál jobb a modellünk performanciája.
 
 \begin{table}[H]
 	\centering
@@ -59,6 +59,8 @@ A mért eredmények azt mutatják, hogy az általam ismertetett módszer esetén
 	\label{fig:matrix}
 \end{figure}
 
+Az \ref{fig:matrix}-es ábra a legpontosabb általam bemutatott és Word2Vec alapú modell tévesztési mátrixát ábrázolja a Linear SVM oszályozó algoritmusra. Az \textit{lstm\_4096\_norm} segítségével az osztályozó 298 esetben helyes döntést hozott, míg a Word2Vec vektorok alkalmazása során helytelenül választott. Az igaz pozitív, igaz negatív, hamis pozitív, hamis negatív csoportok mindkét esetben relatíve kiegyensúlyozottak.
+
 \begin{figure}[H]
 	\centering
 	\subfigure[lstm\_4096\_norm]{
@@ -69,13 +71,14 @@ A mért eredmények azt mutatják, hogy az általam ismertetett módszer esetén
 	\label{fig:roc}
 \end{figure}
 
+A \ref{fig:roc}-es ábra a fent található tévesztési mátrixokhoz tartozó ROC görbéket illusztrálja. A \textit{lstm\_4096\_norm} modellre vonatkozó függvény görbe alatti területe nagyobb, mint a Word2Vec modell esetén, amely szerint az LSTM alapú reprezentációs módszer segítségével a Linear SVM algoritmus pontosabb osztályozásra képes.
+
+
+
 
 %-------------------------------------------------------------------------------
 
-%mátrix - darab
-%roc
-
-%hogyan értelmezem?
+%TODO: hogyan értelmezem??
 
 %befejezés:
 %saját halmaz - nem túl kiterjedt, tehát nem a nyelvi modell egészét méri de adott feladatra jó
