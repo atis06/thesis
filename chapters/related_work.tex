@@ -83,7 +83,7 @@ A szóbeágyazás azon a feltevésen alapszik, hogy a hasonló kontextusban elő
 \subsubsection{Word2vec}
 A Word2Vec \cite{mikolov2013efficient} módszer egy sekély neurális hálón alapuló szóbeágyazási algoritmus, melyet 2013-ban mutattak be. A háló tanítását a szerzők alapvetően két felügyelet nélküli feladattal végezték: Continuous Bag of Words (CBOW) vagy Skip-Gram.
 
-A tanítás során a mondatokat token-ekre bontották és one-hot kódolták. Majd a szöveg minden egyes token-jén végigiterálva a következőket hajtották végre:
+A tanítás során a mondatokat tokenekre bontották és one-hot kódolták. Majd a szöveg minden egyes tokenjén végigiterálva a következőket hajtották végre:
 
 A CBOW modell szerint a háló bemenete $v_i$
 $\left( i \in \left|D\right| \right)$ vektorra a $v_i$ vektor k méretű kontextusa ($v_{i-k},...,v_{i-1}, v_{i+1},..., v_{i+k} : k \in \mathbb{N}$), azaz a könyezetében lévő vektorok. A háló feladata prediktálni $v_i$ vektort a kontextus függvényében. A folyamat közben a háló rejtett rétegében létrejön a Word2Vec reprezentáció.
@@ -148,10 +148,8 @@ Bár az ELMo egy karakter (konkatenáció) alapú reprezentációs algoritmus, s
 \subsubsection{BERT}
 Egy 2018-ban publikált cikk \cite{char} rámutatott arra, hogy a karakteralapú algoritmusok – tehát amelyek karaktereket fogadnak bemenetül tanulás során – nem teljesítenek olyan jól, mint a szóalapú társaik. A Bidirectional Encoder Representations from Transformers (BERT) \cite{2018arXiv181004805D} egy a Google által kifejlesztett transformer architektúrájú nyelvi modell. Az ELMo-hoz hasonlóan ez is kétirányú, azaz egy szó mindkét oldali kontextusát figyelembe veszi a tanulás alatt. A BERT azonban bemenetként nem szavakat és nem is karaktereket kap, hanem szótöredékeket.
 
-A tanítást a \textit{transfer learning} szerint két fázisra bontották: előtanítás és finomhangolás. 
-
-Az előtanítás két feladatból állt: \textit{következő mondat} és \textit{maszkolás}.
-A bemenetben megadták a szótöredék token-eket, a token-ekhez tartozó mondaton belüli helyadatokat és azt, hogy az adott token A vagy B mondat közül melyikhez tartozik.
+A tanítást a \textit{transfer learning} szerint két fázisra bontották: előtanítás és finomhangolás. Az előtanítás két feladatból állt: \textit{következő mondat} és \textit{maszkolás}.
+A bemenetben megadták a szótöredék tokeneket, a tokenekhez tartozó mondaton belüli helyadatokat és azt, hogy az adott token A vagy B mondat közül melyikhez tartozik.
 
 \begin{figure}[H]
 	\centering
@@ -159,11 +157,9 @@ A bemenetben megadták a szótöredék token-eket, a token-ekhez tartozó mondat
 	\caption{A BERT bemenete}
 \end{figure}
 
- A \textit{következő mondat} esetében a mélyháló feladata kitalálni, hogy A[SEP]B input mondatokra B rákövetkezője-e A-nak. A \textit{maszkolás} során véletlenszerűen letakarták a token-eket a mondatokban és a mélyháló megpróbálta kitalálni, hogy eredetileg melyik szó volt a [MASK] token helyén.  A [CLS] token a klasszifikációs feladat alatt a mondatot ábrázolja, a [SEP] a mondatok közötti szeparátor és a [MASK] a letakart szótöredékeket helyettesíti.
+A \textit{következő mondat} esetében a mélyháló feladata kitalálni, hogy A[SEP]B input mondatokra B rákövetkezője-e A-nak. A \textit{maszkolás} során véletlenszerűen letakarták a tokeneket a mondatokban és a mélyháló megpróbálta kitalálni, hogy eredetileg melyik szó volt a [MASK] token helyén.  A [CLS] token a klasszifikációs feladat alatt a mondatot ábrázolja, a [SEP] a mondatok közötti szeparátor és a [MASK] a letakart szótöredékeket helyettesíti. A továbbiakban a modell finomhangolása az adott NLP feladat szerint történik.
 
-A továbbiakban a modell finomhangolása az adott NLP feladat szerint történik.
-
-Míg az ELMo különböző balról-jobbra és jobbról-balra olvasó rétegek konkatenációjaként állítja elő a vektorokat, addig a BERT a valódi mély architektúrájával csak egyszer dolgozza fel a token-eket. A \textit{transformer} architektúra nem igényel vektoriális bemenetet, saját reprezentációt épít a token-ek számára is.
+Míg az ELMo különböző balról-jobbra és jobbról-balra olvasó rétegek konkatenációjaként állítja elő a vektorokat, addig a BERT a valódi mély architektúrájával csak egyszer dolgozza fel a tokeneket. A \textit{transformer} architektúra nem igényel vektoriális bemenetet, saját reprezentációt épít a tokenek számára is. A BERT a szóvektorok előállításán kívül a teljes szekvenciát is képes ábrázolni, ezt a bemeneti [CLS] tokenhez tartozó reprezentációs vektor segítségével teszi.
 
 A BERT szótöredék alapú megoldása egyesíti a karakteralapú modellek előnyét a szóalapú modellek előnyével. Képes kezelni az ismeretlen szavakat és performanciája mégis magas marad. A \textit{következő mondat} feladat a szövegben található mondatok közötti relációk, a \textit{maszkolás} pedig a mondatokon belüli szemantikai és szintaktikai információ ábrázolását segíti. Több NLP feladat megoldásában is jelenleg a BERT a \textit{State-of-the-art}.
 
