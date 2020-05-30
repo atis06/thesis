@@ -6,7 +6,7 @@ Ahogy a nyelvet is szétválaszthatjuk elemeire – például lexéma (szó), sz
 
 \section{Reprezentáció a szavak szintjén}
 
-A szószintű reprezentációs módszerek azt a célt szolgálják, hogy a természetes nyelven írott szöveg szavait numerikusan feldolgozhatóvá tegyék. Ha egy algoritmus képes abszolválni ezt a célt, a számítógép többé már nem karakterláncokat, hanem értelmet is talál a bemenet mögött.
+A szószintű reprezentációs módszerek azt a célt szolgálják, hogy a természetes nyelven írott szöveg szavait numerikusan feldolgozhatóvá tegyék. Ha egy algoritmus képes abszolválni ezt a célt, a számítógép többé már nem karakterláncokat, hanem jelentést talál a bemenet mögött.
 
 Bár az a gondolat, hogy szavakat matematikailag ábrázoljunk már a '80-as években felütötte a fejét, ezek a módszerek többnyire ritka reprezentációkat eredményeztek. A ritka reprezentációk csak kevés esetben hoznak hatékony megoldást. Számításigényük nagy lehet és néhány feladat esetén a kellő pontosság elérésére is alkalmatlanok.
 
@@ -14,22 +14,22 @@ Bár az a gondolat, hogy szavakat matematikailag ábrázoljunk már a '80-as év
 
 A legegyszerűbb technika a szótár keresés, mely során L nyelv minden eleméhez injektív módon egy természetes számot rendelünk. L elemeit szótövezhetjük (\textit{lemmatization}) is, így kisebb szótárat kapunk.
 
-Ez egy kezdetleges és relatíve kis memóriaigényű algoritmus, azonban feladatainkat könnyedén félrevezetheti. A természetes nyelven írott szöveg szavai között csak ritkán találhatunk rendezést. A szótár keresést alkalmazva a szöveget feldolgozó rendszer fontosabbnak ítélheti  azon szavakat, melyek nagyobb azonosítóval rendelkeznek, így ebben az esetben a módszer használhatatlanná válik.
+Ez egy kezdetleges és relatíve kis memóriaigényű algoritmus, azonban feladatainkat könnyedén félrevezetheti. A természetes nyelven írott szöveg szavai között csak ritkán találhatunk rendezést. A szótár keresést alkalmazva a szöveget feldolgozó rendszer fontosabbnak ítélheti  azon szavakat, melyek nagyobb azonosítóval rendelkeznek, így hasonló esetekben a módszer használhatatlanná válik.
 
-\subsection{Valószínűség alapú ábrázolás}
+\subsection{Valószínűség-alapú ábrázolás}
 
-Valószínűség alapú ábrázolásnak nevezünk minden olyan módszert, amely a matematikai valószínűségszámítás eszközeit használja, többnyire eloszlást és gyakoriságot. Ezen reprezentációkat gyenge szemantikai erejük ellenére a mai napig alkalmazzák. Egyszerűek, de memóriaigényük nagy és a tanításuk is körülményes.
+Valószínűség-alapú ábrázolásnak nevezünk minden olyan módszert, amely a matematikai valószínűségszámítás eszközeit használja, többnyire eloszlást és gyakoriságot. Ezen reprezentációkat gyenge szemantikai erejük ellenére a mai napig alkalmazzák. Egyszerűek, de memóriaigényük nagy és a tanításuk is körülményes.
 
 \subsubsection{Gyakoriság és feltételes valószínűség}
 
-A csoportot képviselő alapvető algoritmus a gyakoriság alapú leképezés, amely azt az információt veszi figyelembe, hogy a dokumentumokban hányszor szerepel egy adott szó. Használhatunk relatív gyakoriságot is, ha a gyakoriságot elosztjuk a dokumentumok összes szavának számával. Az így kinyert adat akár egyszerűbb szociális média analízisre is alkalmas lehet.
+A csoportot képviselő alapvető algoritmus a gyakoriság alapú leképezés, amely azt az információt veszi figyelembe, hogy a dokumentumban hányszor szerepel egy adott szó. Használhatunk relatív gyakoriságot is, ha a gyakoriságot elosztjuk a dokumentumok összes szavának számával. Az így kinyert adat akár egyszerűbb szociális média analízisre is alkalmas lehet.
 
-Szekvenciális adatok feldolgozására megfelelő választás lehet a feltételes valószínűség alapú leképezés, mely segítségével képesek lehetünk a következő szó prediktálására az előzőek függvényében.
+Szekvenciális adatok feldolgozására megfelelő választás lehet a feltételes valószínűség alapú leképezés, mely segítségével képesek lehetünk a szekvencia következő elemének prediktálására az előzőek függvényében.
 
 
 \subsubsection{Tf-Idf}
 
-A tf-idf egy statisztikai módszer, amely arra hivatott, hogy egy szó előfordulásának fontosságát ragadja meg egy dokumentumban, a dokumentumhalmazban. A modell a Bag Of Words (BOW) modellen alapszik, mely lényege, hogy L szótár esetén egy adott $d \in D$ dokumentumot egy $v \in \mathbb{N}^{|L|}$ vektor reprezentál. Ahányszor előfordul $w \in L$ szó $d$ dokumentumban, $v_{index(w)}$ értéke eggyel növekszik, egyébként marad 0. 
+A tf-idf egy statisztikai módszer, amely arra hivatott, hogy egy szó előfordulásának fontosságát ragadja meg egy dokumentumban, a dokumentumhalmazban. Az algoritmus a Bag Of Words (BOW) modellen alapszik, mely lényege, hogy L szótár esetén egy adott $d \in D$ dokumentumot egy $v \in \mathbb{N}^{|L|}$ vektor reprezentál. Ahányszor előfordul $w \in L$ szó $d$ dokumentumban, $v_{index(w)}$ értéke eggyel növekszik, egyébként marad 0. 
 
 A tf-idf két részből áll: \textit{term frequency} és \textit{inverse document frequency}. A végeredmény a két metrika szorzata. Mindkét metrikára több variáció is van, a legnépszerűbb a következő:
 
@@ -52,7 +52,7 @@ Bár a módszer számításigénye kicsi, továbbá jó választás lehet olyan 
 
 A valószínűségi modellek jól generalizálnak ritka bemenet esetén, azonban ha sűrűbb a bemenet, azok az algoritmusok bizonyulnak hasznosabbnak, amelyek a szavak jelentéstartalmát is képesek ábrázolni.
 
-Azon feladatok esetén, amikor a szemantikának nagyobb szerepe van – ilyen lehet az írott szöveg érzelmi tartalmának vizsgálata – , nem használhatjuk a fenti technikákat. Olyan reprezentációs módszert kell találnunk, amely képes komplexebb problémákat is megoldani. Ilyen probléma például, ha egy szó több jelentéssel is bír (pl.: mész), a szinonímák és a kontextusfüggő szóhasználat (pl.: víz - $H_2O$).
+Azon feladatok során, amikor a szemantikának nagyobb szerepe van – ilyen lehet az írott szöveg érzelmi tartalmának vizsgálata – , nem használhatjuk a fenti technikákat. Olyan reprezentációs módszert kell találnunk, amely képes komplexebb problémákat is megoldani. Ilyen probléma például, ha egy szó több jelentéssel is bír (pl.: mész), a szinonímák és a kontextusfüggő szóhasználat (pl.: víz - $H_2O$).
 
 A szóvektorok részben megoldást nyújthatnak ezen komplikációkra. Szóvektorokat úgy kapunk, ha a lexémákat leképezzük valamely vektortérbe. Ha két szó szemantikai tartalma hasonló, szóvektoruk távolsága kicsi.
 
@@ -76,9 +76,9 @@ A \textit{one-hot} kódolás egy egyszerű és nem hatékony reprezentációs m�
 \end{note}
 
 \subsection*{Szóvektorok - folytatás}
-Ha egy gyors megoldásra lenne szükségünk, vagy egyszerűen szeretnénk neurális modellünk bemenetére juttatni a szöveg szavait a \textit{one-hot} kódolás jó választás lehet. Azonban ha jelentéstartalmat szeretnénk modellezni, ennél komplexebb reprezentációs módszerre lesz szükségünk, ilyen lehet például a szóbeágyazás.
+Ha egy gyors megoldásra lenne szükségünk, vagy egyszerűen szeretnénk neurális hálónk bemenetére juttatni a szöveg szavait a \textit{one-hot} kódolás jó választás lehet. Azonban ha jelentéstartalmat szeretnénk modellezni, ennél komplexebb reprezentációs módszerre lesz szükségünk, ilyen lehet például a szóbeágyazás.
 
-A szóbeágyazás azon a feltevésen alapszik, hogy a hasonló kontextusban előforduló szavak hasonló jelentéstartalommal bírnak. A Word2Vec és a GloVe algoritmusok képesek feldolgozni ezen relációs információt a lexémák között.
+A szóbeágyazás azon a feltevésen alapszik, hogy a hasonló kontextusban előforduló szavak hasonló jelentéstartalommal bírnak. A Word2Vec és a GloVe algoritmusok képesek ezen lexémák közötti relációs információ feldolgozására.
 
 \subsubsection{Word2vec}
 A Word2Vec \cite{mikolov2013efficient} módszer egy sekély neurális hálón alapuló szóbeágyazási algoritmus, melyet 2013-ban mutattak be. A háló tanítását a szerzők alapvetően két felügyelet nélküli feladattal végezték: Continuous Bag of Words (CBOW) vagy Skip-Gram.
@@ -103,8 +103,8 @@ $\left( i \in \left|D\right| \right)$ vektor lesz. A tanítás célja, hogy a h�
 	\caption{Skip-Gram modell}
 \end{figure}
 
-Egy jól tanított Word2Vec modell a hasonló jelentéstartalmú szóvektorokat közelre képezi egymáshoz a vektortérben. 
-A teljesítmény növelése érdekében finomhangolhatjuk a tanítási paramétereket. Ilyen beavatkozás lehet ha növeljük a halmaz méretét, amellyel Word2Vec modellünket tanítjuk, vagy emeljük a kontextus ablak méretét és a reprezentációs dimenziót.
+Egy jól tanított Word2Vec modell a hasonló jelentéstartalmú szavak vektorait közelre képezi egymáshoz a vektortérben. 
+A további precizitás érdekében finomhangolhatjuk a tanítási paramétereket. Ilyen beavatkozás lehet ha növeljük a halmaz méretét, amellyel Word2Vec modellünket tanítjuk, vagy emeljük a kontextus ablak méretét és a reprezentációs dimenziót.
 
 \begin{note}
 	A Skip-Gram modell a ritka szavak, míg a CBOW modell a gyakori szavak esetén készít pontosabb reprezentációt.
@@ -113,7 +113,6 @@ A teljesítmény növelése érdekében finomhangolhatjuk a tanítási paraméte
 
 \subsubsection{GloVe}
 A Word2Vec bemutatását követő évben újabb nagy lépés történt a szóbeágyazás világában, a \textit{Stanford University} NLP kutatócsoportja publikálta a GloVe módszert.
-
 A GloVe (\textit{Global Vectors}) \cite{pennington2014glove} reprezentációs módszer a Word2Vec-hez képest egy korpusz lokális statisztkáján kívül a globális statisztikáit is figyelembe veszi. 
 
 \begin{definition}
@@ -124,14 +123,14 @@ A GloVe modell tanítása egy korpusz közös előfordulási mátrixának nemnul
 
 A módszer mögötti intuíció az, hogy a közös előfordulási valószínűségek hányadosa értékes információval szolgálhat a leképezés során. Így a feladat célja, hogy a tanult szóvektorok skaláris szorzata megegyezzen a szavak közös előfordulási valószínűségének logaritmusával. Mivel $\log \left( \frac{A}{B} \right) = \log \left( A \right) - \log \left( B \right)$, így ez a cél összekapcsolja az előfordulási valószínűségek arányszámát a vektorok távolságával.
 
-Ugyan a globális statisztikáknak köszönhetően a GloVe több feladatban is túlteljesíti a Word2Vec-et, a tanításához szükséges közös előfordulási mátrix memóriaigénye magas. Paraméterhangolás esetén újból fel kell építenie a mátrixot, mely költséges művelet.
+Ugyan a globális statisztikáknak köszönhetően a GloVe több feladatban is túlteljesíti a Word2Vec-et, a tanításához szükséges közös előfordulási mátrix memóriaigénye magas. Paraméterhangolás esetén újból fel kell építeni a mátrixot, amely költséges művelet.
 
 \subsubsection{ELMo}
-A Word2Vec és a GloVe már alkalmas szemantikus információ leképezésére, azonban esetükben az ellentétes szópárok közel kerülnek egymáshoz. Azon feladatoknál, melyeknél az ellentétes szavak kiemelt szerepűek – például a hangulatelemzés – limitációk jelentkezhetnek, továbbá ezen algoritmusok rosszul kezelik az ismeretlen szavakat is.
+A Word2Vec és a GloVe már képes szemantikus információ leképezésére, azonban esetükben az ellentétes szópárok közel kerülnek egymáshoz. Azon feladatoknál, melyeknél az ellentétes szavak kiemelt szerepűek – például a hangulatelemzés – limitációk jelentkezhetnek, továbbá ezen algoritmusok rosszul kezelik az ismeretlen szavakat is.
 
-A Word2Vec és a GloVe csak szavankénti kontextusfüggetlen reprezentáció tanulására képes. Ez azt jelenti, hogy a szótárban található szavakhoz bijektív módon hozzárendelnek egy vektort, így nem számít az adott szó szövegkörnyezete, amelyre alkalmazzák. Az Embeddings from Language Models (ELMo) \cite{elmo} figyelembe veszi a lexémák kontextusát, mondaton belüli elhelyezkedését is, továbbá használat közben állítja elő a vektorokat.
+A Word2Vec és a GloVe csak szavankénti kontextusfüggetlen reprezentáció tanulására képes. Ez azt jelenti, hogy a szótárban található szavakhoz bijektív módon hozzárendelnek egy vektort, így nem számít az adott szó szövegkörnyezete, amelyre aktuálisan alkalmazzák. Az Embeddings from Language Models (ELMo) \cite{elmo} figyelembe veszi a lexémák kontextusát, mondaton belüli elhelyezkedését is, továbbá használat közben állítja elő a vektorokat.
 
-A modell tanításához használt neurális háló több réteg kétirányú LSTM (biLSTM) konkatenációja. A különböző rétegek más és más típusú információt képesek eltárolni.
+A modell tanításához használt neurális háló több réteg kétirányú LSTM (BiLSTM) konkatenációja. A különböző rétegek más és más típusú információt képesek kinyerni.
 
 \begin{figure}[H]
 	\centering
@@ -139,7 +138,7 @@ A modell tanításához használt neurális háló több réteg kétirányú LST
 	\caption{ELMo modell}
 \end{figure}
 
-Az ELMo a különböző rétegek kimenetének feladatspecifikus kombinációján alapszik. Egy adott NLP feladatra minden BiLSTM réteg egyedi súlyt kap. A végső háló 2 darab BiLSTM rétegből áll, minden LSTM réteg 4096 széles.
+Az ELMo a különböző rétegek kimenetének feladatspecifikus kombinációján alapszik. Egy adott NLP feladatra minden BiLSTM réteg egyedi súlyt kapott. A végső háló 2 darab BiLSTM rétegből állt, minden LSTM réteg mérete 4096 volt.
 Az így kapott sekély kétirányú módszer jelentősen javított a szóvektorok pontosságán.
 
 Bár az ELMo egy karakter (konkatenáció) alapú reprezentációs algoritmus, szavakat ábrázol. Ezen tulajdonsága alapján képes kezelni az addig nem látott szavak problémáját is.
@@ -148,7 +147,7 @@ Bár az ELMo egy karakter (konkatenáció) alapú reprezentációs algoritmus, s
 \subsubsection{BERT}
 Egy 2018-ban publikált cikk \cite{char} rámutatott arra, hogy a karakteralapú algoritmusok – tehát amelyek karaktereket fogadnak bemenetül tanulás során – nem teljesítenek olyan jól, mint a szóalapú társaik. A Bidirectional Encoder Representations from Transformers (BERT) \cite{2018arXiv181004805D} egy a Google által kifejlesztett transformer architektúrájú nyelvi modell. Az ELMo-hoz hasonlóan ez is kétirányú, azaz egy szó mindkét oldali kontextusát figyelembe veszi a tanulás alatt. A BERT azonban bemenetként nem szavakat és nem is karaktereket kap, hanem szótöredékeket.
 
-A tanítást a \textit{transfer learning} szerint két fázisra bontották: előtanítás és finomhangolás. Az előtanítás két feladatból állt: \textit{következő mondat} és \textit{maszkolás}.
+A szerzők a tanítást a \textit{transfer learning} szerint két fázisra bontották: előtanítás és finomhangolás. Az előtanítás két feladatból állt: \textit{következő mondat} és \textit{maszkolás}.
 A bemenetben megadták a szótöredék tokeneket, a tokenekhez tartozó mondaton belüli helyadatokat és azt, hogy az adott token A vagy B mondat közül melyikhez tartozik.
 
 \begin{figure}[H]
@@ -157,7 +156,7 @@ A bemenetben megadták a szótöredék tokeneket, a tokenekhez tartozó mondaton
 	\caption{A BERT bemenete}
 \end{figure}
 
-A \textit{következő mondat} esetében a mélyháló feladata kitalálni, hogy A[SEP]B input mondatokra B rákövetkezője-e A-nak. A \textit{maszkolás} során véletlenszerűen letakarták a tokeneket a mondatokban és a mélyháló megpróbálta kitalálni, hogy eredetileg melyik szó volt a [MASK] token helyén.  A [CLS] token a klasszifikációs feladat alatt a mondatot ábrázolja, a [SEP] a mondatok közötti szeparátor és a [MASK] a letakart szótöredékeket helyettesíti. A továbbiakban a modell finomhangolása az adott NLP feladat szerint történik.
+A \textit{következő mondat} esetében a mélyháló feladata volt kitalálni, hogy A[SEP]B input mondatokra B rákövetkezője-e A-nak. A \textit{maszkolás} során véletlenszerűen letakarták a tokeneket a mondatokban és a mélyháló megpróbálta kitalálni, hogy eredetileg melyik szó volt a [MASK] token helyén.  A [CLS] token a klasszifikációs feladat alatt a mondatot ábrázolta, a [SEP] a mondatok közötti szeparátor volt és a [MASK] a letakart szótöredékeket helyettesítette. A továbbiakban a modell finomhangolása az adott NLP feladat szerint történt.
 
 Míg az ELMo különböző balról-jobbra és jobbról-balra olvasó rétegek konkatenációjaként állítja elő a vektorokat, addig a BERT a valódi mély architektúrájával csak egyszer dolgozza fel a tokeneket. A \textit{transformer} architektúra nem igényel vektoriális bemenetet, saját reprezentációt épít a tokenek számára is. A BERT a szóvektorok előállításán kívül a teljes szekvenciát is képes ábrázolni, ezt a bemeneti [CLS] tokenhez tartozó reprezentációs vektor segítségével teszi.
 
@@ -183,24 +182,23 @@ A szerzők rekurrens enkóder-dekóder architektúrát használtak a tanításho
 	\caption{A Skip-thought enkóder-dekóder architektúrája}
 \end{figure}
 
-Az enkóder és dekóder blokkokhoz rekurrens hálót használtak, melyek lehetnek LSTM és GRU rétegek is. Az enkóder célja a legjobb teljesítményével segíteni a dekóder blokkokat, míg a dekóder blokkok célja minimalizálni az előző és a következő mondat rekonstrukciós hibáját. Olyan szavak esetén, melyeket a háló még nem ismer, tanítottak egy $f:V_{w2v} \rightarrow V_{rnn}$ lineáris leképezést, ahol $V_{w2v}$ és $V_{rnn}$ rendre a Word2Vec és a rekurrens modell szótára. A reprezentáció vektora a rejtett, úgy nevezett \textit{thought} vektor (T).
+Az enkóder és dekóder blokkokhoz rekurrens hálót használtak, melyek lehetnek LSTM és GRU rétegek is. Az enkóder célja az volt, hogy a legjobb teljesítményével segítse a dekóder blokkokat, míg a dekóder blokkok célja minimalizálni az előző és a következő mondat rekonstrukciós hibáját. Olyan szavak esetén, melyeket a háló még nem ismert, tanítottak egy $f:V_{w2v} \rightarrow V_{rnn}$ lineáris leképezést, ahol $V_{w2v}$ és $V_{rnn}$ rendre a Word2Vec és a rekurrens modell szótára. A tanult reprezentáció vektora a rejtett, úgy nevezett \textit{thought} vektor (T).
 
-Bár a \textit{Skip-thought} módszer képes a mondaton belüli és kívüli sorrendiségi információ leképezésére is, csak olyan esetben teljesít megfelelően, ahol az egyes mondatok – melyekre alkalmazzák – megfelelő kontextusban szerepelnek, nem izoláltak.
+Bár a \textit{Skip-thought} módszer képes a mondatokon belüli és kívüli sorrendiségi információ leképezésére is, csak olyan esetben teljesít megfelelően, ahol az egyes mondatok – melyekre alkalmazzák – megfelelő kontextusban szerepelnek, nem izoláltak.
 
 \subsubsection{InferSent}
-2017-ben a Facebook kutatói jelentős áttörést értek el a mondatszintű reprezentációs módszerek terén, a technika neve InferSent \cite{infer}. Hasonló algoritmusokkal ellentétben a szerzők felügyelt tanítást végeztek, melyhez az SNLI adathalmazt vették igénybe. A cikk megmutatta, hogy egy kisebb adathalmazon történő felügyelt tanítás felülmúlhatja a nagyobb adathalmazon nem felügyelt módon tanított modellek teljesítményét.
+2017-ben a Facebook kutatói jelentős áttörést értek el a mondatszintű reprezentációs módszerek terén, a technika neve InferSent \cite{infer}. Hasonló algoritmusokkal ellentétben a szerzők felügyelt tanítást végeztek, melyhez az SNLI adathalmazt \cite{snli} vették igénybe. A cikk megmutatta, hogy egy kisebb adathalmazon történő felügyelt tanítás felülmúlhatja a nagyobb adathalmazon nem felügyelt módon tanított modellek teljesítményét.
 
-Az SNLI adathalmaz 570 ezer darab – ember által írt és címkézett – mondatpárból áll. A címkék a következők: következmény, ellentmondás és semleges.
-
-Négyféle neurális architektúrát összemérve a legpontosabb eredményt a BiLSTM + max pooling mutatta. 
+Az SNLI adathalmaz 570 ezer darab – emberek által írt és címkézett – mondatpárból áll. A címkék a következők: következmény, ellentmondás és semleges.
+Négyféle neurális architektúrát összemérve a legpontosabb eredményt a BiLSTM \textit{max pooling} prezentálta. 
 
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.5\textwidth,height=200px]{biLSTM-max-pooling}
-	\caption{A BiLSTM + max pooling architektúra}
+	\caption{A BiLSTM max pooling architektúra}
 \end{figure}
 
-Az SNLI feldolgozásához szükséges NLI feladat speciális szerkezetet igényel. Mivel kontextusfüggetlen reprezentációt akartak előállítani, amely izolált formában is működik, a mondatpárok GloVe vektorait szeparáltan enkódolták.
+Az SNLI feldolgozásához szükséges NLI feladat speciális szerkezetet igényelt. Mivel kontextusfüggetlen reprezentációt akartak előállítani, amely izolált formában is működik, a mondatpárok GloVe vektorait szeparáltan enkódolták.
 
 \begin{figure}[H]
 	\centering
@@ -210,10 +208,10 @@ Az SNLI feldolgozásához szükséges NLI feladat speciális szerkezetet igénye
 
 Az így készült u és v vektorokból egy speciális reprezentáció készült: u, v, $\left| u - v \right|$ és $u \ast v$ (vektoriális szorzat) konkatenációjával, melyet végül egy 3 osztályú klasszifikáló hálóba vezettek.
 
-A szerzők a reprezentációs vektorméret növelésével pontosabb eredményt kaptak, de a vektorok memóriaigénye emelkedett. Az InferSent megoldja a kontextusfüggőség problémáját, így a módszer már szövegrészletekre is alkalmazható.
+A szerzők a reprezentációs vektorméret növelésével pontosabb eredményt kaptak, de a vektorok memóriaigénye emelkedett. Az InferSent megoldja a kontextusfüggőség problémáját, így a módszer szövegrészletekre is alkalmazható.
 
 \begin{note}
-	Az InferSent napjaink egyik legjobb teljesítményű szemantikus reprezentációs algoritmusa.
+	Az InferSent napjaink egyik legjobb teljesítményű mondatszintű szemantikus reprezentációs algoritmusa.
 \end{note}
 
 \subsubsection{USE}
@@ -228,22 +226,22 @@ Az InferSent bemutatását követő évben a Google Research csapata a modern re
 A \textit{transformer} modell egyik algráfja a mondatokban lévő szavak kontextusfüggő reprezentációját állítja elő. A folyamat során figyelembe veszi az egyes lexémák sorrendi és egyéni információit is, majd összegzi őket, így megkapja a végső mondatszintű reprezentációt.
 A \textit{DAN} modell az input tokenek vektorait először átlagolja, majd \textit{feed forward} rétegek segítségével előállítja a mondatvektorokat. A USE szavakból, mondatokból, vagy akár rövidebb bekezdésekből is képes 512 méretű vektorokat generálni.
 
-A neurális hálók tanítását két részre bontották, bemenetként angol nyelvű karakterláncokat kaptak. Az első rész a \textit{Skip-thought}-hoz hasonló módon, dialógusokból vett mondat-válasz párokkal, illetve felügyelt módon a \textit{Stanford Natural Language Inference} (SNLI) korpuszon történt.
+A neurális hálók tanítását két részre bontották, bemenetként angol nyelvű szöveget kaptak. Az első rész a \textit{Skip-thought}-hoz hasonló módon, dialógusokból vett mondat-válasz párokkal, illetve felügyelt módon a \textit{Stanford Natural Language Inference} (SNLI) korpuszon történt.
 
-A cikk során kiemelt szerepet kapott a tanítás második fázisa. Számos módon finomhangolták a modelleket és mérték a teljesítményüket. A feladatok közé tartozott, hogy filmes értékelések szövege alapján ki kellett találnia a neurális hálóknak az értékelések pontszámát 1 és 5 között. Továbbá vásárlói értékelések hangulati töltetét kellett prediktálniuk.
+A cikkben kiemelt szerepet kapott a tanítás második fázisa. Számos módon finomhangolták a modelleket és mérték a teljesítményüket. A feladatok közé tartozott, hogy filmes értékelések szövege alapján ki kellett találnia a neurális hálóknak az értékelések pontszámát 1 és 5 között. Továbbá vásárlói vélemények hangulati töltetét kellett prediktálniuk.
 
- Az algoritmusokat kipróbálták a szavak szintjén, a mondatok szintjén és a kettő módszer konkatenációjaként is. A legjobb teljesítményt a mondatszintű reprezentációk mutatták. A transformer architektúra pontosabb eredményt hozott, mint a DAN alapú modell, de a transformer modell $\mathcal{O}(n^2)$, míg a DAN modell $\mathcal{O}(n)$ időkomplexitású a bemeneti hossz függvényében. Továbbá memóriahasználatban is kedvezőbb választás a DAN.
+Az algoritmusokat kipróbálták a szavak szintjén, a mondatok szintjén és a kettő módszer konkatenációjaként is. A legjobb teljesítményt a mondatszintű reprezentációk mutatták. A transformer architektúra pontosabb eredményt hozott, mint a DAN alapú modell, de a transformer modell $\mathcal{O}(n^2)$, míg a DAN modell $\mathcal{O}(n)$ időkomplexitású volt a bemeneti hossz függvényében. Továbbá memóriahasználatban is kedvezőbb választás volt a DAN.
 
-A \textit{GloVe}-hoz hasonlóan a USE is képes asszociációkra, de jóval gyengébb ezen képessége az olyan kényes témák esetében, mint a szexizmus és a rasszizmus. Ez a tény alkalmassá teheti a USE-t az ipari használatra is.
+A GloVe-hoz hasonlóan a USE is képes asszociációkra, de jóval gyengébb ezen képessége az olyan kényes témák esetében, mint a szexizmus és a rasszizmus. Ez a tény alkalmassá teheti a USE-t az ipari használatra is.
 
-A szerzők rávilágítottak arra, hogy kevés adat esetén jó választás lehet a \textit{transfer learning} módszere, és a magasabb szintű reprezentációk pontosabb eredményt érhetnek el a legtöbb feladat esetében.
+A szerzők rávilágítottak arra, hogy kevés adat esetén jó választás lehet a \textit{transfer learning} módszere és a magasabb szintű reprezentációk pontosabb eredményt érhetnek el a legtöbb feladat esetében.
 
 \subsection{Dokumentumszintű reprezentáció}
 Ahogy a technológia fejlődik, úgy növekszik a világon az egységnyi idő alatt előállított információ mennyisége is. Gyakori eset, hogy ez írott formában, dokumentumokban jelenik meg. Dokumentumnak tekinthetünk minden, a mondatnál hosszabb emberi nyelven írott szöveget.
 
 Bár a magasabb nyelvi egységek értelmezése és feldolgozása sok területen előkerülő feladat, mégsem triviális. Nagy kihívást jelent a szemantikai szimilaritás mérése, az olyan gyakorlati problémákat nem is említve, mint a duplikációk kiszűrése a fórumokról, vagy a szociális média analízis.
 
-2014-ben a Word2Vec szerzői előálltak egy dokumentumszintű reprezentációs algoritmussal. A Doc2Vec \cite{le2014distributed} módszer a Word2Vec modell kiterjesztése a dokumentumok szintjére. Mivel a dokumentumokat nem lehet a szavakhoz hasonló logikai struktúrába rendezni, ezért a megszokott \textit{CBOW} modell bemeneti vektorai mellé egy speciális, a magasabb nyelvi elem azonosítóját jelölő vektort konkatenáltak. Az algoritmus neve PV-DM. A modell tanítása végén a speciális vektor reprezentációja képviseli a dokumentumot.
+2014-ben a Word2Vec szerzői előálltak egy dokumentumszintű reprezentációs algoritmussal. A Doc2Vec \cite{le2014distributed} módszer a Word2Vec modell kiterjesztése a dokumentumok szintjére. Mivel a dokumentumokat nem lehet a szavakhoz hasonló logikai struktúrába rendezni, ezért a megszokott \textit{CBOW} modell bemeneti vektorai mellé egy speciális, a magasabb nyelvi elem azonosítóját jelölő vektort konkatenáltak. Az algoritmus neve PV-DM. A modell tanítása végén a speciális vektor reprezentációja képviselte a dokumentumot.
 
 \begin{figure}[H]
 	\centering
@@ -253,11 +251,11 @@ Bár a magasabb nyelvi egységek értelmezése és feldolgozása sok területen 
 
 A Word2Vec-hez hasonlóan a Doc2Vec-nek is létezik \textit{Skip-Gram} alternatívája, ez a PV-DBOW. A PV-DBOW modell gyorsabb és memóriahasználat szempontjából is gazdaságosabb a PV-DM-hez képest.
 
-Mivel relatíve kevés algoritmus képes dokumentumszintű modellezésre és azok teljesítménye is limitált, a Doc2Vec egy jó választás lehet. A modell egyszerre mutat jó teljesítményt és a használata is könnyű.
+Mivel relatíve kevés algoritmus képes dokumentumszintű modellezésre és azok teljesítménye is limitált, a Doc2Vec egy jó választás lehet. A modell egyszerre mutat jó teljesítményt és a használata is egyszerű.
 
 \section{Transfer learning}
 
-A modern szemantikus reprezentációs algoritmusok tanítása összetett folyamat. A feladatok során egyszerre kell több szempontra figyelni, melyek befolyásolhatják a modellünk pontosságát. Példának okáért mondatszintű reprezentációnknak képesnek kell lennie értelmezni a lexémák egymáshoz fűződő viszonyait és a mondatok közötti kohéziót is. A \textit{transfer learning} egy kiváló eszköz arra, hogy modellünket tanítsuk több aspektus szerint.
+A modern szemantikus reprezentációs algoritmusok tanítása összetett folyamat. A feladatok során egyszerre kell több szempontra figyelni, melyek befolyásolhatják a modellünk pontosságát. Példának okáért mondatszintű reprezentációnknak képesnek kell lennie értelmezni a lexémák egymáshoz fűződő viszonyait és a mondatok közötti kohéziót is. A \textit{transfer learning} egy kiváló eszköz arra, hogy modellünket több aspektus szerint tanítsuk.
 
 A \textit{transfer learning} napjainkban közkedvelt tanítási módszer, melynek ötletét az NLP ágazata a számítógépes látás eszközkészletéből merítette. A folyamatot két fázisra lehet bontani: előtanítás és a finomhangolás. Az előtanítás általában nagy mennyiségű adaton történik. A finomhangolás az előtanítás után kapott modell – adott NLP feladathoz szükséges – speciális feladatokon való tanítását jelenti, amely szignifikánsan kevesebb adatot igényel.
 
@@ -271,9 +269,9 @@ A \textit{transfer learning} napjainkban közkedvelt tanítási módszer, melyne
 	\caption{Transfer learning}
 \end{figure}
 
-Az előtanítási szakasz olyan feladattal kezdődik, mely kellőképpen generalizál és a neurális hálónk sok, hasznos és általános információhoz tud jutni. A folyamathoz használt adathalmaz általában nagy mennyiségű annotálatlan adatot tartalmaz, de vannak kivételek, például az InferSent esetében.
+Az előtanítási szakasz olyan feladattal kezdődik, amely kellőképpen generalizál és a neurális hálónk sok, hasznos és általános információhoz tud jutni. A folyamathoz használt adathalmaz általában nagy mennyiségű annotálatlan adatot tartalmaz, de lehetnek kivételek, például a USE esetében.
 
-A finomhangolási fázis alatt használt feladatok az előtanítás után kapott modell súlyait alkalmazzák, de a bemeneti adatok és a feladatok végrehajtásához szükséges fej lehet eltérő is. Ezen szakasz állhat feladatok sorozatából is, ekkor a súlyokat inkrementálisan használják azok. A sikeres végrehajtást követően modellünk képes lesz komplexebb összefüggések felismerésére és pontosabb eredmény elérésére.
+A finomhangolási fázis alatt használt feladatok az előtanítás után kapott modell súlyait alkalmazzák, de a bemeneti adatok és a feladatok végrehajtásához szükséges fej lehet eltérő is. Ezen szakasz állhat feladatok sorozatából is, ekkor a súlyokat inkrementálisan használják azok. A sikeres végrehajtást követően modellünk képes lesz komplexebb összefüggések felismerésére és jobb teljesítmény elérésére.
 
 A jelenlegi trendek szerint a reprezentációs módszerek tanítási módja nagyobb hangsúlyt kap, mint maga a neurális háló szerkezete. A \textit{transfer learning} használata a numerikus ábrázolás során még kiaknázatlan terület, mely rendkívül sok eredményt hozhat a jövőben.
 

@@ -1,7 +1,7 @@
 \chapter{Összegzés} % Conclusion
 \label{ch:sum}
 
-A természetes szövegfeldolgozás és annak ágazata, a szemantikus reprezentáció mind akadémiai, mind ipari értelemben gyorsuló ütemben fejlődő területek, amelyek a mai napig rengeteg felderítésre váró lehetőséget tartogatnak. A numerikus ábrázoló algoritmusok teljesítményének növekedése olyan gyakorlati alkalmazások pontosságának javulását indukálják, melyek segítségével hatékonyan kiszűrhető a gyűlöletbeszéd a szociális médiából, vagy akár eredményesen felvehető a harc az álhírek terjedésével szemben. 
+A természetesnyelv-feldolgozás és annak ágazata, a szemantikus reprezentáció mind akadémiai, mind ipari értelemben gyorsuló ütemben fejlődő területek, amelyek a mai napig rengeteg felderítésre váró lehetőséget tartogatnak. A numerikus ábrázoló algoritmusok teljesítményének növekedése olyan gyakorlati alkalmazások pontosságának javulását indukálják, melyek segítségével hatékonyan kiszűrhető a gyűlöletbeszéd a szociális médiából, vagy akár eredményesen felvehető a harc az álhírek terjedésével szemben. 
 
 Diplomamunkám végeredménye egy kétirányú mondat- és paragrafusszintű előre tanított szemantikus reprezentációs modell, amely képes leképezni a magyar nyelven írt mondatokat a szemantikus térbe. Magyar nyelvű tanítóadat a nyelv beszéltségéből fakadóan nem, vagy csak elvétve elérhető. A neurális háló tanításához használt adathalmaz előállítása nem igényel emberi címkézést, olcsó és a végtelenségig skálázható. Továbbá a tanításra szolgáló feladatok jellegéből fakadóan, az algoritmus jó eséllyel átültethető más kis és közepes nyelvre is.
 
@@ -18,11 +18,9 @@ Az általam létrehozott modellek mindegyike csupán előtanított, finomhangol�
 
 Jelen működés szerint a maszkolt szavak közül csak a \textit{padding} tokenek kerülnek 0 súllyal a bemenetre. Ha sok ismeretlen szó található a tanítási halmazban, akkor a modellünk elfogulttá válhat az azokat jelölő token felé, így nehezebbé téve a tanulási folyamatot. Ennélfogva előfordulhat, hogy az ilyen tokenek nullával történő súlyozása jobb konvergációra készteti a modellt.
 
-%több adat
-
 \section*{Összegzés - folytatás}
 
-A magyar nyelvű természetes szövegfeldolgozás dolgozatom által érintett ágazata egyelőre meglehetősen kezdetleges állapotú, ennek köszönhetően számtalan lehetőséget rejt. A jövőben olyan alkalmazási területek is elérhetik a kívánt pontosságot, melyek ma még igencsak limitáltak, így a mobiltelefonunkon található személyi asszisztensünkkel akár magyar nyelven is kommunikálhatunk.
+A magyar nyelvű természetesnyelv-feldolgozás dolgozatom által érintett ágazata egyelőre meglehetősen kezdetleges állapotú, ennek köszönhetően számtalan lehetőséget rejt. A jövőben olyan alkalmazási területek is elérhetik a kívánt pontosságot, melyek ma még igencsak limitáltak, így a mobiltelefonunkon található személyi asszisztensünkkel akár magyar nyelven is kommunikálhatunk.
 
 Bízom benne, hogy az általam tanításra használt feladatok és technikák segítségül lehetnek a kis és közepes nyelveken létrehozandó modellek fejlesztésénél.
 
@@ -31,3 +29,7 @@ Bízom benne, hogy az általam tanításra használt feladatok és technikák se
 \section{Köszönetnyilvánítás}
 
 KÖSZÖNET
+
+A projekt az Európai Unió támogatásával, az Európai Szociális Alap
+társfinanszírozásával valósul meg (EFOP-3.6.3-VEKOP-16-2017-00002).
+
