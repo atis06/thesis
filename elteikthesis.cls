@@ -529,3 +529,5 @@
 	\setcounter{page}{1}
 }
 % ------------------------------
+
+\usepackage{pdfpages}
