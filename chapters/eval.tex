@@ -3,13 +3,13 @@
 
 A modern szemantikus reprezentációs algoritmusok célja, olyan univerzális és általános modellek előállítása, amelyek bármely rendszerben képesek igazodni az adott kihívásokhoz és megfelelő pontossággal teljesíteni az eléjük tűzött feladatokat.
 
-A nyelvi modellek teljesítményének mérése nem triviális feladat. Bár a publikációk során a szerzők többnyire saját módszerrel mérnek, vannak már meglévő komplex kiértékelési keretrendszerek – például SentEval \cite{senteval}, GLUE \cite{glue} – és az igény is egyre nagyobb ezekre. A teljesítmény mérésére szolgáló rendszerek segítségével egységes képet kaphatunk a módszerünk pontosságáról, illetve a csalás lehetősége is korlátozott. A kiértékelés közben a reprezentációs modelleknek olyan feladatok sorozatát kell megoldaniuk, mint a vélemény-polaritás, bináris érzelmi analízis, következtetés vizsgálat, szemantikus hasonlóság.
+A nyelvi modellek teljesítményének mérése nem triviális feladat. Bár a publikációk során a szerzők többnyire saját módszerrel mérnek, vannak már meglévő komplex kiértékelési keretrendszerek – például SentEval \cite{senteval}, GLUE \cite{glue} – és az igény is egyre nagyobb ezekre. A teljesítmény mérésére szolgáló rendszerek segítségével egységes képet kaphatunk a módszerünk pontosságáról, illetve a csalás lehetősége is korlátozott. A kiértékelési folyamat közben a reprezentációs modelleknek olyan feladatok sorozatát kell megoldaniuk, mint a vélemény-polaritás, bináris érzelmi analízis, következtetés vizsgálat, szemantikus hasonlóság.
 
 Mivel a munkám során tanított modellek mindegyike magyar nyelvű, így nem használhattam ezen megoldásokat. Szükségem volt egy saját kiértékelési feladat implementálására.
 
 \section{Vélemények bináris érzelmi analízise}
 
-Az általam létrehozott modellek pontosságának mérésére használt feladatnak több szempont szerint is meg kellett felelni. Jó kiértékelési feladat az, amelyik kellőképpen "nehéz", így a modellek közti teljesítménybeli különbségek jól interpretálhatóak. Továbbá a feladathoz tartozó adathalmaznak elegendő elemet kell tartalmaznia ahhoz, hogy a feladat elkerülje a túltanulás problémáját és hiteles kimenetet kapjunk végeredményül. Az \textit{arukereso}-nek nevezett adathalmaz bináris osztályozása a vélemények érzelmi tartalma alapján megfelelő kihívásnak minősült ahhoz, hogy az általam tanított modellek pontosságát meg tudjam határozni.
+Az általam létrehozott modellek pontosságának mérésére használt feladatnak több szempont szerint is meg kellett felelni. Jó kiértékelési feladat az, amelyik kellőképpen "nehéz", így a modellek közti teljesítménybeli különbségek jól interpretálhatóak. Továbbá a feladathoz tartozó adathalmaznak elegendő elemet kell tartalmaznia ahhoz, hogy a feladat elkerülje a túltanulás problémáját és hiteles kimenetet kapjunk végeredményül. A \textit{velemenyek}-nek nevezett adathalmaz bináris osztályozása a vélemények érzelmi tartalma alapján megfelelő kihívásnak minősült ahhoz, hogy az általam tanított modellek pontosságát meg tudjam határozni.
 
 A mérés során az annotált tanítóhalmaz elemeit – azaz pozitív vagy negatív osztályba tartozó értékeléseket – a meglévő modellek segítségével vektortérbe képeztem. Majd az így kapott vektor-címke párokkal tanítottam különféle osztályozó algoritmusokat. Ezen algoritmusok teszthalmazon történő kiértékelésének kimenete adta meg az adott szemantikus modell pontosságát.
 
@@ -39,13 +39,13 @@ Egy bináris osztályozási feladat teljesítménye többféle metrika szerint i
 		\textbf{lstm\_4096\_norm} & \textbf{87.16\%} & \textbf{83,71\%} & 83,90\% \\
 		\hline
 	\end{tabular}
-	\caption[A modellek pontossága]{A modellek klasszifikációs pontossága az arukereso adathalmazon. A w2v\_sm az oscar\_sm, a w2v\_lg az oscar halmazon tanított modelleket, a norm posztfix a normált bemenetet jelöli. A számok a modellek nevében a reprezentációs vektor méretére utalnak.}
+	\caption[A modellek pontossága]{A modellek klasszifikációs pontossága a velemenyek adathalmazon végzett bináris osztályozási feladat esetén. A w2v\_sm az oscar\_sm, a w2v\_lg az oscar halmazon tanított modelleket, a norm posztfix a normált bemenetet jelöli. A számok a modellek nevében a reprezentációs vektor méretére utalnak.}
 	\label{tab:evaluation}
 \end{table}
 
-Az \ref{tab:evaluation}-es táblázat az arukereso adathalmazon mért klasszifikációs pontosságokat foglalja össze. A kiértékeléshez használt osztályozó algoritmusok a Linear SVM, XGBoost és Random Forest. A \textit{w2v\_sm} Word2vec modellt az \textit{oscar\_sm} halmazon, a \textit{w2v\_lg}-t az \textit{oscar} halmazon tanítottam. Az \textit{lstm} prefixű modellek a bemutatott módszerrel előállított nyelvi modellek.
+Az \ref{tab:evaluation}-es táblázat a \textit{velemenyek} adathalmazon mért klasszifikációs pontosságokat foglalja össze. A kiértékeléshez használt osztályozó algoritmusok a Linear SVM, XGBoost és Random Forest. A \textit{w2v\_sm} Word2vec modellt az \textit{oscar\_sm} halmazon, a \textit{w2v\_lg}-t az \textit{oscar} halmazon tanítottam. Az \textit{lstm} prefixű modellek a bemutatott módszerrel előállított nyelvi modellek.
 
-A mért eredmények azt mutatják, hogy az általam ismertetett módszer esetén a bemeneti rétegnek átadott \textit{w2v\_sm} és a jelentősen nagyobb szótárral rendelkező \textit{w2v\_lg} teljesítménye közötti különbség elenyésző. Továbbá a normált bemenettel tanított modellek használata közben az algoritmusok nagyobb százalékban osztályoznak megfelelően. A feladatot legnagyobb pontossági értékkel abszolváló modell az \textit{lstm\_4096\_norm}, amely alkalmazása során a helyesen klasszifikált elemek aránya 87,16\% volt.
+A mért eredmények azt mutatják, hogy a munkám során ismertetett módszer esetén a bemeneti rétegnek átadott \textit{w2v\_sm} és a jelentősen nagyobb szótárral rendelkező \textit{w2v\_lg} teljesítménye közötti különbség elenyésző. Továbbá a normált bemenettel tanított modellek használata közben az algoritmusok nagyobb százalékban osztályoznak megfelelően. A feladatot legnagyobb pontossági értékkel abszolváló modell az \textit{lstm\_4096\_norm}, amely alkalmazása során a helyesen klasszifikált elemek aránya 87,16\% volt.
 
 \begin{figure}[H]
 	\centering
@@ -53,11 +53,11 @@ A mért eredmények azt mutatják, hogy az általam ismertetett módszer esetén
 		\includegraphics[width=0.6\linewidth]{matrix-4096}}
 	\subfigure[w2v\_lg\_norm]{
 		\includegraphics[width=0.6\linewidth]{matrix-w2v}}
-	\caption{A legjobban teljesítő LSTM és Word2Vec alapú modellek tévesztési mátrixa}
+	\caption{A bináris klasszifikáció során legjobban teljesítő LSTM és Word2Vec alapú modellek tévesztési mátrixa}
 	\label{fig:matrix}
 \end{figure}
 
-Az \ref{fig:matrix}-es ábra a legpontosabb általam bemutatott és Word2Vec alapú modell tévesztési mátrixát ábrázolja a Linear SVM oszályozó algoritmusra. Az \textit{lstm\_4096\_norm} segítségével az osztályozó 298 esetben helyes döntést hozott, míg a Word2Vec vektorok alkalmazása során helytelenül választott. Az igaz pozitív, igaz negatív, hamis pozitív, hamis negatív csoportok a két esetben relatíve kiegyensúlyozottak.
+Az \ref{fig:matrix}-es ábra a legpontosabb általam bemutatott és Word2Vec alapú modell tévesztési mátrixát ábrázolja a Linear SVM oszályozó algoritmusra a bináris klasszifikáció során. Az \textit{lstm\_4096\_norm} modell segítségével az osztályozó 298 esetben helyes döntést hozott, míg a Word2Vec vektorok alkalmazása során helytelenül választott. Az igaz pozitív, igaz negatív, hamis pozitív, hamis negatív csoportok a két esetben relatíve kiegyensúlyozottak.
 
 \begin{figure}[H]
 	\centering
@@ -65,28 +65,10 @@ Az \ref{fig:matrix}-es ábra a legpontosabb általam bemutatott és Word2Vec ala
 		\includegraphics[width=0.6\linewidth]{roc-4096}}
 	\subfigure[w2v\_lg\_norm]{
 		\includegraphics[width=0.6\linewidth]{roc-w2v}}
-	\caption{A legjobban teljesítő LSTM és Word2Vec alapú modellek ROC görbéje}
+	\caption{A bináris klasszifikáció során legjobban teljesítő LSTM és Word2Vec alapú modellek ROC görbéje}
 	\label{fig:roc}
 \end{figure}
 
-Az \ref{fig:roc}-es ábra a fent található tévesztési mátrixokhoz tartozó ROC görbéket illusztrálja. Az \textit{lstm\_4096\_norm} modellre vonatkozó függvény görbe alatti területe nagyobb, mint a Word2Vec modell esetén, amely szerint az LSTM alapú reprezentációs módszer segítségével a Linear SVM algoritmus pontosabb osztályozásra képes.
+Az \ref{fig:roc}-es ábra a fent található tévesztési mátrixokhoz tartozó ROC görbéket illusztrálja. Az \textit{lstm\_4096\_norm} modellre vonatkozó függvény görbe alatti területe nagyobb, mint a Word2Vec modell esetén, amely szerint az LSTM alapú reprezentációs módszer segítségével a Linear SVM algoritmus pontosabb osztályozásra képes a bináris klasszifikációs feladat során.
 
-KONKLÚZIÓ
-
-
-BEFEJEZÉS
-
-
-%befejezés:
-%saját halmaz - nem túl kiterjedt, tehát nem a nyelvi modell egészét méri de adott feladatra jó - cite
-
-% kód cite
-
-%más módszereket is ki lehet vele mérni, publikusan elérhető adathalmaz
-
-
-
-
-
-
-
+Ugyan a kiértékeléshez használt módszer csak egy feladatra koncentrál, így egy bizonyos aspektus szerint méri a modellek teljesítményét, mégis viszonyítási alapként szolgál. A dolgozatban bemutatott reprezentációs algoritmus az általam vizsgált összehasonlítási szempontok alapján körülbelül másfél százalékkal pontosabb osztályozásra képes az említett Word2Vec modellekhez képest.
