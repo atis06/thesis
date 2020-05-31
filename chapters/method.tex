@@ -181,10 +181,10 @@ A fej a BiLSTM háló \textit{max pooling} utáni vektoriális kimenetével, teh
 A \textit{multitask learning} során a neurális háló egyszerre két feladatot próbál megoldani, így jobban generalizál. A háló a GD (\textit{Gradient Descent}) nevű algoritmus segítségével minimalizálja a globális \textit{loss} függvényt, amely a két feladat \textit{loss} függvényének összege.
 A GD számára implementáltam egy konfigurálható \textit{decay} algoritmust. A \textit{learning rate decay} a \textit{loss} függvény értékének \textit{epoch}-onkénti túl lassú csökkenése esetén öttel osztja a \textit{learning rate}-et, így elérve a jobb konvergációs képességet. Az algoritmus minden \textit{epoch} során menti a \textit{transfer} számára szükséges súlyokat és a tanítás aktuális állapotát is.
 
-A jól paraméterezhető tanítás érdekében az implementáció során törekedtem a minél széleskörűbb konfigurálhatóságra. A következő tanításra vonatkozó értékeket állíthatja a felhasználó:
+A jól paraméterezhető tanítás érdekében az implementáció során törekedtem a minél széleskörűbb konfigurálhatóságra. A következő tanításra vonatkozó értékek állíthatók:
 \begin{itemize}
 	\item \textit{batch\_size} : A tanításhoz használt \textit{minibatch}-ek mérete.
-	\item \textit{num\_inputs} : Az input vektorok mérete.
+	\item \textit{num\_inputs} : Az input vektorok mérete. Word2Vec azonosítók esetén 1.
 	\item \textit{num\_time\_steps} : A bemenet szélessége.
 	\item \textit{min\_sentence\_length} : A legkisebb tokenszám amit az algoritmusnak figyelembe kell vennie.
 	\item \textit{max\_sentence\_length} : Az egyes mondatok \textit{padding} utáni hossza.
@@ -195,7 +195,7 @@ A jól paraméterezhető tanítás érdekében az implementáció során töreke
 	\item \textit{lr\_decay} : \textit{Learning rate decay} ki/be.
 	\item \textit{lr\_decay\_threshold} : Az előző és az aktuális \textit{epoch loss} érték mekkora különbsége estén ossza le a \textit{learning rate}-et öttel. Az alapérték 0, tehát ha magasabb, vagy ugyan akkora az aktuális \textit{epoch loss} érték, mint az előző.
 	\item \textit{epochs} : Az adathalmazon történő iterációk száma.
-	\item \textit{mask\_padding} : Maszkolja-e a \textit{padding} karaktereket.
+	\item \textit{mask\_padding} : Maszkolja-e a \textit{padding} tokeneket.
 \end{itemize}
 
 A futtatáshoz használt szervergép konfigurációja a következő: 2 x Intel\textregistered Xeon\textregistered  Processor E5-2640 v4 25M Cache 2.40GHz (10 mag) CPU, 2 x NVIDIA GeForce GTX 1080 Ti GPU, 4 x 32 GB DDR4 RAM.
@@ -239,7 +239,7 @@ A \ref{fig:train-acc-epoch}-es ábrán látható, hogy a normált bemenetű mode
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.45\textwidth]{loss}
-	\caption{A loss függvények alakulása a különböző modellek esetén}
+	\caption{A tanítási loss függvények alakulása a különböző modellek esetén}
 	\label{fig:train-loss-epoch}
 \end{figure}
 
@@ -252,4 +252,4 @@ A szemantikus reprezentációs vektorok felhasználási területe igen szélesk�
 
 Egy eleve betanított modell mentett súlyainak használata nem igényel komoly erőforrásokat és tárhelyet. A vektorok generálása egy egyszerű folyamat, mely során a reprezentáció fej nélküli neurális hálója – azaz a BiLSTM max pooling – ezen súlyok szerint inicializálásra kerül. Ezt követően a bemenetet a tanításéhoz hasonló módon az input-ra juttatva a neurális modell előállítja a szövegrészletet reprezentáló vektort. A művelet során a háló súlyai nem változnak, azaz képtelen a további tanulásra.
 
-A műveletek elvégzésére elegendő lehet egy CPU is, így a kellő pontosságot elérve a módszer akár ipari rendszerekbe is építhető, vagy különböző webes alkalmazások esetén felhasználói élmény fokozására is felhasználható.
+A vektor generálás elvégzésére elegendő lehet egy CPU is, így a kellő pontosságot elérve a módszer akár ipari rendszerekbe is építhető, vagy különböző webes alkalmazások esetén felhasználói élmény fokozására is felhasználható.
