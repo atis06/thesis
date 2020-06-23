@@ -1,0 +1,54 @@
+- bevezető szemrepr:
+	- NLP -> részterülete
+	- Természetes nyelven írott szöveg nyelvi egységei -> numerikus ábrázolás, szemantikus 		vektortér 
+	- Modern módszerek fő meghatározó tényezői: neurális háló(általában rekurrens v rekurzív 	háló), tanítási feladatok/adathalmazok
+	- úgy, hogy hasonló jelentésű nyelvi egységek közel kerülnek egymáshoz a térben
+	- A kapott vektor felhasználása (osztályozás, keresőmotorok, chatbot)
+	- A többség nyelvfüggő
+	- Tanítás jelentős mennyiségű szöveges adat, kézzel annotált adat pontosabb eredmény
+	- Kis és közepes nyelvek (pl magyar) problémája -> limitált eszköztár, felügyelet nélküli 		tanítás
+	- meglévő reprezentációk magyar nyelven(szószintű), nincs magasabb nyelvi elem 			árbázolására lehetőség egyeten modell segítségével
+
+- előzmények:
+	- szóbeágyazási módszerek (szó -> vektor)
+	- InferSent: kézzel annotált adat, pontosabb tanítás
+	- BERT: autoannotált adaton is lehet SOTA eredményekel elérni
+	- USE: kevés adat esetén általános modell -> transfer learnig az adott feladatra
+
+- Adathalmazok:
+	- Általános előkészítési lépések (tisztítás, stemming, bigram...)
+	- Limitált lehetőségek, nincs kézzel annotált nagy és publikus halmaz
+	- OSCAR (Common Crawl tisztított válogatott változata, a mondatok nem sorrendtartóak), 		40GB -> felét használtam
+	- Hungarian Webcorpus eredendően magyar halmaz, 1200000 magyar nyelvű weboldal scrapelve 		(6.5GB) 
+	- Termék vélemények (saját)
+		- Vélemény - csillagszám (1-2 negatív / 4-5 pozitív)
+		- tisztított, balanced -> ~95000 adat
+
+
+- Az előtanítás:
+	- Architektúra
+	- bemenet(OSCAR w2v 645k) -> embedding mátrix átadva, Hungarian Webcorpus
+	- Háló szerkezete (BILSTM max pooling), kétirányú
+	- Feladatok(BERT: masking, next sentence), szavak közötti relációk, mondatok közötti 		kohézió
+	- Érdemes megjegyezni: ismeretlen szavak és spec karakterek -> embedding dim növelés
+	- Normált / nem normált bemenet
+	- Eredmények
+	
+-----------------------------------------------------------------------------------------------
+
+
+- Kiértékelés
+	- Jó kiértékelési feladat, ha kellően nehéz és jól interpretálható az eredmény
+	- Árukereső érzelmi tartalom alapján bináris klasszifikáció
+	- Baseline W2V (kicsi, nagy), normált/nem normált
+	- táblázat
+
+-Külön eredmények:
+	- ismeretlen szavak kizárása a maszkolásból -> teljesítmény csökkenés
+	- előre tanított modell finomhangolása árukeresőn -> növekedés!
+	- kapott adathalmaz Szegedről
+
+- Összefoglalás: 
+	- módszer, adathalmaz kis és közepes nyelveken írt mondatok és belezdések leképezésére 		(Magyar)
+	- javulás a word2vechez képest (dolgozat 1,5%, utána sok)
+	- benchmark adathalmaz
